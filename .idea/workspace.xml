@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ab4f179d-009a-44ea-8338-34643dd22727" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/assets/stylesheets/bootstrap_and_overrides.css.less" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/analyzer.iml" afterPath="$PROJECT_DIR$/.idea/analyzer.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/stylesheets/bootstrap_and_overrides.css.scss" afterPath="$PROJECT_DIR$/app/assets/stylesheets/bootstrap_and_overrides.css.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/stylesheets/welcome.css.scss" afterPath="$PROJECT_DIR$/app/assets/stylesheets/welcome.css.scss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="analyzer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,19 +41,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="welcome.css.scss" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="welcome.css.scss" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/welcome.css.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="200" selection-end="200" vertical-scroll-proportion="0.18072289" vertical-offset="0" max-vertical-offset="415">
+            <state line="3" column="0" selection-start="178" selection-end="178" vertical-scroll-proportion="-1.875" vertical-offset="0" max-vertical-offset="135">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bootstrap_and_overrides.css.scss" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="bootstrap_and_overrides.css.scss" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/bootstrap_and_overrides.css.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="80" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="540">
+            <state line="6" column="2" selection-start="123" selection-end="123" vertical-scroll-proportion="0.21686748" vertical-offset="0" max-vertical-offset="615">
               <folding />
             </state>
           </provider>
@@ -76,7 +72,11 @@
         <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.erb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="300">
-              <folding />
+              <folding>
+                <marker date="1396234375000" expanded="true" signature="21:296" placeholder="..." />
+                <marker date="1396234375000" expanded="true" signature="28:258" placeholder="..." />
+                <marker date="1396234375000" expanded="true" signature="265:288" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -84,7 +84,7 @@
       <file leaf-file-name="index.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/welcome/index.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="132" column="51" selection-start="6462" selection-end="6462" vertical-scroll-proportion="-11.75" vertical-offset="1698" max-vertical-offset="17535">
+            <state line="210" column="23" selection-start="9278" selection-end="9278" vertical-scroll-proportion="-6.2916665" vertical-offset="2999" max-vertical-offset="17535">
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -93,6 +93,15 @@
                 <element signature="n#style#0;n#div#0;n#div#4;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <marker date="1396319819000" expanded="true" signature="6291:6543" placeholder="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="bootstrap.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/bootstrap.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6116" column="16" selection-start="126769" selection-end="126776" vertical-scroll-proportion="0.0" vertical-offset="46343" max-vertical-offset="92460">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -119,15 +128,6 @@
         <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/application.css">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="18" selection-start="203" selection-end="203" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
               <folding />
             </state>
           </provider>
@@ -670,27 +670,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/welcome/index.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="132" column="51" selection-start="6462" selection-end="6462" vertical-scroll-proportion="-11.75" vertical-offset="1698" max-vertical-offset="17535">
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#3;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#4;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <marker date="1396319819000" expanded="true" signature="6291:6543" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="462">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/style.css">
       <provider selected="true" editor-type-id="text-editor">
         <state line="414" column="20" selection-start="8135" selection-end="8135" vertical-scroll-proportion="0.0" vertical-offset="5963" max-vertical-offset="19725">
@@ -705,16 +684,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/bootstrap_and_overrides.css.scss">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="80" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="540">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="462">
+          <folding>
+            <marker date="1396234375000" expanded="true" signature="21:296" placeholder="..." />
+            <marker date="1396234375000" expanded="true" signature="28:258" placeholder="..." />
+            <marker date="1396234375000" expanded="true" signature="265:288" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/welcome/index.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="210" column="23" selection-start="9278" selection-end="9278" vertical-scroll-proportion="-6.2916665" vertical-offset="2999" max-vertical-offset="17535">
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#3;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#4;n#div#1;n#div#2;n#div#0;n#section#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <marker date="1396319819000" expanded="true" signature="6291:6543" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/bootstrap.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6116" column="16" selection-start="126769" selection-end="126776" vertical-scroll-proportion="0.0" vertical-offset="46343" max-vertical-offset="92460">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/welcome.css.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="200" selection-end="200" vertical-scroll-proportion="0.18072289" vertical-offset="0" max-vertical-offset="415">
+        <state line="3" column="0" selection-start="178" selection-end="178" vertical-scroll-proportion="-1.875" vertical-offset="0" max-vertical-offset="135">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/bootstrap_and_overrides.css.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="2" selection-start="123" selection-end="123" vertical-scroll-proportion="0.21686748" vertical-offset="0" max-vertical-offset="615">
           <folding />
         </state>
       </provider>
