@@ -32,9 +32,12 @@ group :doc do
   gem 'sdoc', require: false
 end
 
-gem 'therubyracer'
-gem 'less-rails' #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
-gem 'twitter-bootstrap-rails'
+#gem 'sass-rails', '>= 3.2'
+gem 'bootstrap-sass', '~> 3.1.1'
+
+#gem 'therubyracer'
+#gem 'less-rails' #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
+#gem 'twitter-bootstrap-rails'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
