@@ -485,7 +485,7 @@ padding-bottom:4px;
 				overflow:hidden;
 			}
 			#header-section .innerbg{
-				background: rgba(44, 62, 80, 0.8)url(../../assets/img/tablebg.jpg) 50% 0 fixed repeat;
+				background: rgba(44, 62, 80, 0.8)url(../../assets/tablebg.jpg) 50% 0 fixed repeat;
 				min-height:650px;
 				width:100%;
 				display:inline-block;
@@ -503,7 +503,7 @@ padding-bottom:4px;
 		
 			
 			#header-section .leftbg{
-				background: rgba(40, 170, 157, 0.3) url(../../assets/img/pixel.png) 0% 0% repeat;
+				background: rgba(40, 170, 157, 0.3) url(../../assets/pixel.png) 0% 0% repeat;
 				min-height:100%;
 				height:100%;
 				width:100%;
@@ -699,16 +699,16 @@ h3{
 	}
 	
 	.features-more{
-		background: url(../../assets/img/shadright.png) bottom right no-repeat;
+		background: url(../../assets/shadright.png) bottom right no-repeat;
 		
 	}
 	
 	.features-more:nth-child(even){
-		background: url(../../assets/img/shadleft.png) bottom left no-repeat;
+		background: url(../../assets/shadleft.png) bottom left no-repeat;
 		
 	}
 	.features-more:nth-child(odd).span6{
-		background: url(../../assets/img/shadright.png) bottom right no-repeat;
+		background: url(../../assets/shadright.png) bottom right no-repeat;
 		
 		
 	}
@@ -1025,7 +1025,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px -50px no-repeat;
+			background:url(../topbottomlinks.png) 0px -50px no-repeat;
 		}
 		
 		
@@ -1037,7 +1037,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px 0px  no-repeat;
+			background:url(../topbottomlinks.png) 0px 0px  no-repeat;
 			
 		}
 		.bottom-link-click{
@@ -1050,7 +1050,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px -150px no-repeat;
+			background:url(../topbottomlinks.png) 0px -150px no-repeat;
 		}
 		
 		.bottom-link{
@@ -1061,7 +1061,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px -100px no-repeat;
+			background:url(../topbottomlinks.png) 0px -100px no-repeat;
 			
 			
 		}
