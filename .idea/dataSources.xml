@@ -4,7 +4,7 @@
     <data-source source="LOCAL" name="Rails analyzer: development" uuid="0a8681cb-63ea-4558-976e-c140bf0f1c4f">
       <driver-ref>sqlite.xerial</driver-ref>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\Sean\Desktop\analyzer\db\development.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\Sean\Documents\GitHub\analyzer\db\development.sqlite3</jdbc-url>
       <libraries />
     </data-source>
   </component>

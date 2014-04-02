@@ -1025,7 +1025,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../topbottomlinks.png) 0px -50px no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px -50px no-repeat;
 		}
 		
 		
@@ -1037,7 +1037,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../topbottomlinks.png) 0px 0px  no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px 0px  no-repeat;
 			
 		}
 		.bottom-link-click{
@@ -1050,7 +1050,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../topbottomlinks.png) 0px -150px no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px -150px no-repeat;
 		}
 		
 		.bottom-link{
@@ -1061,7 +1061,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../topbottomlinks.png) 0px -100px no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px -100px no-repeat;
 			
 			
 		}
