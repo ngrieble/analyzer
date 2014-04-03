@@ -52,6 +52,11 @@
 
 <body data-spy="scroll" data-target=".scroller-spy">
 
+<!--################# D3:GRAPH VISUALIZATION ####################
+	============================================================ -->
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+
 <!--################# SET UP FOR FB API ####################
 	============================================================ -->
 
@@ -132,6 +137,18 @@
             for (var i=0; i<photoResponse.data.length; i++){
                 var photo = photoResponse.data[i];
                 console.log('Link: ' + photo.link);
+                if(i==0){
+                    document.getElementById('feature-item-1').src = photo.source;
+                }
+                if(i==1){
+                    document.getElementById('feature-item-2').src = photo.source;
+                }
+                if(i==2){
+                    document.getElementById('feature-item-3').src = photo.source;
+                }
+                if(i==3){
+                    document.getElementById('feature-item-4').src = photo.source;
+                }
             }
 //            console.log('Link: ' + response.data[0].link + '.');
         });
@@ -285,7 +302,7 @@
       <!-- FEATURE ITEM-->
       <div class="span3">
         <div class="feature-box">
-          <img class="feature-box-image" alt="" src= "assets/illustrations/infinity.png" >
+          <img id="feature-item-1" class="feature-box-image" alt="" src= "" >
           <h4 class="feature-box-title">Easy to Customize</h4>
           <p>Included PSD vector-based shapes and layer styles.</p>
           <a class="btn btn-primary btn-large btn-block" href="#">Get Pro</a>
@@ -296,7 +313,7 @@
       <!-- FEATURE ITEM-->
       <div class="span3">
         <div class="feature-box">
-          <img class="feature-box-image" alt="" src="assets/illustrations/colors.png">
+          <img id="feature-item-2" class="feature-box-image" alt="" src="assets/illustrations/colors.png">
           <h4 class="feature-box-title">Modern colors</h4>
           <p>Based on trend web colors - contrast, modern and bright </p>
           <a class="btn btn-info btn-large btn-block" href="#">Get Pro</a>
@@ -307,7 +324,7 @@
       <!-- FEATURE ITEM-->
       <div class="span3">
         <div class="feature-box">
-          <img class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+          <img id="feature-item-3" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
           <h4 class="feature-box-title">Well coded</h4>
           <p>W3C valid HTML5 code, commented and well orginized</p>
           <a class="btn btn-success btn-large btn-block" href="#">Get Pro</a>
@@ -318,7 +335,7 @@
       <!-- FEATURE ITEM-->
       <div class="span3">
         <div class="feature-box feature-box-hot">
-          <img class="feature-box-image" alt="" src="assets/illustrations/timec.png">
+          <img id="feature-item-4" class="feature-box-image" alt="" src="assets/illustrations/timec.png">
           <h4 class="feature-box-title">Saves time</h4>
           <p>Save up to 72 hours for your project kickstarting</p>
           <a class="btn btn-danger btn-large btn-block" href="#">Get Pro</a>
