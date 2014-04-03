@@ -53,8 +53,21 @@
 <body data-spy="scroll" data-target=".scroller-spy">
 
 <!--################# D3:GRAPH VISUALIZATION ####################
-	============================================================ -->
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+============================================================ -->
+
+<meta charset="utf-8">
+<style>
+
+    .chart div {
+        font: 10px sans-serif;
+        background-color: steelblue;
+        text-align: right;
+        padding: 3px;
+        margin: 1px;
+        color: white;
+    }
+
+</style>
 
 
 <!--################# SET UP FOR FB API ####################
@@ -81,7 +94,7 @@
                 // login status of the person. In this case, we're handling the situation where they
                 // have logged in to the app.
                 testAPI();
-                getUsersPhotos();
+                getUsersPhotos(makeGraph);
             } else if (response.status === 'not_authorized') {
                 // In this case, the person is logged into Facebook, but not into the app, so we call
                 // FB.login() to prompt them to do so.
@@ -124,16 +137,21 @@
         }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
     }
 
-
+    var sorted_values = [];
+    var sorted_keys = [];
 
         // Grab all users' photos
-    function getUsersPhotos() {
+    function getUsersPhotos(callback) {
         console.log('Fetching photos.... ');
         FB.api('/me/photos', function(photoResponse) {
             console.log('Got response');
 //            var photos = JSON.parse(photoResponse.data);
 //            console.log('Link: ' + photos[0].link);
 //            var photos = response["data"];
+
+            var all_data;
+            all_data = photoResponse.data;
+
             for (var i=0; i<photoResponse.data.length; i++){
                 var photo = photoResponse.data[i];
                 console.log('Link: ' + photo.link);
@@ -150,7 +168,103 @@
                     document.getElementById('feature-item-4').src = photo.source;
                 }
             }
+
+
+            // NEED TO LOOP THROUGH PAGES
+
+            var desiredAttributes=["id","from"];
+            var myJSONText = JSON.stringify(all_data, desiredAttributes);
+
+            console.log(myJSONText);
 //            console.log('Link: ' + response.data[0].link + '.');
+
+
+            // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
+            var user_to_num_photos_uploaded = {};
+            for (var i=0; i<all_data.length; i++){
+                var user_id = all_data[i].from.id;
+
+                if (user_id in user_to_num_photos_uploaded) {
+                    user_to_num_photos_uploaded[all_data[i].from.id]++;
+                } else {
+                    user_to_num_photos_uploaded[all_data[i].from.id] = 1;
+                }
+            }
+
+            console.log(user_to_num_photos_uploaded);
+//
+//            user_to_num_photos_uploaded.sort(function(obj1, obj2) {
+//                //return obj1.value - obj2.value;
+//                var a1= obj1[1], b1= obj2[1];
+//                return b1 - a1;
+//            });
+
+            //user_to_num_photos_uploaded.sort();
+
+
+            function keysbyValue(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                var obj = {};
+                for(var i= 0, L= A.length; i<L; i++){
+                    obj[i] = {key: A[i], value: O[A[i]]};
+                }
+                return obj;
+            }
+
+            function getSortedKeys(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                return A;
+            }
+
+            function getSortedValues(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][1];
+                }
+                return A;
+            }
+
+            sorted_keys = getSortedKeys(user_to_num_photos_uploaded);
+
+            sorted_values = getSortedValues(user_to_num_photos_uploaded);
+
+            user_to_num_photos_uploaded = keysbyValue(user_to_num_photos_uploaded);
+
+            console.log(user_to_num_photos_uploaded);
+
+            console.log(sorted_keys);
+
+            console.log(sorted_values);
+
+            callback();
+
         });
     }
 </script>
@@ -354,6 +468,29 @@
 			
 			<span> Great template for start and grow business!
 				<span class="inner">BootScroller provides easy start and faster growing!</span>
+              <script src="http://d3js.org/d3.v3.min.js"></script>
+              <div class="chart"></div>
+
+                <script>
+
+                    function makeGraph() {
+
+                        var x = d3.scale.linear()
+                                .domain([0, d3.max(sorted_values)])
+                                .range([0, 420]);
+
+                        d3.select(".chart")
+                                .selectAll("div")
+                                .data(sorted_values)
+                                .enter().append("div")
+                                .style("width", function(d) { return x(d) + "px"; })
+                                .text(function(d) {
+                                    console.log(d);
+                                    return d;
+                                });
+                    }
+
+                </script>
 			</span>
         </div>
       </div>
