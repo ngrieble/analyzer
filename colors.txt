@@ -1,0 +1,7 @@
+COLORS
+
+FB Blue		Hex: #4c66a4
+		RGB: 76, 102, 164
+
+FB DarkBlue	Hex: #364c7c
+		RGB: 54, 76, 124

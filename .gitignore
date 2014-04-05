@@ -32,3 +32,5 @@ config/secrets.yml
 .idea/dataSources.xml
 
 .idea/workspace.xml
+
+.tmp/*
