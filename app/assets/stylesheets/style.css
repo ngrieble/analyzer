@@ -470,9 +470,14 @@ padding-bottom:0px;
 				margin-bottom:40px;
 			}
 			.hero-unit h1, .hero-unit h2 {
-				color: #000000;
+				color: #FFFFFF;
 				font-weight:700;
-				text-shadow: 0 3px 6px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+				text-shadow: 0 3px 6px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075),
+                    /*THE BELOW ADDS A BLACK OUTLINE TO THE TEXT*/
+                    -1px -1px 0 #000,
+                    1px -1px 0 #000,
+                    -1px 1px 0 #000,
+                    1px 1px 0 #000;
 				
 			}
 			
@@ -503,7 +508,7 @@ padding-bottom:0px;
 		
 			
 			#header-section .leftbg{
-				background: rgba(40, 170, 157, 0.3) url(../../assets/2pixel.png) 0% 0% repeat;
+				background: rgba(76, 102, 164, 0.3) url(../../assets/2pixel.png) 0% 0% repeat;
 				min-height:100%;
 				height:100%;
 				width:100%;
@@ -624,7 +629,7 @@ h3{
 /****************************** FEATURES ***************************************/
 
 	#features-section{
-				border-top: 4px solid #2fe2bf;
+				border-top: 4px solid #4c66a4;
 				min-height:550px;
 				position:relative;
 				overflow:hidden;
