@@ -32,5 +32,7 @@ config/secrets.yml
 .idea/dataSources.xml
 
 .idea/workspace.xml
-
+.idea/runConfigurations/Development__analyzer.xml
+.idea/runConfigurations/Production__analyzer.xml
+.idea/runConfigurations/test__analyzer.xml
 .tmp/*
