@@ -8,12 +8,11 @@
 				font-family: 'Sintony', sans-serif;*/
 				font-size:16px;
 	}
-	
 
-	
 	h1, h2, h3, h4{
 		color:#16A085;
 	}
+
 	section{
 		
 		
@@ -95,23 +94,24 @@
   font-size: 18px; }
 	
 	.navbar-inner {
+  height: 46px;
   border: none;
   padding-left: 4px;
   padding-right: 4px;
-padding-top:4px;
-padding-bottom:4px;
+padding-top:0px;
+padding-bottom:0px;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false); 
   }
 
 .navbar-inverse .navbar-inner {
-  background: #34495e;
+  background: #4c66a4;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false); }
   
   .navbar-inverse .nav > li > a {
   color: white; }
 .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus {
   background-color: transparent;
-  color: #1abc9c;
+  color: #364c7c;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none; }
@@ -124,13 +124,13 @@ padding-bottom:4px;
 		
 	}
 	.navbar .brand:hover {
-		color: rgba(40, 170, 157, 1);
+		color: rgba(0, 0, 0, 1);
 
 		
 	}
 	
 	.navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus{
-		color: #FFAA49;
+		color: #000000;
 	}
 
 	
@@ -278,7 +278,7 @@ padding-bottom:4px;
 		-o-transition: all 0.3s ease-in-out;
 		transition: all 0.3s ease-in-out;
 		-webkit-transition: all 0.3s ease-in-out;
-		border-top:4px solid #2fe2bf;
+		border-top:0px solid #364c7c;
 	}
 
 /************************** BS ELEMENTS *********************************/		
@@ -399,7 +399,7 @@ padding-bottom:4px;
 		margin-top:5px;
 		font-size:90%;
 	}
-	
+
 	*.main-color{
 		color:#1ABC9C;
 	}
@@ -470,9 +470,14 @@ padding-bottom:4px;
 				margin-bottom:40px;
 			}
 			.hero-unit h1, .hero-unit h2 {
-				color:#fff;
+				color: #FFFFFF;
 				font-weight:700;
-				text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+				text-shadow: 0 3px 6px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075),
+                    /*THE BELOW ADDS A BLACK OUTLINE TO THE TEXT*/
+                    -1px -1px 0 #000,
+                    1px -1px 0 #000,
+                    -1px 1px 0 #000,
+                    1px 1px 0 #000;
 				
 			}
 			
@@ -485,7 +490,7 @@ padding-bottom:4px;
 				overflow:hidden;
 			}
 			#header-section .innerbg{
-				background: rgba(44, 62, 80, 0.8)url(../../assets/img/tablebg.jpg) 50% 0 fixed repeat;
+				background: rgba(44, 62, 80, 0.8)url(../../assets/headerbg.png) 20% fixed repeat;
 				min-height:650px;
 				width:100%;
 				display:inline-block;
@@ -503,7 +508,7 @@ padding-bottom:4px;
 		
 			
 			#header-section .leftbg{
-				background: rgba(40, 170, 157, 0.3) url(../../assets/img/pixel.png) 0% 0% repeat;
+				background: rgba(76, 102, 164, 0.3) url(../../assets/2pixel.png) 0% 0% repeat;
 				min-height:100%;
 				height:100%;
 				width:100%;
@@ -624,7 +629,7 @@ h3{
 /****************************** FEATURES ***************************************/
 
 	#features-section{
-				border-top: 4px solid #2fe2bf;
+				border-top: 4px solid #4c66a4;
 				min-height:550px;
 				position:relative;
 				overflow:hidden;
@@ -699,16 +704,16 @@ h3{
 	}
 	
 	.features-more{
-		background: url(../../assets/img/shadright.png) bottom right no-repeat;
+		background: url(../../assets/shadright.png) bottom right no-repeat;
 		
 	}
 	
 	.features-more:nth-child(even){
-		background: url(../../assets/img/shadleft.png) bottom left no-repeat;
+		background: url(../../assets/shadleft.png) bottom left no-repeat;
 		
 	}
 	.features-more:nth-child(odd).span6{
-		background: url(../../assets/img/shadright.png) bottom right no-repeat;
+		background: url(../../assets/shadright.png) bottom right no-repeat;
 		
 		
 	}
@@ -1025,7 +1030,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px -50px no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px -50px no-repeat;
 		}
 		
 		
@@ -1037,7 +1042,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px 0px  no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px 0px  no-repeat;
 			
 		}
 		.bottom-link-click{
@@ -1050,7 +1055,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px -150px no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px -150px no-repeat;
 		}
 		
 		.bottom-link{
@@ -1061,7 +1066,7 @@ padding-top: 18px;
 			z-index:10000;
 			width:50px;
 			height:50px;
-			background:url(../img/topbottomlinks.png) 0px -100px no-repeat;
+			background:url(../../assets/topbottomlinks.png) 0px -100px no-repeat;
 			
 			
 		}
