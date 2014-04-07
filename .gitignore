@@ -25,4 +25,18 @@ config/secrets.yml
 
 .idea/runConfigurations/test__analyzer.xml
 
+<<<<<<< HEAD
 *.xml
+=======
+.idea/dataSources.xml
+
+.idea/workspace.xml
+
+.idea/dataSources.xml
+
+.idea/workspace.xml
+.idea/runConfigurations/Development__analyzer.xml
+.idea/runConfigurations/Production__analyzer.xml
+.idea/runConfigurations/test__analyzer.xml
+.tmp/*
+>>>>>>> origin/temp
