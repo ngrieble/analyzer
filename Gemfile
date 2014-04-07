@@ -10,6 +10,7 @@ end
 group :production do
   gem 'pg'
   gem 'thin'
+  gem 'rails_12factor'
 end
 
 # Use SCSS for stylesheets
@@ -41,8 +42,6 @@ end
 #gem 'sass-rails', '>= 3.2'
 gem 'bootstrap-sass', '~> 3.1.1'
 
-
-gem 'heroku'
 
 #gem 'therubyracer'
 #gem 'less-rails' #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
