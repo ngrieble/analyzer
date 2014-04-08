@@ -74,7 +74,6 @@
 
 </style>
 
-
 <!--################# SET UP FOR FB API ####################
 	============================================================ -->
 
@@ -100,6 +99,8 @@
                 // have logged in to the app.
                 testAPI();
                 getUsersPhotos(makeGraph);
+                showButtons();
+
             } else if (response.status === 'not_authorized') {
                 // In this case, the person is logged into Facebook, but not into the app, so we call
                 // FB.login() to prompt them to do so.
@@ -108,6 +109,7 @@
                 // (1) JavaScript created popup windows are blocked by most browsers unless they
                 // result from direct interaction from people using the app (such as a mouse click)
                 // (2) it is a bad experience to be continually prompted to login upon page load.
+                hideButtons();
                 FB.login(function(response) {
                     // handle the response
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
@@ -117,12 +119,32 @@
                 // of whether they are logged into the app. If they aren't then they'll see the Login
                 // dialog right after they log in to Facebook.
                 // The same caveats as above apply to the FB.login() call here.
+                hideButtons();
                 FB.login(function(response) {
                     // handle the response
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             }
         });
     };
+
+    function showButtons(){
+        document.getElementById('mainbody').style.display = '';
+        document.getElementById('home-btn').style.visibility = 'visible';
+        document.getElementById('photos-btn').style.visibility = 'visible';
+        document.getElementById('status-btn').style.visibility = 'visible';
+        document.getElementById('comments-btn').style.visibility = 'visible';
+        document.getElementById('team-btn').style.visibility = 'visible';
+        document.getElementById('contact-btn').style.visibility = 'visible';
+    }
+    function hideButtons(){
+        document.getElementById('mainbody').style.display = 'none';
+        document.getElementById('home-btn').style.visibility = 'hidden';
+        document.getElementById('photos-btn').style.visibility = 'hidden';
+        document.getElementById('status-btn').style.visibility = 'hidden';
+        document.getElementById('comments-btn').style.visibility = 'hidden';
+        document.getElementById('team-btn').style.visibility = 'hidden';
+        document.getElementById('contact-btn').style.visibility = 'hidden';
+    }
 
     // Load the SDK asynchronously
     (function(d){
@@ -174,6 +196,7 @@
                 if(i==3){
                     document.getElementById('feature-item-4').src = photo.source;
                 }
+
             }
 
 
@@ -345,12 +368,12 @@
             <div id="main-nav" class="scroller-spy">
               <nav class="nav-collapse collapse" >
                 <ul class="nav pull-right" id="nav">
-                  <li class="active"><a href="#header-section">Home</a> </li>
-                  <li><a href="#photos-section">Photos</a> </li>
-                  <li><a href="#status-section">Status</a> </li>
-                  <li><a href="#comment-section">Comments</a> </li>
-                  <li><a href="#team-section">Our team</a> </li>
-                  <li><a href="#contact-section">Contact</a> </li>
+                  <li class="active"><a href="#header-section" id = "home-btn" style="visibility:hidden">Home</a> </li>
+                  <li><a href="#photos-section" id = "photos-btn" style="visibility:hidden">Photos</a> </li>
+                  <li><a href="#status-section" id = "status-btn" style="visibility:hidden">Status</a> </li>
+                  <li><a href="#comment-section" id = "comments-btn" style="visibility:hidden">Comments</a> </li>
+                  <li><a href="#team-section" id = "team-btn" style="visibility:hidden">Our team</a> </li>
+                  <li><a href="#contact-section" id = "contact-btn" style="visibility:hidden">Contact</a> </li>
                 </ul>
               </nav>
             </div>
@@ -400,7 +423,7 @@
 	=============================================================== -->
 
 
-
+<section id = "mainbody" style = "display:none">
 
 <!-- ######################## FEATURES SECTION ##################
 ============================================================== -->
@@ -1343,7 +1366,7 @@
 
 </div>
 <!-- END: MAIN-WRAPPER-->
-
+</section>
 
 <!-- Le javascript
     ================================================== -->
