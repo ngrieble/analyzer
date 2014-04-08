@@ -33,6 +33,8 @@
 		width: 100%;
 	}
 
+    svg .tooltip { opacity: 1; }
+
 	/*************** FIX BS MARGIN on fluid scafolding **************/ 
 	#container-folio.row-fluid .span6:nth-child(2n+1){
 		margin-left:0px;
