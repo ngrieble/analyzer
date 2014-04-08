@@ -48,6 +48,11 @@
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/small_logo.ico">
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/small_logo.ico">
   <link rel="apple-touch-icon-precomposed" href="assets/small_logo.ico">
+
+
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v1.1.5.min.js"></script>
+
 </head>
 
 <body data-spy="scroll" data-target=".scroller-spy">
@@ -139,6 +144,8 @@
 
     var sorted_values = [];
     var sorted_keys = [];
+    var user_to_num_photos_uploaded = {};
+    var facebook_ids_to_tags = [];
 
         // Grab all users' photos
     function getUsersPhotos(callback) {
@@ -179,19 +186,25 @@
 //            console.log('Link: ' + response.data[0].link + '.');
 
 
+            console.log("all_data");
+            console.log(all_data);
+
             // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
-            var user_to_num_photos_uploaded = {};
+            //var user_to_num_photos_uploaded = {};
             for (var i=0; i<all_data.length; i++){
-                var user_id = all_data[i].from.id;
+                var user_id = all_data[i].from.name;
 
                 if (user_id in user_to_num_photos_uploaded) {
-                    user_to_num_photos_uploaded[all_data[i].from.id]++;
+                    user_to_num_photos_uploaded[all_data[i].from.name]++;
                 } else {
-                    user_to_num_photos_uploaded[all_data[i].from.id] = 1;
+                    user_to_num_photos_uploaded[all_data[i].from.name] = 1;
                 }
             }
 
             console.log(user_to_num_photos_uploaded);
+
+
+
 //
 //            user_to_num_photos_uploaded.sort(function(obj1, obj2) {
 //                //return obj1.value - obj2.value;
@@ -257,11 +270,21 @@
 
             user_to_num_photos_uploaded = keysbyValue(user_to_num_photos_uploaded);
 
+            console.log("user_to_num_photos_uploaded");
             console.log(user_to_num_photos_uploaded);
 
+            console.log("sorted_keys");
             console.log(sorted_keys);
 
+            console.log("sorted_values");
             console.log(sorted_values);
+
+            for (var i=0; i<sorted_keys.length; i++){
+                facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+            }
+
+            console.log("facebook_ids_to_tags");
+            console.log(facebook_ids_to_tags);
 
             callback();
 
@@ -472,13 +495,60 @@
 			
 			<span> Great template for start and grow business!
 				<span class="inner">BootScroller provides easy start and faster growing!</span>
-              <script src="http://d3js.org/d3.v3.min.js"></script>
               <div class="chart"></div>
+              <div class="chart2"></div>
 
                 <script>
 
-                    function makeGraph() {
 
+
+
+                    function makeGraph() {
+<<<<<<< HEAD
+
+                        // CHART USING D3 AND DIMPLY: PRETTY
+
+                        var svg = dimple.newSvg(".chart2", 800, 600);
+                        var data = [
+                            { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
+                            { "Facebook ID":"World", "Number of Photo Tags":3000 }
+                        ];
+                        console.log("data for fake chart");
+                        console.log(data);
+
+                        var chart = new dimple.chart(svg, facebook_ids_to_tags);
+                        chart.addCategoryAxis("x", "Facebook ID");
+                        chart.addMeasureAxis("y", "Number of Photo Tags");
+                        var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+//                        s.barGap = 1;
+                        chart.draw();
+
+
+
+                        // CHART USING ONLY D3: NOT PRETTY
+
+//                        var x = d3.scale.linear()
+//                                .domain([0, d3.max(sorted_values)])
+//                                .range([0, 420]);
+//
+//                        d3.select(".chart")
+//                                .selectAll("div")
+//                                .data(sorted_values)
+//                                .enter().append("div")
+//                                .style("width", function(d) { return x(d) + "px"; })
+//                                .text(function(d) {
+//                                    console.log(d);
+//                                    return d;
+//                                });
+
+=======
+                        for(x in sorted_keys) {
+                            FB.api('/'+sorted_keys[x], function(response) {
+                                console.log("Name: "+response.name);
+                                console.log("Num Photos: "+sorted_values[x]);
+                                //need to add the names to the graph
+                            }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
+                        }
                         var x = d3.scale.linear()
                                 .domain([0, d3.max(sorted_values)])
                                 .range([0, 420]);
@@ -492,6 +562,7 @@
                                     console.log(d);
                                     return d;
                                 });
+>>>>>>> FETCH_HEAD
                     }
 
                 </script>
