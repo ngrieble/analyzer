@@ -516,11 +516,21 @@
                         console.log(data);
 
                         var chart = new dimple.chart(svg, facebook_ids_to_tags);
-                        chart.addCategoryAxis("x", "Facebook ID");
-                        chart.addMeasureAxis("y", "Number of Photo Tags");
+                        var x = chart.addCategoryAxis("x", "Facebook ID");
+//                        x.tickFormat = "%20.10s";
+                        var y = chart.addMeasureAxis("y", "Number of Photo Tags");
+                        y.tickFormat = "i";
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 //                        s.barGap = 1;
                         chart.draw();
+                        x.titleShape.attr("y", chart.height + 1000);
+                        x.shapes.selectAll("text").attr("transform",
+                                function (d) {
+                                    return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
+                                });
+
+//                        y.tickFormat = "i";
+
 
 
 

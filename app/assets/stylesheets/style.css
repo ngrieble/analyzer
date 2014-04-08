@@ -46,6 +46,8 @@
 		margin-left:0px;
 	}
 
+svg .tooltip { opacity: 1; }
+
 /**************************** EVENTS ANIMATED ***************************/	
 	.relative{
 		position:relative;
