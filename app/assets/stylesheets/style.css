@@ -34,6 +34,8 @@
 		width: 100%;
 	}
 
+    svg .tooltip { opacity: 1; }
+
 	/*************** FIX BS MARGIN on fluid scafolding **************/ 
 	#container-folio.row-fluid .span6:nth-child(2n+1){
 		margin-left:0px;
@@ -46,8 +48,6 @@
 	#container-folio.row-fluid .span3:nth-child(4n+1){
 		margin-left:0px;
 	}
-
-svg .tooltip { opacity: 1; }
 
 /**************************** EVENTS ANIMATED ***************************/	
 	.relative{
