@@ -150,11 +150,16 @@
         // Grab all users' photos
     function getUsersPhotos(callback) {
         console.log('Fetching photos.... ');
-        FB.api('/me/photos', function(photoResponse) {
+
+        var params = {limit:500};
+        FB.api('/me/photos', params, function(photoResponse) {
             console.log('Got response');
 //            var photos = JSON.parse(photoResponse.data);
 //            console.log('Link: ' + photos[0].link);
 //            var photos = response["data"];
+
+            console.log("photoResponse");
+            console.log(photoResponse);
 
             var all_data;
             all_data = photoResponse.data;
@@ -508,26 +513,43 @@
                         // CHART USING D3 AND DIMPLY: PRETTY
 
                         var svg = dimple.newSvg(".chart2", 800, 600);
-                        var data = [
-                            { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
-                            { "Facebook ID":"World", "Number of Photo Tags":3000 }
-                        ];
-                        console.log("data for fake chart");
-                        console.log(data);
+//                        var data = [
+//                            { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
+//                            { "Facebook ID":"World", "Number of Photo Tags":3000 }
+//                        ];
+//                        console.log("data for fake chart");
+//                        console.log(data);
 
                         var chart = new dimple.chart(svg, facebook_ids_to_tags);
                         var x = chart.addCategoryAxis("x", "Facebook ID");
+
 //                        x.tickFormat = "%20.10s";
                         var y = chart.addMeasureAxis("y", "Number of Photo Tags");
                         y.tickFormat = "i";
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 //                        s.barGap = 1;
+
                         chart.draw();
-                        x.titleShape.attr("y", chart.height + 1000);
-                        x.shapes.selectAll("text").attr("transform",
-                                function (d) {
-                                    return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
-                                });
+
+//                        svg.selectAll("text")
+//                                .attr("text-anchor", "middle");
+
+                        x.shapes.selectAll("text")
+                                    .attr("style", "text-anchor: end; font-family: sans-serif; font-size: 13.714285714285714px;")
+                                    .attr("y", function(d) { return  });
+
+
+
+//                        x.titleShape.attr("y", 1000);
+//                        x.shapes.selectAll("text").attr("style"),
+//                                function(d){
+//                                    return "text-anchor: end; font-family: sans-serif; font-size: 13.714285714285714px;";
+//                                }
+//                        x.shapes.selectAll("text").attr("transform",
+//                                function (d) {
+//                                    return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
+//                                });
+
 
 //                        y.tickFormat = "i";
 
