@@ -504,7 +504,6 @@
 
 
                     function makeGraph() {
-<<<<<<< HEAD
 
                         // CHART USING D3 AND DIMPLY: PRETTY
 
@@ -541,28 +540,14 @@
 //                                    return d;
 //                                });
 
-=======
-                        for(x in sorted_keys) {
-                            FB.api('/'+sorted_keys[x], function(response) {
-                                console.log("Name: "+response.name);
-                                console.log("Num Photos: "+sorted_values[x]);
-                                //need to add the names to the graph
-                            }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
-                        }
-                        var x = d3.scale.linear()
-                                .domain([0, d3.max(sorted_values)])
-                                .range([0, 420]);
+//                        for(x in sorted_keys) {
+//                            FB.api('/'+sorted_keys[x], function(response) {
+//                                console.log("Name: "+response.name);
+//                                console.log("Num Photos: "+sorted_values[x]);
+//                                //need to add the names to the graph
+//                            }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
+//                        }
 
-                        d3.select(".chart")
-                                .selectAll("div")
-                                .data(sorted_values)
-                                .enter().append("div")
-                                .style("width", function(d) { return x(d) + "px"; })
-                                .text(function(d) {
-                                    console.log(d);
-                                    return d;
-                                });
->>>>>>> FETCH_HEAD
                     }
 
                 </script>
