@@ -133,12 +133,15 @@
         ref.parentNode.insertBefore(js, ref);
     }(document));
 
+    var user_id;
+
     // Here we run a very simple test of the Graph API after login is successful.
     // This testAPI() function is only called in those cases.
     function testAPI() {
         console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
             console.log('Good to see you, ' + response.name + '.');
+            user_id = response.id;
         }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
     }
 
@@ -151,7 +154,9 @@
     function getUsersPhotos(callback) {
         console.log('Fetching photos.... ');
 
-        var params = {limit:500};
+//        var params = {limit:500};
+        var params = {since:"01-01-2010", limit:5000};
+//1262304000
         FB.api('/me/photos', params, function(photoResponse) {
             console.log('Got response');
 //            var photos = JSON.parse(photoResponse.data);
@@ -197,12 +202,17 @@
             // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
             //var user_to_num_photos_uploaded = {};
             for (var i=0; i<all_data.length; i++){
-                var user_id = all_data[i].from.name;
+                var user_name = all_data[i].from.name;
 
-                if (user_id in user_to_num_photos_uploaded) {
-                    user_to_num_photos_uploaded[all_data[i].from.name]++;
-                } else {
-                    user_to_num_photos_uploaded[all_data[i].from.name] = 1;
+                if(all_data[i].from.id == user_id){
+
+                }
+                else{
+                    if (user_name in user_to_num_photos_uploaded) {
+                        user_to_num_photos_uploaded[all_data[i].from.name]++;
+                    } else {
+                        user_to_num_photos_uploaded[all_data[i].from.name] = 1;
+                    }
                 }
             }
 
@@ -512,7 +522,7 @@
 
                         // CHART USING D3 AND DIMPLY: PRETTY
 
-                        var svg = dimple.newSvg(".chart2", 800, 600);
+                        var svg = dimple.newSvg(".chart2", 1000, 600);
                         var data = [
                             { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
                             { "Facebook ID":"World", "Number of Photo Tags":3000 }
@@ -536,11 +546,13 @@
 
 //                        y.tickFormat = "i";
 
-                        x.shapes.selectAll("text")
-                            .attr("style", "text-anchor: end; font-family: sans-serif; font-size: 13.714285714285714px;")
-                            .attr("y", function(d) { return  });
 
 
+//                        x.shapes.selectAll("text")
+//                            .attr("style", "text-anchor: end; font-family: sans-serif; font-size: 13.714285714285714px;")
+//                            .attr("x", function(d) { return d.x + (d.dy)* d.length });
+
+                        svg.attr("height", 800);
 
                         // CHART USING ONLY D3: NOT PRETTY
 
