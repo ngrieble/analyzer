@@ -154,14 +154,6 @@
 
             for (var i=0; i<photoResponse.data.length; i++){
                 var photo = photoResponse.data[i];
-
-                 /*FB.api('/'+photo.id+'/likes', function(response) {
-                     console.log('Total number of likes: '+response.total_count);
-
-                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
-                 */
-
-
                 console.log('Link: ' + photo.link);
                 if(i==0){
                     document.getElementById('feature-item-1').src = photo.source;
@@ -486,16 +478,13 @@
                 <script>
 
                     function makeGraph() {
-                        /*for(x in sorted_keys) {
+                        for(x in sorted_keys) {
                             FB.api('/'+sorted_keys[x], function(response) {
                                 console.log("Name: "+response.name);
                                 console.log("Num Photos: "+sorted_values[x]);
                                 //need to add the names to the graph
                             }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
                         }
-
-
-                        */
                         var x = d3.scale.linear()
                                 .domain([0, d3.max(sorted_values)])
                                 .range([0, 420]);
