@@ -172,11 +172,16 @@
         // Grab all users' photos
     function getUsersPhotos(callback) {
         console.log('Fetching photos.... ');
-        FB.api('/me/photos', function(photoResponse) {
+
+        var params = {limit:500};
+        FB.api('/me/photos', params, function(photoResponse) {
             console.log('Got response');
 //            var photos = JSON.parse(photoResponse.data);
 //            console.log('Link: ' + photos[0].link);
 //            var photos = response["data"];
+
+            console.log("photoResponse");
+            console.log(photoResponse);
 
             var all_data;
             all_data = photoResponse.data;
@@ -546,14 +551,17 @@
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 //                        s.barGap = 1;
                         chart.draw();
-                        x.titleShape.attr("y", chart.height + 1000);
-                        x.shapes.selectAll("text").attr("transform",
-                                function (d) {
-                                    return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
-                                });
+//                        x.titleShape.attr("y", chart.height + 1000);
+//                        x.shapes.selectAll("text").attr("transform",
+//                                function (d) {
+//                                    return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
+//                                });
 
 //                        y.tickFormat = "i";
 
+                        x.shapes.selectAll("text")
+                            .attr("style", "text-anchor: end; font-family: sans-serif; font-size: 13.714285714285714px;")
+                            .attr("y", function(d) { return  });
 
 
 
