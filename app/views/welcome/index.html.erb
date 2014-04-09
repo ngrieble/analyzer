@@ -628,18 +628,23 @@
 //                            tagged-photo-text.innerHTML = "Photos you're tagged in by " + e.SeriesValue;
 //                            fieldNameElement.innerHTML = "Ny new text!";
                             if(current_selected_bar == e.seriesValue){
-                                // clicked same bar, close tray
-                                tray_closed = true;
+                                // clicked same bar, close or open tray
+//                                if(tray_closed == false){
+//                                    tray_closed = true;
+//                                }
+//                                if(tray_closed == true){
+//                                    tray_closed = false;
+//                                }
                                 togglePhotoTray1();
                             }
                             if(current_selected_bar == null){
                                 // no bar selected yet, open tray
-                                tray_closed = false;
+//                                tray_closed = false;
                                 togglePhotoTray1();
                             }
                             if(tray_closed == true && current_selected_bar != e.seriesValue){
                                 // tray closed and selecting new bar. Open tray
-                                tray_closed = false;
+//                                tray_closed = false;
                                 togglePhotoTray1();
                             }
                             current_selected_bar = e.seriesValue;
@@ -744,6 +749,12 @@
 
                 <script>
                     function togglePhotoTray1() {
+                        if(tray_closed == false){
+                            tray_closed = true;
+                        }
+                        if(tray_closed == true){
+                            tray_closed = false;
+                        }
                         jQuery('#collapseOne').collapse('toggle');
                     }
                 </script>
