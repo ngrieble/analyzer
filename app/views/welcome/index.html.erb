@@ -552,7 +552,7 @@
                 <script>
 
                     var current_selected_bar;
-
+                    var tray_closed = true;
 
                     function makeGraph() {
 
@@ -629,10 +629,17 @@
 //                            fieldNameElement.innerHTML = "Ny new text!";
                             if(current_selected_bar == e.seriesValue){
                                 // clicked same bar, close tray
+                                tray_closed = true;
                                 togglePhotoTray1();
                             }
                             if(current_selected_bar == null){
-                                // no bar selected yet
+                                // no bar selected yet, open tray
+                                tray_closed = false;
+                                togglePhotoTray1();
+                            }
+                            if(tray_closed == true && current_selected_bar != e.seriesValue){
+                                // tray closed and selecting new bar. Open tray
+                                tray_closed = false;
                                 togglePhotoTray1();
                             }
                             current_selected_bar = e.seriesValue;
