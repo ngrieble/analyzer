@@ -561,6 +561,11 @@
                         var y = chart.addMeasureAxis("y", "Number of Photo Tags");
                         y.tickFormat = "i";
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+                        s.addEventHandler("click", function (e) {
+//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+                            togglePhotoTray1();
+                        });
+
 //                        s.barGap = 1;
                         chart.draw();
 //                        x.titleShape.attr("y", chart.height + 1000);
@@ -569,15 +574,12 @@
                                     return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
                                 });
 
-//                        y.tickFormat = "i";
-
-
-
-//                        x.shapes.selectAll("text")
-//                            .attr("style", "text-anchor: end; font-family: sans-serif; font-size: 13.714285714285714px;")
-//                            .attr("x", function(d) { return d.x + (d.dy)* d.length });
-
                         svg.attr("height", 800);
+
+
+//                        document.getElementById('category-1').class = "accordion-body show";
+
+
 
                         // CHART USING ONLY D3: NOT PRETTY
 
@@ -606,11 +608,37 @@
                     }
 
                 </script>
+
+
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <!--<div class="panel-heading">-->
+                  <!--<h4 class="panel-title">-->
+                  <!--<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">-->
+                  <!--Collapsible Group Item #1-->
+                  <!--</a>-->
+                  <!--</h4>-->
+                  <!--</div>-->
+                  <div id="collapseOne" class="panel-collapse collapse">
+                    <div>
+                      Photos go here
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+                <script>
+                    function togglePhotoTray1() {
+                        jQuery('#collapseOne').collapse('toggle');
+                    }
+                </script>
+
 			</span>
         </div>
       </div>
     </div>
   </div>
+
 
   <!--<div class="container">-->
     <!--<div class="row-fluid features-more o-hidden" >-->
