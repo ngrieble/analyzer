@@ -354,6 +354,12 @@ padding-bottom:0px;
   height: 170px;
   margin: 31px 0 27px;
   vertical-align: bottom; }
+
+.tagged-images {
+    height: 125px;
+    height: auto;
+    vertical-align: bottom; }
+
   .feature-box-image.big-illustration {
     height: 111px;
     margin-top: 20px;

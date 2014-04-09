@@ -577,51 +577,51 @@
 
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 0){
                                 document.getElementById('tagged-photo-1').src = facebook_ids_to_tagged_photos[e.seriesValue][0];
-                                document.getElementById('tagged-photo-1').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][0];
+                                document.getElementById('tagged-link-1').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][0];
                             }
                             else{
                                 document.getElementById('tagged-photo-1').src = "";
-                                document.getElementById('tagged-photo-1').href = "";
+                                document.getElementById('tagged-link-1').href = "";
                             }
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 1){
                                 document.getElementById('tagged-photo-2').src = facebook_ids_to_tagged_photos[e.seriesValue][1];
-                                document.getElementById('tagged-photo-2').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][1];
+                                document.getElementById('tagged-link-2').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][1];
                             }
                             else{
                                 document.getElementById('tagged-photo-2').src = "";
-                                document.getElementById('tagged-photo-2').href = "";
+                                document.getElementById('tagged-link-2').href = "";
                             }
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 2){
                                 document.getElementById('tagged-photo-3').src = facebook_ids_to_tagged_photos[e.seriesValue][2];
-                                document.getElementById('tagged-photo-3').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][2];
+                                document.getElementById('tagged-link-3').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][2];
                             }
                             else{
                                 document.getElementById('tagged-photo-3').src = "";
-                                document.getElementById('tagged-photo-3').href = "";
+                                document.getElementById('tagged-link-3').href = "";
                             }
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 3){
                                 document.getElementById('tagged-photo-4').src = facebook_ids_to_tagged_photos[e.seriesValue][3];
-                                document.getElementById('tagged-photo-4').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][3];
+                                document.getElementById('tagged-link-4').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][3];
                             }
                             else{
                                 document.getElementById('tagged-photo-4').src = "";
-                                document.getElementById('tagged-photo-4').href = "";
+                                document.getElementById('tagged-link-4').href = "";
                             }
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 4){
                                 document.getElementById('tagged-photo-5').src = facebook_ids_to_tagged_photos[e.seriesValue][4];
-                                document.getElementById('tagged-photo-5').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][4];
+                                document.getElementById('tagged-link-5').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][4];
                             }
                             else{
                                 document.getElementById('tagged-photo-5').src = "";
-                                document.getElementById('tagged-photo-5').href = "";
+                                document.getElementById('tagged-link-5').href = "";
                             }
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 5){
                                 document.getElementById('tagged-photo-6').src = facebook_ids_to_tagged_photos[e.seriesValue][5];
-                                document.getElementById('tagged-photo-6').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][5];
+                                document.getElementById('tagged-link-6').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][5];
                             }
                             else{
                                 document.getElementById('tagged-photo-6').src = "";
-                                document.getElementById('tagged-photo-6').href = "";
+                                document.getElementById('tagged-link-6').href = "";
                             }
                             //                            var text = "Photos you're tagged in by " + (e.SeriesValue).toString();
 //                            jQuery('#tagged-photo-text').text(text);
@@ -704,35 +704,37 @@
                   </span>
                   <div id="collapseOne" class="panel-collapse collapse">
 
-                    <div class="row">
+                    <!--<div class="row demo-tiles" id="show3">-->
+                    <div id="show3">
+                      <!--<div width="10"></div>-->
                     <div class="span2">
                       <div class="feature-box">
-                        <img id="tagged-photo-1" class="feature-box-image" alt="" src="" href="">
+                        <a target="_blank" id="tagged-link-1" href=""><img id="tagged-photo-1" class="tagged-images" alt="" src="" href=""> </a>
                       </div>
                     </div>
                       <div class="span2">
                         <div class="feature-box">
-                          <img id="tagged-photo-2" class="feature-box-image" alt="" src="" href="">
+                          <a target="_blank" id="tagged-link-2" href=""><img id="tagged-photo-2" class="tagged-images" alt="" src="" href=""> </a>
                         </div>
                       </div>
                       <div class="span2">
                         <div class="feature-box">
-                          <img id="tagged-photo-3" class="feature-box-image" alt="" src="" href="">
+                          <a target="_blank" id="tagged-link-3" href=""><img id="tagged-photo-3" class="tagged-images" alt="" src="" href=""> </a>
                         </div>
                       </div>
                       <div class="span2">
                         <div class="feature-box">
-                          <img id="tagged-photo-4" class="feature-box-image" alt="" src="" href="">
+                          <a target="_blank" id="tagged-link-4" href=""><img id="tagged-photo-4" class="tagged-images" alt="" src="" href=""> </a>
                         </div>
                       </div>
                       <div class="span2">
                         <div class="feature-box">
-                          <img id="tagged-photo-5" class="feature-box-image" alt="" src="" href="">
+                          <a target="_blank" id="tagged-link-5" href=""><img id="tagged-photo-5" class="tagged-images" alt="" src="" href=""> </a>
                         </div>
                       </div>
                       <div class="span2">
                         <div class="feature-box">
-                          <img id="tagged-photo-6" class="feature-box-image" alt="" src="" href="">
+                          <a target="_blank" id="tagged-link-6" href=""><img id="tagged-photo-6" class="tagged-images" alt="" src="" href=""> </a>
                         </div>
                       </div>
                     </div>
