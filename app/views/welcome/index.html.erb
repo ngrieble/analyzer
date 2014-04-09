@@ -171,8 +171,12 @@
     var sorted_keys = [];
     var user_to_num_photos_uploaded = {};
     var facebook_ids_to_tags = [];
+    var facebook_ids_to_tagged_photos = {};
+    var facebook_ids_to_tagged_photo_urls = {};
 
-        // Grab all users' photos
+
+
+    // Grab all users' photos
     function getUsersPhotos(callback) {
         console.log('Fetching photos.... ');
 
@@ -233,8 +237,15 @@
                 else{
                     if (user_name in user_to_num_photos_uploaded) {
                         user_to_num_photos_uploaded[all_data[i].from.name]++;
+                        facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
+                        facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
                     } else {
                         user_to_num_photos_uploaded[all_data[i].from.name] = 1;
+                        facebook_ids_to_tagged_photos[all_data[i].from.name] = [];
+                        facebook_ids_to_tagged_photo_urls[all_data[i].from.name] = [];
+                        facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
+                        facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
+
                     }
                 }
             }
@@ -540,7 +551,7 @@
 
                 <script>
 
-
+                    var current_selected_bar;
 
 
                     function makeGraph() {
@@ -563,7 +574,27 @@
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
                         s.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
-                            togglePhotoTray1();
+
+                            document.getElementById('tagged-photo-1').src = facebook_ids_to_tagged_photos[e.seriesValue][1];
+                            document.getElementById('tagged-photo-2').src = facebook_ids_to_tagged_photos[e.seriesValue][2];
+                            document.getElementById('tagged-photo-3').src = facebook_ids_to_tagged_photos[e.seriesValue][3];
+                            document.getElementById('tagged-photo-4').src = facebook_ids_to_tagged_photos[e.seriesValue][4];
+                            document.getElementById('tagged-photo-5').src = facebook_ids_to_tagged_photos[e.seriesValue][5];
+                            document.getElementById('tagged-photo-6').src = facebook_ids_to_tagged_photos[e.seriesValue][6];
+//                            var text = "Photos you're tagged in by " + (e.SeriesValue).toString();
+//                            jQuery('#tagged-photo-text').text(text);
+//                            tagged-photo-text.innerHTML = "Photos you're tagged in by " + e.SeriesValue;
+//                            fieldNameElement.innerHTML = "Ny new text!";
+                            if(current_selected_bar == e.seriesValue){
+                                // clicked same bar, close tray
+                                togglePhotoTray1();
+                            }
+                            if(current_selected_bar == null){
+                                // no bar selected yet
+                                togglePhotoTray1();
+                            }
+                            current_selected_bar = e.seriesValue;
+//                            togglePhotoTray1();
                         });
 
 //                        s.barGap = 1;
@@ -574,7 +605,7 @@
                                     return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
                                 });
 
-                        svg.attr("height", 800);
+                        svg.attr("height", 750);
 
 
 //                        document.getElementById('category-1').class = "accordion-body show";
@@ -620,8 +651,40 @@
                   <!--</h4>-->
                   <!--</div>-->
                   <div id="collapseOne" class="panel-collapse collapse">
-                    <div>
-                      Photos go here
+                    <div id="tagged-photo-text">
+
+                    </div>
+                    <div class="row">
+                    <div class="span2">
+                      <div class="feature-box">
+                        <img id="tagged-photo-1" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+                      </div>
+                    </div>
+                      <div class="span2">
+                        <div class="feature-box">
+                          <img id="tagged-photo-2" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+                        </div>
+                      </div>
+                      <div class="span2">
+                        <div class="feature-box">
+                          <img id="tagged-photo-3" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+                        </div>
+                      </div>
+                      <div class="span2">
+                        <div class="feature-box">
+                          <img id="tagged-photo-4" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+                        </div>
+                      </div>
+                      <div class="span2">
+                        <div class="feature-box">
+                          <img id="tagged-photo-5" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+                        </div>
+                      </div>
+                      <div class="span2">
+                        <div class="feature-box">
+                          <img id="tagged-photo-6" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -49,6 +49,10 @@
 		margin-left:0px;
 	}
 
+    #container-folio.row-fluid .span2:nth-child(2n+1){
+        margin-left:0px;
+    }
+
 /**************************** EVENTS ANIMATED ***************************/	
 	.relative{
 		position:relative;
