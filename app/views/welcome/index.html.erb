@@ -105,7 +105,7 @@
                     getUsersPhotos(makeGraph);
                 }
                 first_graph_made = true;
-                showButtons();
+                //showButtons();
 
             } else if (response.status === 'not_authorized') {
                 // In this case, the person is logged into Facebook, but not into the app, so we call
@@ -674,7 +674,7 @@
                             current_selected_bar = e.seriesValue;
                         });
 
-                        chart.draw();
+                        var chartObject = chart.draw();
                         x.shapes.selectAll("text").attr("transform",
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
@@ -682,7 +682,9 @@
 
                         svg.attr("height", 750);
 
-
+                        while(!chartObject){}
+                        if (chartObject)
+                            showButtons();
 //                        document.getElementById('category-1').class = "accordion-body show";
 
 
