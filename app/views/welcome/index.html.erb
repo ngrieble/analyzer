@@ -78,6 +78,9 @@
 	============================================================ -->
 
 <script>
+
+    var first_graph_made = false;
+
     window.fbAsyncInit = function() {
         FB.init({
             appId      : '682201798512608',
@@ -98,8 +101,11 @@
                 // login status of the person. In this case, we're handling the situation where they
                 // have logged in to the app.
                 testAPI();
-                getUsersPhotos(makeGraph);
-                //showButtons();
+                if(first_graph_made == false){
+                    getUsersPhotos(makeGraph);
+                }
+                first_graph_made = true;
+                showButtons();
 
             } else if (response.status === 'not_authorized') {
                 // In this case, the person is logged into Facebook, but not into the app, so we call
@@ -450,6 +456,7 @@
 <!-- / ###################### END MAIN HEADER ####################
 	=============================================================== -->
 
+
 <section id = "mainbody" style = "display:none">
 
 <!-- ######################## FEATURES SECTION ##################
@@ -667,7 +674,7 @@
                             current_selected_bar = e.seriesValue;
                         });
 
-                        var chartObject = chart.draw();
+                        chart.draw();
                         x.shapes.selectAll("text").attr("transform",
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
@@ -675,9 +682,7 @@
 
                         svg.attr("height", 750);
 
-                        while (!chartObject){}
-                        if (chartObject)
-                            showButtons();
+
 //                        document.getElementById('category-1').class = "accordion-body show";
 
 
