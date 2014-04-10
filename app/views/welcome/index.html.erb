@@ -180,7 +180,83 @@
     var facebook_ids_to_tagged_photos = {};
     var facebook_ids_to_tagged_photo_urls = {};
 
+    /*function getPhotoLikesComments(photoResponse) {
+       console.log('Fetching photo likes...');
+       var user_to_photoLikes = [];
+       var user_to_photoComments = [];
+       var params = {limit:500};
+        for (var i=0; i<1; i++){
+            var photo = photoResponse.data[i];
+            //LIKES
+            FB.api('/'+photo.id+'/likes/',function(likesResponse){
+                console.log('Likes object:');
+                console.log(likesResponse);
+                for(var j=0;j<likesResponse.data.length; j++) {
+                    var user = likesResponse.data[j];
+                    if (user in user_to_photoLikes) {
+                        user_to_photoLikes[user.name]++;
+                    } else {
+                        user_to_photoLikes[user.name] = 1;
+                    }
+                }
+            },{scope: 'user_photos,friends_photos,user_status,friends_status'});
+            //COMMENTS
+            FB.api('/'+photo.id+'/comments/',function(commentsResponse){
+                console.log('Comments object:');
+                console.log(commentsResponse);
+                for(var j=0;j<commentsResponse.data.length; j++) {
+                    var user = commentsResponse.data[j];
+                    if (user in user_to_photoComments) {
+                        user_to_photoComments[user.name]++;
+                    } else {
+                        user_to_photoComments[user.name] = 1;
+                    }
+                }
+            },{scope: 'user_photos,friends_photos,user_status,friends_status'});
 
+            //LIKES
+            var sorted_ids = getSortedKeys(user_to_photoLikes);
+            var sorted_Counts = getSortedValues(user_to_photoLikes);
+            user_to_photoLikes = keysbyValue(user_to_photoLikes);
+            console.log("user_to_photoLikes");
+            console.log(user_to_photoLikes);
+            console.log("sorted_ids");
+            console.log(sorted_ids);
+            console.log("sorted_Counts");
+            console.log(sorted_Counts);
+            var facebook_ids_to_photoLikes = [];
+            for (var i=0; i<20; i++){
+                facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+            }
+            console.log("facebook_ids_to_photoLikes");
+            console.log(facebook_ids_to_photoLikes);
+
+            //make the graph with user_to_photoLikes
+
+
+            //COMMENTS
+            sorted_ids = getSortedKeys(user_to_photoComments);
+            sorted_Counts = getSortedValues(user_to_photoComments);
+            user_to_photoLikes = keysbyValue(user_to_photoComments);
+            console.log("user_to_photoComments");
+            console.log(user_to_photoComments);
+            console.log("sorted_ids");
+            console.log(sorted_ids);
+            console.log("sorted_Counts");
+            console.log(sorted_Counts);
+            var facebook_ids_to_photoComments = [];
+            for (var i=0; i<20; i++){
+                facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+            }
+            console.log("facebook_ids_to_photoComments");
+            console.log(facebook_ids_to_photoComments);
+
+            //make the graph with user_to_photoComments
+
+
+
+        }
+    };*/
 
     // Grab all users' photos
     function getUsersPhotos(callback) {
@@ -197,7 +273,7 @@
 
             console.log("photoResponse");
             console.log(photoResponse);
-
+            //getPhotoLikesComments(photoResponse);
             var all_data;
             all_data = photoResponse.data;
 
