@@ -191,7 +191,7 @@
                 console.log(likesResponse);
                 for(var j=0;j<likesResponse.data.length; j++) {
                     var user = likesResponse.data[j];
-                    if (user_name in user_to_num_photos_uploaded) {
+                    if (user in user_to_photoLikes) {
                         user_to_photoLikes[user.name]++;
                         //facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
                         //facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
