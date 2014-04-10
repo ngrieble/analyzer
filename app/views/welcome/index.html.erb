@@ -620,40 +620,44 @@
                                 document.getElementById('tagged-link-6').href = facebook_ids_to_tagged_photo_urls[e.seriesValue][5];
                             }
                             else{
+                                jQuery('#tagged-photo-6').hide();
                                 document.getElementById('tagged-photo-6').src = "";
                                 document.getElementById('tagged-link-6').href = "";
                             }
-                            //                            var text = "Photos you're tagged in by " + (e.SeriesValue).toString();
+//                            var text = "Photos you're tagged in by " + (e.SeriesValue).toString();
 //                            jQuery('#tagged-photo-text').text(text);
 //                            tagged-photo-text.innerHTML = "Photos you're tagged in by " + e.SeriesValue;
 //                            fieldNameElement.innerHTML = "Ny new text!";
                             if(current_selected_bar == e.seriesValue){
-                                // clicked same bar, close or open tray
-//                                if(tray_closed == false){
-//                                    tray_closed = true;
-//                                }
-//                                if(tray_closed == true){
-//                                    tray_closed = false;
-//                                }
-                                togglePhotoTray1();
+                                // Clicked same bar, close or open tray
+                                if (jQuery('#collapseOne').hasClass('in')) {
+                                    // tray is open, close tray
+                                    jQuery('#collapseOne').collapse('hide');
+                                }
+                                else{
+                                    // tray is closed, open tray
+                                    jQuery('#collapseOne').collapse('show');
+                                }
                             }
                             if(current_selected_bar == null){
                                 // no bar selected yet, open tray
-//                                tray_closed = false;
-                                togglePhotoTray1();
+                                jQuery('#collapseOne').collapse('show');
+//                                togglePhotoTray1();
                             }
-                            if(tray_closed == true && current_selected_bar != e.seriesValue){
-                                // tray closed and selecting new bar. Open tray
-//                                tray_closed = false;
-                                togglePhotoTray1();
+                            if(current_selected_bar != e.seriesValue){
+                                // Selecting new bar
+                                if (jQuery('#collapseOne').hasClass('in')) {
+                                    // tray is open, do not change tray
+                                }
+                                else{
+                                    // tray is closed, open tray
+                                    jQuery('#collapseOne').collapse('show');
+                                }
                             }
                             current_selected_bar = e.seriesValue;
-//                            togglePhotoTray1();
                         });
 
-//                        s.barGap = 1;
                         chart.draw();
-//                        x.titleShape.attr("y", chart.height + 1000);
                         x.shapes.selectAll("text").attr("transform",
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, 30) rotate(-45)";
@@ -746,18 +750,6 @@
                   </div>
                 </div>
               </div>
-
-                <script>
-                    function togglePhotoTray1() {
-                        if(tray_closed == false){
-                            tray_closed = true;
-                        }
-                        if(tray_closed == true){
-                            tray_closed = false;
-                        }
-                        jQuery('#collapseOne').collapse('toggle');
-                    }
-                </script>
 
 			</span>
         </div>
