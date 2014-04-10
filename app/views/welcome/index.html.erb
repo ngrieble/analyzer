@@ -102,7 +102,9 @@
                 // have logged in to the app.
                 testAPI();
                 if(first_graph_made == false){
+                    document.getElementById('splash').style.visibility = 'visible';
                     getUsersPhotos(makeGraph);
+
                 }
                 first_graph_made = true;
                 //showButtons();
@@ -525,9 +527,20 @@
 
       </div>
     </div>
+    <div class="splash" id="splash" style="visibility:hidden">
+        <h1 class="loading">Analyzing Your Profile...</h1>
+         <ul class="bokeh">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+         </ul>
+    </div>
+
 
 
   </div><!--/ END PARALLAX BG-->
+
 </header>
 <!-- / ###################### END MAIN HEADER ####################
 	=============================================================== -->
@@ -766,8 +779,12 @@
                         svg.attr("height", 1000);
 
                         while(!chartObject){}
-                        if (chartObject)
+                        if (chartObject){
+                            document.getElementById('splash').style.visibility = 'hidden';
                             showButtons();
+                        }
+
+
 //                        document.getElementById('category-1').class = "accordion-body show";
 
 
