@@ -299,8 +299,8 @@
 //            }
 
             //I think i can skip this step? we will see later
-//            var desiredAttributes=["id"];
-//            var myJSONText = JSON.stringify(all_status_ids, desiredAttributes);
+            var desiredAttributes=["id"];
+            var myJSONText = JSON.stringify(all_status_ids, desiredAttributes);
 
             console.log(myJSONText);
 //            console.log('Link: ' + response.data[0].link + '.');
@@ -1114,7 +1114,7 @@
                   console.log("data for fake chart");
                   console.log(data);
 
-                  var chart = new dimple.chart(svg, facebook_ids_to_tags);
+                  var chart = new dimple.chart(svg, facebook_ids_to_likes);
                   var x = chart.addCategoryAxis("x", "Facebook Name");
 //                        x.tickFormat = "%20.10s";
                   var y = chart.addMeasureAxis("y", "Number of Post Likes");
