@@ -29,7 +29,7 @@
 
   <!-- FontAwesome styles (iconic font)-->
   <link href="assets/font-awesome.min.css" rel="stylesheet">
-  <!-- prettyPhoto styles -->
+  <!-- prettyPhoto styles -->   `
 
   <!-- Gallery inlarge script styles-->
   <link href="assets/prettyPhoto.css" rel="stylesheet" type="text/css" />
@@ -103,8 +103,9 @@
                 testAPI();
                 if(first_graph_made == false){
                     document.getElementById('splash').style.visibility = 'visible';
+                    //call funcs to make graphs here
                     getUsersPhotos(makeGraph);
-
+                    getUsersStatusLikes(makeStatusGraph);
                 }
                 first_graph_made = true;
                 //showButtons();
@@ -175,12 +176,21 @@
         }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
     }
 
+    //for first graph, photos tagged in by
     var sorted_values = [];
     var sorted_keys = [];
     var user_to_num_photos_uploaded = {};
     var facebook_ids_to_tags = [];
     var facebook_ids_to_tagged_photos = {};
     var facebook_ids_to_tagged_photo_urls = {};
+
+    //for status you uploaded, like count
+    var status_sorted_values = [];
+    var status_sorted_keys = [];
+    var user_to_num_status_liked ={};
+    var facebook_ids_to_likes = {};
+    var facebook_ids_to_liked_status = {};
+    var facebook_ids_to_liked_status_urls = {};
 
     /*function getPhotoLikesComments(photoResponse) {
        console.log('Fetching photo likes...');
@@ -259,6 +269,155 @@
 
         }
     };*/
+    function getUsersStatusLikes(callback){
+        console.log('getting status ids....')
+        var params = {since: "01-01-2010", limit:5000}
+        FB.api('/'+user_id+'/feed', params , function(statusResponse){
+            console.log("got response");
+            console.log("statusResponse");
+            console.log(statusResponse);
+
+            var all_status_ids;
+            all_status_ids = statusResponse.data;
+
+                //not sure what this part is for yet
+//            for(var i=0; i < statusResponse.data.length; i++){
+//                var status = statusResponse.data[i];
+//                console.log('Link: ' + status.link);
+//                if(i==0){
+//                    document.getElementById('feature-item-1').src = status.source;
+//                }
+//                if(i==1){
+//                    document.getElementById('feature-item-2').src = status.source;
+//                }
+//                if(i==2){
+//                    document.getElementById('feature-item-3').src = status.source;
+//                }
+//                if(i==3){
+//                    document.getElementById('feature-item-4').src = status.source;
+//                }
+//            }
+
+            //I think i can skip this step? we will see later
+//            var desiredAttributes=["id"];
+//            var myJSONText = JSON.stringify(all_status_ids, desiredAttributes);
+
+            console.log(myJSONText);
+//            console.log('Link: ' + response.data[0].link + '.');
+
+
+            console.log("all_status_ids");
+            console.log(all_status_ids);
+
+
+            // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
+            for (var i=0; i< all_status_ids.length; i++){
+                var post_id = all_status_ids[i].id;
+
+                FB.api('/'+post_id+'/likes', function(postResponse){
+                    if (postResponse && !postResponse.error) {
+                        var total_likers_data;
+                        total_likers_data = postResponse.data;
+                        for(var j = 0; j < total_likers_data.length; j++){
+
+                            var user_name = total_likers_data[j].name;
+
+                            if( user_name in user_to_num_status_liked){
+                                user_to_num_status_liked[total_likers_data[j].name]++;
+                                facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                                facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                            }else{
+                                user_to_num_status_liked[total_likers_data[j].name] = 1;
+                                facebook_ids_to_liked_status[total_likers_data[j].name] = [];
+                                facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+
+                                facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
+                                facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                            }
+                        }
+                    }
+                });
+            }
+            //see result
+            console.log(user_to_num_status_liked);
+
+            //sort it now
+
+            function keysbyValue(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                var obj = {};
+                for(var i= 0, L= A.length; i<L; i++){
+                    obj[i] = {key: A[i], value: O[A[i]]};
+                }
+                return obj;
+            }
+
+            function getSortedKeys(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                return A;
+            }
+
+            function getSortedValues(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][1];
+                }
+                return A;
+            }
+
+            status_sorted_keys = getSortedKeys(user_to_num_status_liked);
+
+            status_sorted_values = getSortedValues(user_to_num_status_liked);
+
+            user_to_num_status_liked = keysbyValue(user_to_num_status_liked);
+
+            console.log("user_to_num_photos_uploaded");
+            console.log(user_to_num_status_liked);
+
+            console.log("sorted_keys");
+            console.log(status_sorted_keys);
+
+            console.log("sorted_values");
+            console.log(status_sorted_values);
+
+            for (var i=0; i<20; i++){
+                facebook_ids_to_likes[i] = { "Facebook ID":status_sorted_keys[i], "Number of Photo Tags":status_sorted_values[i] };
+            }
+
+            console.log("facebook_ids_to_tags");
+            console.log(facebook_ids_to_likes);
+
+            callback();
+        });
+
+    }
 
     // Grab all users' photos
     function getUsersPhotos(callback) {
@@ -312,7 +471,7 @@
 
             // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
             //var user_to_num_photos_uploaded = {};
-            for (var i=0; i<all_data.length; i++){
+            for (var i=0; i< all_data.length; i++){
                 var user_name = all_data[i].from.name;
 
                 if(all_data[i].from.id == user_id){
@@ -548,7 +707,7 @@
 
 <section id = "mainbody" style = "display:none">
 
-<!-- ######################## FEATURES SECTION ##################
+<!-- ######################## PHOTOS SECTION ##################
 ============================================================== -->
 <section  id="photos-section">
 
@@ -652,7 +811,6 @@
                     function makeGraph() {
 
                         // CHART USING D3 AND DIMPLY: PRETTY
-
                         var svg = dimple.newSvg(".chart2", 1000, 600);
                         var data = [
                             { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
@@ -925,38 +1083,74 @@
         <h3> Status Metrics <small class="visible-desktop">// Check out graphs based on Status's</small> </h3>
       </header>
 
-        <!--
-      <div class="span6 hidden-phone">
-        <!-- PROJECTS FILTER-->
-        <!-- just add your TAG to ==> data-filter=".yourtaghere"
-        for SHOW ALL ==> data-filter="*" in button filter -->
-        <!-- and then add your same TAG to portfolio item class="box"
-        ==> class="span4  project-item box YOURTAGHERE"
-
-        <div class="text-right">
-          <div class="proj">
-            <div id="filters">
-              <div class="btn-toolbar">
-                <div class="btn-group">
-                  <a href="#" data-filter="*" class="ione-col active btn btn-primary btn-large">Show All</a>
-                  <a href="#" data-filter=".graphics" class="btn ione-col btn-primary btn-large">Graphics</a>
-                  <a href="#" data-filter=".web" class="btn ione-col btn-primary btn-large">Web</a>
-                  <a href="#" data-filter=".branding" class="btn ione-col btn-primary btn-large">Branding</a>
-                  <a href="#" data-filter=".seo" class="btn ione-col btn-primary btn-large">SEO</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        -->
-        <!--END: PROJECTS FILTER-->
 
 
     </div><!--/ROW-->
   </div><!--/CONTAINER-->
 </header><!-- / PORTFOLIO SECTION HEADER-->
 
+<div class="panel">
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span12 text-center">
 
+	    <span> Who do you think has liked your posts the most?
+	      <span class="inner">This graph shows the number of likes per person on all posts!</span>
+          <div class="chart"></div>
+          <div class="chart2"></div>
+
+          <script>
+
+              var current_selected_bar;
+              var tray_closed = true;
+
+              function makeStatusGraph(){
+                  // CHART USING D3 AND DIMPLY: PRETTY
+                  var svg = dimple.newSvg(".chart2", 1000, 600);
+                  var data = [
+                      { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
+                      { "Facebook ID":"World", "Number of Photo Tags":3000 }
+                  ];
+                  console.log("data for fake chart");
+                  console.log(data);
+
+                  var chart = new dimple.chart(svg, facebook_ids_to_tags);
+                  var x = chart.addCategoryAxis("x", "Facebook Name");
+//                        x.tickFormat = "%20.10s";
+                  var y = chart.addMeasureAxis("y", "Number of Post Likes");
+                  y.tickFormat = "i";
+                  var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+                    //click event handler code here
+
+                  var chartObject = chart.draw();
+                  x.shapes.selectAll("text").attr("transform",
+                          function (d) {
+                              return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                          });
+                  x.shapes.selectAll("text").style("text-anchor", "end");
+                  x.titleShape.remove();
+
+                  y.titleShape.attr("transform",
+                          function (d) {
+                              return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                          });
+
+                  svg.attr("height", 1000);
+
+                  while(!chartObject){}
+                  if (chartObject){
+                      document.getElementById('splash').style.visibility = 'hidden';
+                      showButtons();
+                  }
+              }
+
+          </script>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!--&lt;!&ndash;################### START PORTFOLIO ###################-->
 	<!--======================================================= &ndash;&gt;-->
@@ -1646,16 +1840,16 @@
   </div>
 
   <!-- MAP DIV // !Don't remove this !Important -= gMap Script wrapper =- -->
-  <div id="map"></div>
+  <!--<div id="map"></div>-->
   <!-- MAP DIV // !Don't remove this !Important -->
 
 </footer>
 <!-- END: FOOTER -->
 
-
+</section>
 </div>
 <!-- END: MAIN-WRAPPER-->
-</section>
+
 
 <!-- Le javascript
     ================================================== -->
