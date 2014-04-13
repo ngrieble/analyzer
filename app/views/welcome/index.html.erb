@@ -137,16 +137,20 @@
         });
     };
 
+    function refreshScroll(){
+        jQuery('[data-spy="scroll"]').each(function () {
+            var jQueryspy = jQuery(this).scrollspy('refresh')
+        });
+    }
     function showButtons(){
-        console.log('REFRESHING');
         document.getElementById('mainbody').style.display = '';
-        //var spy = document.body.scrollspy('refresh');
         document.getElementById('home-btn').style.visibility = 'visible';
         document.getElementById('photos-btn').style.visibility = 'visible';
         document.getElementById('status-btn').style.visibility = 'visible';
         document.getElementById('comments-btn').style.visibility = 'visible';
         document.getElementById('team-btn').style.visibility = 'visible';
         document.getElementById('contact-btn').style.visibility = 'visible';
+        refreshScroll();
     }
     function hideButtons(){
         document.getElementById('mainbody').style.display = 'none';
@@ -640,7 +644,7 @@
 
             <!-- TOP NAVIGATION-->
             <div id="main-nav" class="scroller-spy">
-              <nav class="nav-collapse collapse" >
+              <nav id="myScrollspy" class="nav-collapse collapse" >
                 <ul class="nav pull-right" id="nav">
                   <li><a href="#header-section" id = "home-btn" style="visibility:hidden">Home</a> </li>
                   <li><a href="#photos-section" id = "photos-btn" style="visibility:hidden">Photos</a> </li>
