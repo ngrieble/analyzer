@@ -28,7 +28,8 @@
   <link href="assets/style.css" rel="stylesheet">
 
   <!-- FontAwesome styles (iconic font)-->
-  <link href="assets/font-awesome.min.css" rel="stylesheet">
+  <!--<link href="assets/font-awesome.min.css" rel="stylesheet">-->
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
   <!-- prettyPhoto styles -->   `
 
   <!-- Gallery inlarge script styles-->
@@ -137,7 +138,9 @@
     };
 
     function showButtons(){
+        console.log('REFRESHING');
         document.getElementById('mainbody').style.display = '';
+        //var spy = document.body.scrollspy('refresh');
         document.getElementById('home-btn').style.visibility = 'visible';
         document.getElementById('photos-btn').style.visibility = 'visible';
         document.getElementById('status-btn').style.visibility = 'visible';
@@ -639,7 +642,7 @@
             <div id="main-nav" class="scroller-spy">
               <nav class="nav-collapse collapse" >
                 <ul class="nav pull-right" id="nav">
-                  <li class="active"><a href="#header-section" id = "home-btn" style="visibility:hidden">Home</a> </li>
+                  <li><a href="#header-section" id = "home-btn" style="visibility:hidden">Home</a> </li>
                   <li><a href="#photos-section" id = "photos-btn" style="visibility:hidden">Photos</a> </li>
                   <li><a href="#status-section" id = "status-btn" style="visibility:hidden">Status</a> </li>
                   <li><a href="#comment-section" id = "comments-btn" style="visibility:hidden">Comments</a> </li>
@@ -1541,7 +1544,7 @@
   <div class="page-header ">
     <div class="container">
       <div class="row-fluid">
-        <h3>OUR TEAM <small class="visible-desktop">// Who build this awesome project</small></h3>
+        <h3>OUR TEAM <small class="visible-desktop">// Who built this awesome project</small></h3>
       </div>
     </div>
   </div>
@@ -1567,11 +1570,11 @@
 
         <div class="widget_nav_menu">
           <ul class="social-top">
-            <li><a href="#" title=""><i class="fa-icon-facebook"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-github-alt"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-linkedin"></i></a></li>
+            <li><a href="https://www.facebook.com/ngrieble" title=""><i class="fa-icon-facebook"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>-->
+            <li><a href="https://github.com/ngrieble title="><i class="fa-icon-github-alt"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>-->
+            <li><a href="www.linkedin.com/pub/nicole-grieble/35/aa3/96" title=""><i class="fa-icon-linkedin"></i></a></li>
           </ul>
 
         </div>
@@ -1593,11 +1596,11 @@
         <h3 class="">Sean Pradhan </h3>
         <div class="widget_nav_menu">
           <ul class="social-top">
-            <li><a href="#" title=""><i class="fa-icon-facebook"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-github-alt"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-linkedin"></i></a></li>
+            <li><a href="https://www.facebook.com/seanpradhan" title=""><i class="fa-icon-facebook"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>-->
+            <li><a href="https://github.com/spradhan12" title=""><i class="fa-icon-github-alt"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>-->
+            <li><a href="www.linkedin.com/pub/sean-pradhan/4b/b1/6b9/" title=""><i class="fa-icon-linkedin"></i></a></li>
           </ul>
         </div>
       </div> <!--END CAPTION -->
@@ -1618,11 +1621,11 @@
         <h3 class="">Sravan Rengarajan </h3>
         <div class="widget_nav_menu">
           <ul class="social-top">
-            <li><a href="#" title=""><i class="fa-icon-facebook"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-github-alt"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-linkedin"></i></a></li>
+            <li><a href="https://www.facebook.com/thekoolaidguy69" title=""><i class="fa-icon-facebook"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>-->
+            <li><a href="https://github.com/srengarajan19" title=""><i class="fa-icon-github-alt"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>-->
+            <li><a href="www.linkedin.com/pub/sravan-rengarajan/35/238/222" title=""><i class="fa-icon-linkedin"></i></a></li>
           </ul>
 
         </div>
@@ -1645,10 +1648,10 @@
 
         <div class="widget_nav_menu">
           <ul class="social-top">
-            <li><a href="#" title=""><i class="fa-icon-facebook"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-github-alt"></i></a></li>
-            <li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>
+            <li><a href="https://www.facebook.com/warnermc" title=""><i class="fa-icon-facebook"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-twitter"></i></a></li>-->
+            <li><a href="https://github.com/warnermc" title=""><i class="fa-icon-github-alt"></i></a></li>
+            <!--<li><a href="#" title=""><i class="fa-icon-google-plus"></i></a></li>-->
             <li><a href="#" title=""><i class="fa-icon-linkedin"></i></a></li>
           </ul>
         </div>
