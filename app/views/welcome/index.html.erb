@@ -81,6 +81,7 @@
 <script>
 
     var first_graph_made = false;
+    var graphs_made = 0;
 
     window.fbAsyncInit = function() {
         FB.init({
@@ -109,7 +110,6 @@
                     getUsersStatusLikes(makeStatusGraph);
                 }
                 first_graph_made = true;
-                //showButtons();
 
             } else if (response.status === 'not_authorized') {
                 // In this case, the person is logged into Facebook, but not into the app, so we call
@@ -143,14 +143,19 @@
         });
     }
     function showButtons(){
-        document.getElementById('mainbody').style.display = '';
-        document.getElementById('home-btn').style.visibility = 'visible';
-        document.getElementById('photos-btn').style.visibility = 'visible';
-        document.getElementById('status-btn').style.visibility = 'visible';
-        document.getElementById('comments-btn').style.visibility = 'visible';
-        document.getElementById('team-btn').style.visibility = 'visible';
-        document.getElementById('contact-btn').style.visibility = 'visible';
-        refreshScroll();
+        graphs_made = graphs_made + 1;
+        if(graphs_made == 1)
+        {
+            document.getElementById('mainbody').style.display = '';
+            document.getElementById('home-btn').style.visibility = 'visible';
+            document.getElementById('photos-btn').style.visibility = 'visible';
+            document.getElementById('status-btn').style.visibility = 'visible';
+            document.getElementById('comments-btn').style.visibility = 'visible';
+            document.getElementById('team-btn').style.visibility = 'visible';
+            document.getElementById('contact-btn').style.visibility = 'visible';
+            document.getElementById('splash').style.visibility = 'hidden';
+            refreshScroll();
+        }
     }
     function hideButtons(){
         document.getElementById('mainbody').style.display = 'none';
@@ -813,6 +818,8 @@
                 <script>
 
                     var current_selected_bar;
+                    var previous_selected_x;
+                    var previous_colors;
                     var tray_closed = true;
 
                     function makeGraph() {
@@ -899,23 +906,81 @@
 //                            jQuery('#tagged-photo-text').text(text);
 //                            tagged-photo-text.innerHTML = "Photos you're tagged in by " + e.SeriesValue;
 //                            fieldNameElement.innerHTML = "Ny new text!";
-                            if(current_selected_bar == e.seriesValue){
+
+                            if(String(current_selected_bar) == String(e.seriesValue)){
                                 // Clicked same bar, close or open tray
                                 if (jQuery('#collapseOne').hasClass('in')) {
                                     // tray is open, close tray
                                     jQuery('#collapseOne').collapse('hide');
+                                    //Unhighlight the bar
+                                    if(previous_selected_x){
+                                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+
+                                        x.shapes.selectAll('.tick').each(function(d, i) {
+                                            if(d == String(previous_selected_x)) {
+                                                d3.select(this)
+                                                        .selectAll('text')
+                                                        .style("font-weight", "normal")
+                                            }
+                                        });
+                                    }
                                 }
                                 else{
                                     // tray is closed, open tray
                                     jQuery('#collapseOne').collapse('show');
+                                    //Highlight the bar
+                                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                                    //Iterate through ticks, make right one bold
+                                    x.shapes.selectAll('.tick').each(function(d, i) {
+                                        if(d == String(e.xValue)) {
+                                            d3.select(this)
+                                                    .selectAll('text')
+                                                    .style("font-weight", "bold")
+                                        }
+                                    });
                                 }
                             }
-                            if(current_selected_bar == null){
+                            else if(current_selected_bar == null){
+                                //Store the original tag name and colors of the selectedbar
+                                previous_selected_x = e.xValue;
+                                previous_colors = chart.getColor(e.xValue);
+                                //Highlight bar
+                                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                                //Iterate through ticks and highlight new selection
+                                x.shapes.selectAll('.tick').each(function(d, i) {
+                                    if(d == String(e.xValue)) {
+                                        d3.select(this)
+                                                .selectAll('text')
+                                                .style("font-weight", "bold")
+                                    }
+                                });
                                 // no bar selected yet, open tray
                                 jQuery('#collapseOne').collapse('show');
 //                                togglePhotoTray1();
                             }
-                            if(current_selected_bar != e.seriesValue){
+                            else if(String(current_selected_bar) != String(e.seriesValue)){
+                                //Reset old bar to non-highlight
+                                if(previous_selected_x)
+                                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+                                //Store the original tag name and colors of newly selected bar
+                                //Iterate through ticks, unbold old selection, bold new selection
+                                x.shapes.selectAll('.tick').each(function(d, i) {
+                                    if(previous_selected_x && d == String(previous_selected_x)){
+                                        d3.select(this)
+                                                .selectAll('text')
+                                                .style("font-weight", "normal")
+                                    }
+
+                                    if(d == String(e.xValue)) {
+                                        d3.select(this)
+                                                .selectAll('text')
+                                                .style("font-weight", "bold")
+                                    }
+                                });
+                                previous_selected_x = e.xValue;
+                                previous_colors = chart.getColor(e.xValue);
+                                //Highlight new bar
+                                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
                                 // Selecting new bar
                                 if (jQuery('#collapseOne').hasClass('in')) {
                                     // tray is open, do not change tray
@@ -926,9 +991,26 @@
                                 }
                             }
                             current_selected_bar = e.seriesValue;
+
+
+                            chart.draw();
+                            chart.setMargins(60,50,50,100);
+                            x.shapes.selectAll("text").attr("transform",
+                                    function (d) {
+                                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                                    });
+                            x.shapes.selectAll("text").style("text-anchor", "end");
+                            x.titleShape.remove();
+
+                            y.titleShape.attr("transform",
+                                    function (d) {
+                                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                                    })
+
                         });
 
                         var chartObject = chart.draw();
+                        chart.setMargins(60,50,50,100);
                         x.shapes.selectAll("text").attr("transform",
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -941,11 +1023,8 @@
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
 
-                        svg.attr("height", 1000);
-
                         while(!chartObject){}
                         if (chartObject){
-                            document.getElementById('splash').style.visibility = 'hidden';
                             showButtons();
                         }
 
@@ -992,9 +1071,7 @@
                   <!--</a>-->
                   <!--</h4>-->
                   <!--</div>-->
-                  <span id="tagged-photo-text">
-                    Click on a bar to see what they've tagged you in most recently!
-                  </span>
+
                   <div id="collapseOne" class="panel-collapse collapse">
 
                     <!--<div class="row demo-tiles" id="show3">-->
@@ -1032,6 +1109,9 @@
                       </div>
                     </div>
                   </div>
+                  <span id="tagged-photo-text">
+                    Click on a bar to see what they've tagged you in most recently!
+                  </span>
                 </div>
               </div>
 
@@ -1147,7 +1227,6 @@
 
                   while(!chartObject){}
                   if (chartObject){
-                      document.getElementById('splash').style.visibility = 'hidden';
                       showButtons();
                   }
               }
