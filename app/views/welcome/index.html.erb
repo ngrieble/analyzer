@@ -210,83 +210,334 @@
     //for status you uploaded, like count
 
 
-    /*function getPhotoLikesComments(photoResponse) {
-       console.log('Fetching photo likes...');
+    function getPhotoLikesComments(photoResponse,callback) {
+
        var user_to_photoLikes = [];
        var user_to_photoComments = [];
-       var params = {limit:500};
-        for (var i=0; i<1; i++){
+       var numPhotos = photoResponse.data.length; //must be at least 1
+        var like_photos_urls = {};
+        var like_photos = {};
+
+        var comment_photos_urls = {};
+        var comment_photos = {};
+        for (var i=0; i<numPhotos; i++){
             var photo = photoResponse.data[i];
+            console.log(i);
+            //console.log("HELLOOOOOOO");
+            //console.log(photo);
             //LIKES
-            FB.api('/'+photo.id+'/likes/',function(likesResponse){
-                console.log('Likes object:');
-                console.log(likesResponse);
+            var likesResponse = photo.likes;
+            console.log('Likes object pic num'+i+':');
+            console.log(likesResponse);
+
+            if(likesResponse) {
                 for(var j=0;j<likesResponse.data.length; j++) {
                     var user = likesResponse.data[j];
-                    if (user in user_to_photoLikes) {
+                    if(user.id == user_id) {
+                        //do not add yourself
+                    }
+                    else if (user.name in user_to_photoLikes) {
                         user_to_photoLikes[user.name]++;
-                    } else {
-                        user_to_photoLikes[user.name] = 1;
-                    }
-                }
-            },{scope: 'user_photos,friends_photos,user_status,friends_status'});
-            //COMMENTS
-            FB.api('/'+photo.id+'/comments/',function(commentsResponse){
-                console.log('Comments object:');
-                console.log(commentsResponse);
-                for(var j=0;j<commentsResponse.data.length; j++) {
-                    var user = commentsResponse.data[j];
-                    if (user in user_to_photoComments) {
-                        user_to_photoComments[user.name]++;
-                    } else {
-                        user_to_photoComments[user.name] = 1;
-                    }
-                }
-            },{scope: 'user_photos,friends_photos,user_status,friends_status'});
+                        like_photos[user.name].push(photo.source);
+                        like_photos_urls[user.name].push(photo.link);
 
-            //LIKES
-            var sorted_ids = getSortedKeys(user_to_photoLikes);
-            var sorted_Counts = getSortedValues(user_to_photoLikes);
-            user_to_photoLikes = keysbyValue(user_to_photoLikes);
-            console.log("user_to_photoLikes");
-            console.log(user_to_photoLikes);
-            console.log("sorted_ids");
-            console.log(sorted_ids);
-            console.log("sorted_Counts");
-            console.log(sorted_Counts);
-            var facebook_ids_to_photoLikes = [];
-            for (var i=0; i<20; i++){
-                facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+                    }
+                    else {
+                        user_to_photoLikes[user.name] = 1;
+                        like_photos[user.name] = [];
+                        like_photos_urls[user.name] = [];
+                        like_photos[user.name].push(photo.source);
+                        like_photos_urls[user.name].push(photo.link);
+                    }
+                }
             }
-            console.log("facebook_ids_to_photoLikes");
-            console.log(facebook_ids_to_photoLikes);
+
+            console.log("user to photo likes");
+            console.log(user_to_photoLikes);
+
+            //COMMENTS
+            var commentsResponse = photo.comments;
+            console.log('Comments object pic num'+i+':');
+            console.log(commentsResponse);
+            if(commentsResponse) {
+                for(var j=0;j<commentsResponse.data.length; j++) {
+                    var comment = commentsResponse.data[j];
+                    if(comment.from.id == user_id) {
+                        //do not add yourself
+                    }
+                    else if (comment.from.name in user_to_photoComments) {
+                        user_to_photoComments[comment.from.name]++;
+                        comment_photos[comment.from.name].push(photo.source);
+                        comment_photos_urls[comment.from.name].push(photo.link);
+
+                    }
+                    else {
+                        user_to_photoComments[comment.from.name] = 1;
+                        comment_photos[comment.from.name] = [];
+                        comment_photos_urls[comment.from.name] = [];
+                        comment_photos[comment.from.name].push(photo.source);
+                        comment_photos_urls[comment.from.name].push(photo.link);
+
+                    }
+                }
+            }
+
+            console.log("user to photo comments");
+            console.log(user_to_photoComments);
+        }
+            console.log('After going through all pics');
+            console.log("user to photo likes");
+            console.log(user_to_photoLikes);
+            console.log("user to photo comments");
+            console.log(user_to_photoComments);
+            //Functions to sort
+            function keysbyValue(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                var obj = {};
+                for(var i= 0, L= A.length; i<L; i++){
+                    obj[i] = {key: A[i], value: O[A[i]]};
+                }
+                return obj;
+            }
+
+            function getSortedKeys(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                return A;
+            }
+
+            function getSortedValues(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][1];
+                }
+                return A;
+            }
+
+
+            //end functions to sort
+
+            ///////////LIKES GRAPH//////////
+            //var sorted_ids = getSortedKeys(user_to_photoLikes);
+            //var sorted_Counts = getSortedValues(user_to_photoLikes);
+
+            //user_to_photoLikes = keysbyValue(user_to_photoLikes);
+
+            //console.log("user_to_photoLikes");
+            //console.log(user_to_photoLikes);
+            //console.log("sorted_ids");
+            //console.log(sorted_ids);
+            //console.log("sorted_Counts");
+            //console.log(sorted_Counts);
+            //var facebook_ids_to_photoLikes = [];
+            //for (var i=0; i<20 && i<sorted_ids.length && i<sorted_Counts.length; i++){
+             //   facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+            //}
+            //console.log("facebook_ids_to_photoLikes");
+            //console.log(facebook_ids_to_photoLikes);
 
             //make the graph with user_to_photoLikes
+            var sorted_ids = getSortedKeys(user_to_photoLikes);
+
+            var sorted_counts = getSortedValues(user_to_photoLikes);
+
+            //user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+
+            var facebook_ids_to_photoLikes = [];
+                for (var i=0; i<20; i++){
+                    facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_counts[i] };
+                }
+
+
+
+            var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
+            var data = [
+                { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
+                { "Facebook ID":"World", "Number of Photo Likes":3000 }
+            ];
+            //console.log("data for fake chart");
+            //console.log(data);
+
+            var chart = new dimple.chart(svg, facebook_ids_to_photoLikes);
+            var x = chart.addCategoryAxis("x", "Facebook ID");
+    //                        x.tickFormat = "%20.10s";
+            var y = chart.addMeasureAxis("y", "Number of Photo Likes");
+            y.tickFormat = "i";
+            var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+            //click event handler code here
+
+            var chartObject = chart.draw();
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                    });
+
+            svg.attr("height", 1000);
+
+            while(!chartObject){}
+            if (chartObject){
+                //showButtons();
+            }
+
+
+        /////////////COMMENTS GRAPH////////////////////////////
+        sorted_ids = getSortedKeys(user_to_photoComments);
+
+        sorted_counts = getSortedValues(user_to_photoComments);
+
+        //user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+        var facebook_ids_to_photoComments = [];
+        for (var i=0; i<20; i++){
+            facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Comments":sorted_counts[i] };
+        }
+
+
+
+
+        var svg = dimple.newSvg(".photoCommentsChart", 1000, 600);
+        var data = [
+            { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
+            { "Facebook ID":"World", "Number of Photo Comments":3000 }
+        ];
+        //console.log("data for fake chart");
+        //console.log(data);
+
+        var chart = new dimple.chart(svg, facebook_ids_to_photoComments);
+        var x = chart.addCategoryAxis("x", "Facebook ID");
+        //                        x.tickFormat = "%20.10s";
+        var y = chart.addMeasureAxis("y", "Number of Photo Comments");
+        y.tickFormat = "i";
+        var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+        //click event handler code here
+
+        var chartObject = chart.draw();
+        x.shapes.selectAll("text").attr("transform",
+                function (d) {
+                    return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                });
+        x.shapes.selectAll("text").style("text-anchor", "end");
+        x.titleShape.remove();
+
+        y.titleShape.attr("transform",
+                function (d) {
+                    return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                });
+
+        svg.attr("height", 1000);
+
+        while(!chartObject){}
+        if (chartObject){
+            //showButtons();
+        }
+            /*sorted_keys = getSortedKeys(user_to_photoComments);
+
+            sorted_values = getSortedValues(user_to_photoComments);
+
+            user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+
+            for (var i=0; i<20; i++){
+                facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+            }
+
+
+            console.log('Ids to Comments')
+            console.log(facebook_ids_to_tags);
+
+            console.log('Ids to Photos vector');
+            facebook_ids_to_tagged_photos = comment_photos;
+            console.log(facebook_ids_to_tagged_photos);
+
+
+            console.log('Ids to Photos urls');
+            facebook_ids_to_tagged_photo_urls = comment_photos_urls;
+            console.log(facebook_ids_to_tagged_photo_urls);
+
+            callback();*/
+
 
 
             //COMMENTS
-            sorted_ids = getSortedKeys(user_to_photoComments);
-            sorted_Counts = getSortedValues(user_to_photoComments);
-            user_to_photoLikes = keysbyValue(user_to_photoComments);
-            console.log("user_to_photoComments");
-            console.log(user_to_photoComments);
-            console.log("sorted_ids");
-            console.log(sorted_ids);
-            console.log("sorted_Counts");
-            console.log(sorted_Counts);
-            var facebook_ids_to_photoComments = [];
-            for (var i=0; i<20; i++){
-                facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
-            }
-            console.log("facebook_ids_to_photoComments");
-            console.log(facebook_ids_to_photoComments);
+            //sorted_ids = getSortedKeys(user_to_photoComments);
+            //sorted_Counts = getSortedValues(user_to_photoComments);
+            //user_to_photoComments = keysbyValue(user_to_photoComments);
+            //console.log("user_to_photoComments");
+            //console.log(user_to_photoComments);
+            //console.log("sorted_ids");
+            //console.log(sorted_ids);
+            //console.log("sorted_Counts");
+            //console.log(sorted_Counts);
+            //var facebook_ids_to_photoComments = [];
+
+            //for (var i=0; i<20; i++){
+             //   facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+            //}
+            //console.log("facebook_ids_to_photoComments");
+            //console.log(facebook_ids_to_photoComments);
 
             //make the graph with user_to_photoComments
+
+            /*
+            sorted_keys = getSortedKeys(user_to_photoLikes);
+
+            sorted_values = getSortedValues(user_to_photoLikes);
+
+            user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+
+            for (var i=0; i<20; i++){
+                facebook_ids_to_tags[i] = facebook_ids_to_photoLikes[i];
+            }
+
+            console.log("facebook_ids_to_tags");
+            console.log(facebook_ids_to_tags);
+
+            //makegraph();
 
 
 
         }
-    };*/
+    };
+
+            */
+
+
+    };
 
     var max_params = {since:"01-01-2010",limit:5000};
 
@@ -460,10 +711,13 @@
 //            var photos = JSON.parse(photoResponse.data);
 //            console.log('Link: ' + photos[0].link);
 //            var photos = response["data"];
-
             //console.log("photoResponse");
             //console.log(photoResponse);
             //getPhotoLikesComments(photoResponse);
+
+            console.log("photoResponse");
+            console.log(photoResponse);
+
             var all_data;
             all_data = photoResponse.data;
 
@@ -608,9 +862,11 @@
             console.log(facebook_ids_to_tags);
 
             callback();
-
+            getPhotoLikesComments(photoResponse,callback);
         });
     }
+
+
 </script>
 
 
@@ -1128,6 +1384,12 @@
                   </span>
                 </div>
               </div>
+            <div class="photoLikesChart">
+
+            </div>
+            <div class="photoCommentsChart">
+
+            </div>
 
 			</span>
         </div>
