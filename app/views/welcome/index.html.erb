@@ -209,8 +209,8 @@
        var user_to_photoLikes = [];
        var user_to_photoComments = [];
        var numPhotos = photoResponse.data.length; //must be at least 1
-        facebook_ids_to_tagged_photos = {};
-        facebook_ids_to_tagged_photo_urls = {};
+        var like_photos_urls = {};
+        var like_photos = {};
 
         var comment_photos_urls = {};
         var comment_photos = {};
@@ -232,16 +232,16 @@
                     }
                     else if (user.name in user_to_photoLikes) {
                         user_to_photoLikes[user.name]++;
-                        facebook_ids_to_tagged_photos[user.name].push(photo.source);
-                        facebook_ids_to_tagged_photo_urls[user.name].push(photo.link);
+                        like_photos[user.name].push(photo.source);
+                        like_photos_urls[user.name].push(photo.link);
 
                     }
                     else {
                         user_to_photoLikes[user.name] = 1;
-                        facebook_ids_to_tagged_photos[user.name] = [];
-                        facebook_ids_to_tagged_photo_urls[user.name] = [];
-                        facebook_ids_to_tagged_photos[user.name].push(photo.source);
-                        facebook_ids_to_tagged_photo_urls[user.name].push(photo.link);
+                        like_photos[user.name] = [];
+                        like_photos_urls[user.name] = [];
+                        like_photos[user.name].push(photo.source);
+                        like_photos_urls[user.name].push(photo.link);
                     }
                 }
             }
@@ -333,9 +333,11 @@
                 }
                 return A;
             }
+
+
             //end functions to sort
 
-            //LIKES
+            ///////////LIKES GRAPH//////////
             //var sorted_ids = getSortedKeys(user_to_photoLikes);
             //var sorted_Counts = getSortedValues(user_to_photoLikes);
 
@@ -355,29 +357,109 @@
             //console.log(facebook_ids_to_photoLikes);
 
             //make the graph with user_to_photoLikes
-            sorted_keys = getSortedKeys(user_to_photoLikes);
+            var sorted_ids = getSortedKeys(user_to_photoLikes);
 
-            sorted_values = getSortedValues(user_to_photoLikes);
+            var sorted_counts = getSortedValues(user_to_photoLikes);
 
-            user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+            //user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
 
-
+            var facebook_ids_to_photoLikes = [];
                 for (var i=0; i<20; i++){
-                    facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+                    facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_counts[i] };
                 }
 
 
-            console.log('Ids to Likes')
-            console.log(facebook_ids_to_tags);
-            console.log('Ids to Photos vector');
-            console.log(facebook_ids_to_tagged_photos);
-            console.log('Ids to Photos urls');
-            console.log(facebook_ids_to_tagged_photo_urls);
 
-            callback();
-        //COMMENTS
+            var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
+            var data = [
+                { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
+                { "Facebook ID":"World", "Number of Photo Likes":3000 }
+            ];
+            //console.log("data for fake chart");
+            //console.log(data);
 
-            sorted_keys = getSortedKeys(user_to_photoComments);
+            var chart = new dimple.chart(svg, facebook_ids_to_photoLikes);
+            var x = chart.addCategoryAxis("x", "Facebook ID");
+    //                        x.tickFormat = "%20.10s";
+            var y = chart.addMeasureAxis("y", "Number of Photo Likes");
+            y.tickFormat = "i";
+            var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+            //click event handler code here
+
+            var chartObject = chart.draw();
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                    });
+
+            svg.attr("height", 1000);
+
+            while(!chartObject){}
+            if (chartObject){
+                //showButtons();
+            }
+
+
+        /////////////COMMENTS GRAPH////////////////////////////
+        sorted_ids = getSortedKeys(user_to_photoComments);
+
+        sorted_counts = getSortedValues(user_to_photoComments);
+
+        //user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+        var facebook_ids_to_photoComments = [];
+        for (var i=0; i<20; i++){
+            facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Comments":sorted_counts[i] };
+        }
+
+
+
+
+        var svg = dimple.newSvg(".photoCommentsChart", 1000, 600);
+        var data = [
+            { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
+            { "Facebook ID":"World", "Number of Photo Comments":3000 }
+        ];
+        //console.log("data for fake chart");
+        //console.log(data);
+
+        var chart = new dimple.chart(svg, facebook_ids_to_photoComments);
+        var x = chart.addCategoryAxis("x", "Facebook ID");
+        //                        x.tickFormat = "%20.10s";
+        var y = chart.addMeasureAxis("y", "Number of Photo Comments");
+        y.tickFormat = "i";
+        var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+        //click event handler code here
+
+        var chartObject = chart.draw();
+        x.shapes.selectAll("text").attr("transform",
+                function (d) {
+                    return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                });
+        x.shapes.selectAll("text").style("text-anchor", "end");
+        x.titleShape.remove();
+
+        y.titleShape.attr("transform",
+                function (d) {
+                    return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                });
+
+        svg.attr("height", 1000);
+
+        while(!chartObject){}
+        if (chartObject){
+            //showButtons();
+        }
+            /*sorted_keys = getSortedKeys(user_to_photoComments);
 
             sorted_values = getSortedValues(user_to_photoComments);
 
@@ -401,7 +483,9 @@
             facebook_ids_to_tagged_photo_urls = comment_photos_urls;
             console.log(facebook_ids_to_tagged_photo_urls);
 
-            callback();
+            callback();*/
+
+
 
             //COMMENTS
             //sorted_ids = getSortedKeys(user_to_photoComments);
@@ -1278,6 +1362,12 @@
                   </span>
                 </div>
               </div>
+            <div class="photoLikesChart">
+
+            </div>
+            <div class="photoCommentsChart">
+
+            </div>
 
 			</span>
         </div>
