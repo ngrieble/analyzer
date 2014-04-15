@@ -83,6 +83,14 @@
     var first_graph_made = false;
     var graphs_made = 0;
 
+    var status_sorted_values = [];
+    var status_sorted_keys = [];
+    var user_to_num_status_liked ={};
+    var facebook_ids_to_likes = [];
+    var facebook_ids_to_liked_status = {};
+    var facebook_ids_to_liked_status_urls = {};
+    var all_status_ids;
+
     window.fbAsyncInit = function() {
         FB.init({
             appId      : '682201798512608',
@@ -103,11 +111,12 @@
                 // login status of the person. In this case, we're handling the situation where they
                 // have logged in to the app.
                 testAPI();
+
                 if(first_graph_made == false){
                     document.getElementById('splash').style.visibility = 'visible';
                     //call funcs to make graphs here
                     getUsersPhotos(makeGraph);
-                    getUsersStatusLikes(makeStatusGraph);
+
                 }
                 first_graph_made = true;
 
@@ -184,7 +193,9 @@
         console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
             console.log('Good to see you, ' + response.name + '.');
+            console.log(response);
             user_id = response.id;
+
         }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
     }
 
@@ -197,12 +208,7 @@
     var facebook_ids_to_tagged_photo_urls = {};
 
     //for status you uploaded, like count
-    var status_sorted_values = [];
-    var status_sorted_keys = [];
-    var user_to_num_status_liked ={};
-    var facebook_ids_to_likes = {};
-    var facebook_ids_to_liked_status = {};
-    var facebook_ids_to_liked_status_urls = {};
+
 
     /*function getPhotoLikesComments(photoResponse) {
        console.log('Fetching photo likes...');
@@ -281,153 +287,164 @@
 
         }
     };*/
+
+    var max_params = {since:"01-01-2010",limit:5000};
+
+    function getLikes(response){
+        var post = response;
+        console.log('response');
+        console.log(response);
+        if('likes' in post){
+            for( var j = 0; j < post.likes.data.length; j++){
+                var user_name = post.likes.data[j].name;
+                if( user_name in user_to_num_status_liked){
+                    user_to_num_status_liked[post.likes.data[j].name]++;
+                    //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                    //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                }else{
+                    user_to_num_status_liked[post.likes.data[j].name] = 1;
+                    //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
+                    //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
+                    //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                    //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                }
+            }
+        }else if('data' in post){
+            for( var j = 0; j < post.data.length; j++){
+                var user_name = post.data[j].name;
+                if( user_name in user_to_num_status_liked){
+                    user_to_num_status_liked[post.data[j].name]++;
+                }else{
+                    user_to_num_status_liked[post.data[j].name] = 1;
+                }
+            }
+        }
+
+        if('likes' in post){
+            if ('paging' in post.likes && 'next' in post.likes.paging && post.likes.paging.next != 'undefined' ){
+                console.log('paging likes');
+                FB.api(response.likes.paging.next,max_params , getLikes);
+            }
+        }else if('data' in post){
+            if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
+                console.log('paging likes again');
+                FB.api(response.likes.paging.next, max_params ,  getLikes);
+            }
+        }
+
+    }
+
+    function getAllstatus(response){
+
+        console.log(response);
+        all_status_ids = response.data;
+        // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
+        for (var i=0; i< all_status_ids.length; i++){
+            if(all_status_ids[i].from.id == user_id){
+                if('likes' in all_status_ids[i] && all_status_ids[i].type != "question"){
+                    //console.log(all_status_ids[i]);
+                    console.log('calling get likes for ' + i);
+                    getLikes(all_status_ids[i]);
+                }
+            }
+        }
+
+        if ('paging' in response && response.paging.next != "undefined"){
+            FB.api(response.paging.next, max_params ,getAllstatus);
+        }else{
+            finishStatusGraph(makeStatusGraph);
+        }
+    }
+
     function getUsersStatusLikes(callback){
-        console.log('getting status ids....')
-        var params = {since: "01-01-2010", limit:5000}
-        FB.api('/'+user_id+'/feed', params , function(statusResponse){
-            console.log("got response");
-            console.log("statusResponse");
-            console.log(statusResponse);
+//        console.log('before');
+//        setTimeout(function(){
+//            console.log('after');
+//        },800);
+        console.log('getting status ids....');
+        console.log('/' +user_id + '/feed');
+        FB.api('/me/statuses?limit=5000', max_params, getAllstatus);
+    }
 
-            var all_status_ids;
-            all_status_ids = statusResponse.data;
+    function finishStatusGraph(callback){
 
-                //not sure what this part is for yet
-//            for(var i=0; i < statusResponse.data.length; i++){
-//                var status = statusResponse.data[i];
-//                console.log('Link: ' + status.link);
-//                if(i==0){
-//                    document.getElementById('feature-item-1').src = status.source;
-//                }
-//                if(i==1){
-//                    document.getElementById('feature-item-2').src = status.source;
-//                }
-//                if(i==2){
-//                    document.getElementById('feature-item-3').src = status.source;
-//                }
-//                if(i==3){
-//                    document.getElementById('feature-item-4').src = status.source;
-//                }
-//            }
-
-            //I think i can skip this step? we will see later
-            var desiredAttributes=["id"];
-            var myJSONText = JSON.stringify(all_status_ids, desiredAttributes);
-
-            console.log(myJSONText);
-//            console.log('Link: ' + response.data[0].link + '.');
-
-
-            console.log("all_status_ids");
-            console.log(all_status_ids);
-
-
-            // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
-            for (var i=0; i< all_status_ids.length; i++){
-                var post_id = all_status_ids[i].id;
-
-                FB.api('/'+post_id+'/likes', function(postResponse){
-                    if (postResponse && !postResponse.error) {
-                        var total_likers_data;
-                        total_likers_data = postResponse.data;
-                        for(var j = 0; j < total_likers_data.length; j++){
-
-                            var user_name = total_likers_data[j].name;
-
-                            if( user_name in user_to_num_status_liked){
-                                user_to_num_status_liked[total_likers_data[j].name]++;
-                                facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                                facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
-                            }else{
-                                user_to_num_status_liked[total_likers_data[j].name] = 1;
-                                facebook_ids_to_liked_status[total_likers_data[j].name] = [];
-                                facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-
-                                facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
-                                facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
-                            }
-                        }
-                    }
-                });
+        console.log("in finishStatusGraph");
+        console.log(user_to_num_status_liked);
+        //sort it now
+        function keysbyValue(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
             }
-            //see result
-            console.log(user_to_num_status_liked);
-
-            //sort it now
-
-            function keysbyValue(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][0];
-                }
-                var obj = {};
-                for(var i= 0, L= A.length; i<L; i++){
-                    obj[i] = {key: A[i], value: O[A[i]]};
-                }
-                return obj;
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][0];
             }
-
-            function getSortedKeys(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][0];
-                }
-                return A;
+            var obj = {};
+            for(var i= 0, L= A.length; i<L; i++){
+                obj[i] = {key: A[i], value: O[A[i]]};
             }
+            return obj;
+        }
 
-            function getSortedValues(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][1];
-                }
-                return A;
+        function getSortedKeys(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
             }
-
-            status_sorted_keys = getSortedKeys(user_to_num_status_liked);
-
-            status_sorted_values = getSortedValues(user_to_num_status_liked);
-
-            user_to_num_status_liked = keysbyValue(user_to_num_status_liked);
-
-            console.log("user_to_num_photos_uploaded");
-            console.log(user_to_num_status_liked);
-
-            console.log("sorted_keys");
-            console.log(status_sorted_keys);
-
-            console.log("sorted_values");
-            console.log(status_sorted_values);
-
-            for (var i=0; i<20; i++){
-                facebook_ids_to_likes[i] = { "Facebook ID":status_sorted_keys[i], "Number of Photo Tags":status_sorted_values[i] };
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][0];
             }
+            return A;
+        }
 
-            console.log("facebook_ids_to_tags");
-            console.log(facebook_ids_to_likes);
+        function getSortedValues(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+            }
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][1];
+            }
+            return A;
+        }
 
-            callback();
-        });
+        status_sorted_keys = getSortedKeys(user_to_num_status_liked);
+
+        status_sorted_values = getSortedValues(user_to_num_status_liked);
+
+        user_to_num_status_liked = keysbyValue(user_to_num_status_liked);
+
+        console.log("user to num status liked 2.0");
+        console.log(user_to_num_status_liked);
+
+        console.log("sorted_keys status ");
+        console.log(status_sorted_keys);
+
+        console.log("sorted_values status");
+        console.log(status_sorted_values);
+
+        for (var x=0; x<20; x++){
+            facebook_ids_to_likes[x] = { "Facebook ID":status_sorted_keys[x], "Number of Posts Liked":status_sorted_values[x] };
+//            facebook_ids_to_likes[x] = {"Name":user_to_num_status_liked[x].key,"Number of Posts Liked":user_to_num_status_liked[x].value};
+        }
+        console.log("facebook_ids_to_likes");
+        console.log(facebook_ids_to_likes);
+
+        console.log('calling make status Graph');
+
+        callback();
 
     }
 
@@ -439,20 +456,20 @@
         var params = {since:"01-01-2010", limit:5000};
 //1262304000
         FB.api('/me/photos', params, function(photoResponse) {
-            console.log('Got response');
+            //console.log('Got response');
 //            var photos = JSON.parse(photoResponse.data);
 //            console.log('Link: ' + photos[0].link);
 //            var photos = response["data"];
 
-            console.log("photoResponse");
-            console.log(photoResponse);
+            //console.log("photoResponse");
+            //console.log(photoResponse);
             //getPhotoLikesComments(photoResponse);
             var all_data;
             all_data = photoResponse.data;
 
             for (var i=0; i<photoResponse.data.length; i++){
                 var photo = photoResponse.data[i];
-                console.log('Link: ' + photo.link);
+                //console.log('Link: ' + photo.link);
                 if(i==0){
                     document.getElementById('feature-item-1').src = photo.source;
                 }
@@ -474,12 +491,12 @@
             var desiredAttributes=["id","from"];
             var myJSONText = JSON.stringify(all_data, desiredAttributes);
 
-            console.log(myJSONText);
+            //console.log(myJSONText);
 //            console.log('Link: ' + response.data[0].link + '.');
 
 
-            console.log("all_data");
-            console.log(all_data);
+            //console.log("all_data");
+            //console.log(all_data);
 
             // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
             //var user_to_num_photos_uploaded = {};
@@ -505,7 +522,7 @@
                 }
             }
 
-            console.log(user_to_num_photos_uploaded);
+            //console.log(user_to_num_photos_uploaded);
 
 
 
@@ -574,14 +591,14 @@
 
             user_to_num_photos_uploaded = keysbyValue(user_to_num_photos_uploaded);
 
-            console.log("user_to_num_photos_uploaded");
-            console.log(user_to_num_photos_uploaded);
+            //console.log("user_to_num_photos_uploaded");
+            //console.log(user_to_num_photos_uploaded);
 
-            console.log("sorted_keys");
-            console.log(sorted_keys);
+            //console.log("sorted_keys");
+            //console.log(sorted_keys);
 
-            console.log("sorted_values");
-            console.log(sorted_values);
+            //console.log("sorted_values");
+            //console.log(sorted_values);
 
             for (var i=0; i<20; i++){
                 facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
@@ -685,7 +702,7 @@
                 <!--
                   Below we include the Login Button social plugin. This button uses the JavaScript SDK to
                   present a graphical Login button that triggers the FB.login() function when clicked. -->
-                <fb:login-button show-faces="false" autologoutlink="true" size="xlarge" width="200" max-rows="1" auto-logout="true" scope="user_photos,friends_photos,user_status,friends_status"></fb:login-button>
+                <fb:login-button show-faces="false" autologoutlink="true" size="xlarge" width="200" max-rows="1" auto-logout="true" scope="user_photos,friends_photos,user_status,friends_status,read_stream,user_location,user_checkins"></fb:login-button>
                 <!--<a href="#" class="btn btn-large btn-info" title="">LOGIN WITH FACEBOOK</a>-->
                 <!--<i class="or">- or -</i>-->
                 <!--<a href="#" class="btn btn-large btn-block-third btn-warning" title="">FUCKING SEND IT</a>-->
@@ -824,14 +841,11 @@
 
                     function makeGraph() {
 
+                        getUsersStatusLikes(finishStatusGraph);
+
                         // CHART USING D3 AND DIMPLY: PRETTY
                         var svg = dimple.newSvg(".chart2", 1000, 600);
-                        var data = [
-                            { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
-                            { "Facebook ID":"World", "Number of Photo Tags":3000 }
-                        ];
-                        console.log("data for fake chart");
-                        console.log(data);
+
 
                         var chart = new dimple.chart(svg, facebook_ids_to_tags);
                         var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -1023,10 +1037,10 @@
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
 
-                        while(!chartObject){}
-                        if (chartObject){
-                            showButtons();
-                        }
+//                        while(!chartObject){}
+//                        if (chartObject){
+//                            showButtons();
+//                        }
 
 
 //                        document.getElementById('category-1').class = "accordion-body show";
@@ -1181,10 +1195,13 @@
     <div class="row-fluid">
       <div class="span12 text-center">
 
-	    <span> Who do you think has liked your posts the most?
-	      <span class="inner">This graph shows the number of likes per person on all posts!</span>
-          <div class="chart"></div>
-          <div class="chart2"></div>
+	    <span> Who do you think has liked your statuses the most?
+	      <span class="inner">This graph shows the number of likes per person on all statuses!</span>
+
+            <script src="http://d3js.org/d3.v3.min.js"></script>
+            <script src="http://dimplejs.org/dist/dimple.v1.1.5.min.js"></script>
+
+          <div class="chart3"></div>
 
           <script>
 
@@ -1193,24 +1210,26 @@
 
               function makeStatusGraph(){
                   // CHART USING D3 AND DIMPLY: PRETTY
-                  var svg = dimple.newSvg(".chart2", 1000, 600);
-                  var data = [
-                      { "Facebook ID":"Hello", "Number of Photo Tags":2000 },
-                      { "Facebook ID":"World", "Number of Photo Tags":3000 }
-                  ];
-                  console.log("data for fake chart");
-                  console.log(data);
+                  var svg = dimple.newSvg(".chart3", 1000, 600);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_likes);
-                  var x = chart.addCategoryAxis("x", "Facebook Name");
-//                        x.tickFormat = "%20.10s";
-                  var y = chart.addMeasureAxis("y", "Number of Post Likes");
-                  y.tickFormat = "i";
+                  console.log('made');
+                  var x = chart.addCategoryAxis("x", "Facebook ID");
+////                        x.tickFormat = "%20.10s";
+                  var y = chart.addMeasureAxis("y", "Number of Posts Liked");
+//                  y.tickFormat = "i";
                   var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 
                     //click event handler code here
+//                  s.addEventHandler("click", function (e) {
+//
+//
+//                  }
 
-                  var chartObject = chart.draw();
+
+                   console.log('draw');
+                  var postLikesChart = chart.draw();
+                   console.log('done');
                   x.shapes.selectAll("text").attr("transform",
                           function (d) {
                               return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -1225,8 +1244,8 @@
 
                   svg.attr("height", 1000);
 
-                  while(!chartObject){}
-                  if (chartObject){
+                  while(!postLikesChart){}
+                  if (postLikesChart){
                       showButtons();
                   }
               }
@@ -1237,272 +1256,6 @@
     </div>
   </div>
 </div>
-
-<!--&lt;!&ndash;################### START PORTFOLIO ###################-->
-	<!--======================================================= &ndash;&gt;-->
-<!--<div class="container">-->
-<!--<div id="container-folio" class="row ufilter">-->
-<!--&lt;!&ndash; !important! => DONT REMOVE class="ufilter"&ndash;&gt;-->
-<!--<div id="portfolio" class="">-->
-
-
-
-<!--&lt;!&ndash; portfolio item &ndash;&gt;-->
-<!--<div class="span4  project-item seo graphics box ">-->
-  <!--<div class="thumbnail">-->
-
-    <!--&lt;!&ndash; IMAGE CONTAINER&ndash;&gt;-->
-    <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="img-wrap">-->
-      <!--<img src="assets/indexb.png" alt="iPhonegraphy" />-->
-    <!--</a>-->
-    <!--&lt;!&ndash;END IMAGE CONTAINER&ndash;&gt;-->
-
-    <!--&lt;!&ndash; CAPTION &ndash;&gt;-->
-    <!--<div class="caption">-->
-      <!--&lt;!&ndash; TITLE &ndash;&gt;-->
-      <!--<h3 class="">Project title</h3>-->
-      <!--&lt;!&ndash; / TITLE &ndash;&gt;-->
-
-      <!--&lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-      <!--<p class="caption-descr">-->
-        <!--This project presents beautiful style graphic &amp; design. OnePager provides modern features-->
-      <!--</p>-->
-      <!--&lt;!&ndash; / DESCRIPTION &ndash;&gt;-->
-
-      <!--&lt;!&ndash;BUTTONS&ndash;&gt;-->
-      <!--<div class="row-fluid">-->
-        <!--<div class="span6">-->
-          <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="btn btn-success btn-block"><i class="fa-icon-zoom-in "></i> Enlarge</a>-->
-        <!--</div>-->
-        <!--<div class="span6">-->
-          <!--<a class="btn btn-primary btn-block" href="http://wrapbootstrap.com/theme/scroll-strap-modern-parallax-one-pager-WB0XLB528">-->
-            <!--<i class="fa-icon-link"></i> Visit site</a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;/ BUTTONS&ndash;&gt;-->
-
-    <!--</div>-->
-    <!--&lt;!&ndash;END CAPTION &ndash;&gt;-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash; END: THUMBNAIL &ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; END: portfolio item &ndash;&gt;-->
-
-<!--&lt;!&ndash; portfolio item &ndash;&gt;-->
-<!--<div class="span4  project-item seo box ">-->
-  <!--<div class="thumbnail">-->
-
-    <!--&lt;!&ndash; IMAGE CONTAINER&ndash;&gt;-->
-    <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="img-wrap">-->
-      <!--<img src="assets/indexb.png" alt="iPhonegraphy" />-->
-    <!--</a>-->
-    <!--&lt;!&ndash;END IMAGE CONTAINER&ndash;&gt;-->
-
-    <!--&lt;!&ndash; CAPTION &ndash;&gt;-->
-    <!--<div class="caption">-->
-      <!--&lt;!&ndash; TITLE &ndash;&gt;-->
-      <!--<h3 class="">Project title</h3>-->
-      <!--&lt;!&ndash; / TITLE &ndash;&gt;-->
-
-      <!--&lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-      <!--<p class="caption-descr">-->
-        <!--This project presents beautiful style graphic &amp; design. OnePager provides modern features-->
-      <!--</p>-->
-      <!--&lt;!&ndash; / DESCRIPTION &ndash;&gt;-->
-
-      <!--&lt;!&ndash;BUTTONS&ndash;&gt;-->
-      <!--<div class="row-fluid">-->
-        <!--<div class="span6">-->
-          <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="btn btn-success btn-block"><i class="fa-icon-zoom-in "></i> Enlarge</a>-->
-        <!--</div>-->
-        <!--<div class="span6">-->
-          <!--<a class="btn btn-primary btn-block" href="http://wrapbootstrap.com/theme/scroll-strap-modern-parallax-one-pager-WB0XLB528">-->
-            <!--<i class="fa-icon-link"></i> Visit site</a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;/ BUTTONS&ndash;&gt;-->
-
-    <!--</div>-->
-    <!--&lt;!&ndash;END CAPTION &ndash;&gt;-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash; END: THUMBNAIL &ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; END: portfolio item &ndash;&gt;-->
-
-<!--&lt;!&ndash; portfolio item &ndash;&gt;-->
-<!--<div class="span4  project-item graphics web box ">-->
-  <!--<div class="thumbnail">-->
-
-    <!--&lt;!&ndash; IMAGE CONTAINER&ndash;&gt;-->
-    <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="img-wrap">-->
-      <!--<img src="assets/indexb.png" alt="iPhonegraphy" />-->
-    <!--</a>-->
-    <!--&lt;!&ndash;END IMAGE CONTAINER&ndash;&gt;-->
-
-    <!--&lt;!&ndash; CAPTION &ndash;&gt;-->
-    <!--<div class="caption">-->
-      <!--&lt;!&ndash; TITLE &ndash;&gt;-->
-      <!--<h3 class="">Project title</h3>-->
-      <!--&lt;!&ndash; / TITLE &ndash;&gt;-->
-
-      <!--&lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-      <!--<p class="caption-descr">-->
-        <!--This project presents beautiful style graphic &amp; design. OnePager provides modern features-->
-      <!--</p>-->
-      <!--&lt;!&ndash; / DESCRIPTION &ndash;&gt;-->
-
-      <!--&lt;!&ndash;BUTTONS&ndash;&gt;-->
-      <!--<div class="row-fluid">-->
-        <!--<div class="span6">-->
-          <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="btn btn-success btn-block"><i class="fa-icon-zoom-in "></i> Enlarge</a>-->
-        <!--</div>-->
-        <!--<div class="span6">-->
-          <!--<a class="btn btn-primary btn-block" href="http://wrapbootstrap.com/theme/scroll-strap-modern-parallax-one-pager-WB0XLB528">-->
-            <!--<i class="fa-icon-link"></i> Visit site</a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;/ BUTTONS&ndash;&gt;-->
-
-    <!--</div>-->
-    <!--&lt;!&ndash;END CAPTION &ndash;&gt;-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash; END: THUMBNAIL &ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; END: portfolio item &ndash;&gt;-->
-
-<!--&lt;!&ndash; portfolio item &ndash;&gt;-->
-<!--<div class="span4  project-item branding web box ">-->
-  <!--<div class="thumbnail">-->
-
-    <!--&lt;!&ndash; IMAGE CONTAINER&ndash;&gt;-->
-    <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="img-wrap">-->
-      <!--<img src="assets/indexb.png" alt="iPhonegraphy" />-->
-    <!--</a>-->
-    <!--&lt;!&ndash;END IMAGE CONTAINER&ndash;&gt;-->
-
-    <!--&lt;!&ndash; CAPTION &ndash;&gt;-->
-    <!--<div class="caption">-->
-      <!--&lt;!&ndash; TITLE &ndash;&gt;-->
-      <!--<h3 class="">Project title</h3>-->
-      <!--&lt;!&ndash; / TITLE &ndash;&gt;-->
-
-      <!--&lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-      <!--<p class="caption-descr">-->
-        <!--This project presents beautiful style graphic &amp; design. OnePager provides modern features-->
-      <!--</p>-->
-      <!--&lt;!&ndash; / DESCRIPTION &ndash;&gt;-->
-
-      <!--&lt;!&ndash;BUTTONS&ndash;&gt;-->
-      <!--<div class="row-fluid">-->
-        <!--<div class="span6">-->
-          <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="btn btn-success btn-block"><i class="fa-icon-zoom-in "></i> Enlarge</a>-->
-        <!--</div>-->
-        <!--<div class="span6">-->
-          <!--<a class="btn btn-primary btn-block" href="http://wrapbootstrap.com/theme/scroll-strap-modern-parallax-one-pager-WB0XLB528">-->
-            <!--<i class="fa-icon-link"></i> Visit site</a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;/ BUTTONS&ndash;&gt;-->
-
-    <!--</div>-->
-    <!--&lt;!&ndash;END CAPTION &ndash;&gt;-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash; END: THUMBNAIL &ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; END: portfolio item &ndash;&gt;-->
-
-<!--&lt;!&ndash; portfolio item &ndash;&gt;-->
-<!--<div class="span4  project-item seo graphics box ">-->
-  <!--<div class="thumbnail">-->
-
-    <!--&lt;!&ndash; IMAGE CONTAINER&ndash;&gt;-->
-    <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="img-wrap">-->
-      <!--<img src="assets/indexb.png" alt="iPhonegraphy" />-->
-    <!--</a>-->
-    <!--&lt;!&ndash;END IMAGE CONTAINER&ndash;&gt;-->
-
-    <!--&lt;!&ndash; CAPTION &ndash;&gt;-->
-    <!--<div class="caption">-->
-      <!--&lt;!&ndash; TITLE &ndash;&gt;-->
-      <!--<h3 class="">Project title</h3>-->
-      <!--&lt;!&ndash; / TITLE &ndash;&gt;-->
-
-      <!--&lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-      <!--<p class="caption-descr">-->
-        <!--This project presents beautiful style graphic &amp; design. OnePager provides modern features-->
-      <!--</p>-->
-      <!--&lt;!&ndash; / DESCRIPTION &ndash;&gt;-->
-
-      <!--&lt;!&ndash;BUTTONS&ndash;&gt;-->
-      <!--<div class="row-fluid">-->
-        <!--<div class="span6">-->
-          <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="btn btn-success btn-block"><i class="fa-icon-zoom-in "></i> Enlarge</a>-->
-        <!--</div>-->
-        <!--<div class="span6">-->
-          <!--<a class="btn btn-primary btn-block" href="http://wrapbootstrap.com/theme/scroll-strap-modern-parallax-one-pager-WB0XLB528">-->
-            <!--<i class="fa-icon-link"></i> Visit site</a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;/ BUTTONS&ndash;&gt;-->
-
-    <!--</div>-->
-    <!--&lt;!&ndash;END CAPTION &ndash;&gt;-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash; END: THUMBNAIL &ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; END: portfolio item &ndash;&gt;-->
-
-<!--&lt;!&ndash; portfolio item &ndash;&gt;-->
-<!--<div class="span4  project-item seo box ">-->
-  <!--<div class="thumbnail">-->
-
-    <!--&lt;!&ndash; IMAGE CONTAINER&ndash;&gt;-->
-    <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="img-wrap">-->
-      <!--<img src="assets/indexb.png" alt="iPhonegraphy" />-->
-    <!--</a>-->
-    <!--&lt;!&ndash;END IMAGE CONTAINER&ndash;&gt;-->
-
-    <!--&lt;!&ndash; CAPTION &ndash;&gt;-->
-    <!--<div class="caption">-->
-      <!--&lt;!&ndash; TITLE &ndash;&gt;-->
-      <!--<h3 class="">Project title</h3>-->
-      <!--&lt;!&ndash; / TITLE &ndash;&gt;-->
-
-      <!--&lt;!&ndash; DESCRIPTION &ndash;&gt;-->
-      <!--<p class="caption-descr">-->
-        <!--This project presents beautiful style graphic &amp; design. OnePager provides modern features-->
-      <!--</p>-->
-      <!--&lt;!&ndash; / DESCRIPTION &ndash;&gt;-->
-
-      <!--&lt;!&ndash;BUTTONS&ndash;&gt;-->
-      <!--<div class="row-fluid">-->
-        <!--<div class="span6">-->
-          <!--<a data-gal="prettyPhoto[gallery]" href="assets/indexb.png" class="btn btn-success btn-block"><i class="fa-icon-zoom-in "></i> Enlarge</a>-->
-        <!--</div>-->
-        <!--<div class="span6">-->
-          <!--<a class="btn btn-primary btn-block" href="http://wrapbootstrap.com/theme/scroll-strap-modern-parallax-one-pager-WB0XLB528">-->
-            <!--<i class="fa-icon-link"></i> Visit site</a>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--&lt;!&ndash;/ BUTTONS&ndash;&gt;-->
-    <!--</div>-->
-    <!--&lt;!&ndash;END CAPTION &ndash;&gt;-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash; END: THUMBNAIL &ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash; END: portfolio item &ndash;&gt;-->
-
-
-<!--</div>&lt;!&ndash;/innner folio row&ndash;&gt;-->
-<!--</div>&lt;!&ndash; /container-folio row ufilter!&ndash;&gt;-->
-<!--</div>-->
-<!--&lt;!&ndash;/CONTAINER&ndash;&gt;-->
 </section><!--/ portfolio section-->
 
 
@@ -1516,7 +1269,6 @@
       </header>
     </div>
   </div>
-
   <!-- ################# PRICE SECTION #############
       ================================================ -->
   <div class="container" id="showprice">
