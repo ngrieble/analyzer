@@ -222,13 +222,13 @@
         var comment_photos = {};
         for (var i=0; i<numPhotos; i++){
             var photo = photoResponse.data[i];
-            console.log(i);
+            //console.log(i);
             //console.log("HELLOOOOOOO");
             //console.log(photo);
             //LIKES
             var likesResponse = photo.likes;
-            console.log('Likes object pic num'+i+':');
-            console.log(likesResponse);
+            //console.log('Likes object pic num'+i+':');
+            //console.log(likesResponse);
 
             if(likesResponse) {
                 for(var j=0;j<likesResponse.data.length; j++) {
@@ -252,13 +252,13 @@
                 }
             }
 
-            console.log("user to photo likes");
-            console.log(user_to_photoLikes);
+            //console.log("user to photo likes");
+            //console.log(user_to_photoLikes);
 
             //COMMENTS
             var commentsResponse = photo.comments;
-            console.log('Comments object pic num'+i+':');
-            console.log(commentsResponse);
+           // console.log('Comments object pic num'+i+':');
+            //console.log(commentsResponse);
             if(commentsResponse) {
                 for(var j=0;j<commentsResponse.data.length; j++) {
                     var comment = commentsResponse.data[j];
@@ -282,14 +282,14 @@
                 }
             }
 
-            console.log("user to photo comments");
-            console.log(user_to_photoComments);
+            //console.log("user to photo comments");
+            //console.log(user_to_photoComments);
         }
-            console.log('After going through all pics');
+            /*console.log('After going through all pics');
             console.log("user to photo likes");
             console.log(user_to_photoLikes);
             console.log("user to photo comments");
-            console.log(user_to_photoComments);
+            console.log(user_to_photoComments);*/
             //Functions to sort
             function keysbyValue(O){
                 var A= [];
@@ -391,6 +391,125 @@
             y.tickFormat = "i";
             var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 
+        s.addEventHandler("click", function (e) {
+//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            for(var i = 0;i<6;i++) {
+                //console.log("Helloooo "+i);
+                if(like_photos[e.seriesValue].length > i){
+                    document.getElementById('liked-photo-'+(i+1)).src = like_photos[e.seriesValue][i];
+                    document.getElementById('liked-link-'+(i+1)).href = like_photos_urls[e.seriesValue][i];
+                    jQuery('#liked-photo-box-'+i).show();
+                }
+                else{
+                    jQuery('#liked-photo-box-'+i).hide();
+                    document.getElementById('liked-photo-'+(i+1)).src = "";
+                    document.getElementById('liked-link-'+(i+1)).href = "";
+                }
+            }
+
+
+            if(String(current_selected_bar) == String(e.seriesValue)){
+                // Clicked same bar, close or open tray
+                if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                    // tray is open, close tray
+                    jQuery('#collapsePhotoLikes').collapse('hide');
+                    //Unhighlight the bar
+                    if(previous_selected_x){
+                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+
+                        x.shapes.selectAll('.tick').each(function(d, i) {
+                            if(d == String(previous_selected_x)) {
+                                d3.select(this)
+                                        .selectAll('text')
+                                        .style("font-weight", "normal")
+                            }
+                        });
+                    }
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoLikes').collapse('show');
+                    //Highlight the bar
+                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                    //Iterate through ticks, make right one bold
+                    x.shapes.selectAll('.tick').each(function(d, i) {
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                }
+            }
+            else if(current_selected_bar == null){
+                //Store the original tag name and colors of the selectedbar
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                //Iterate through ticks and highlight new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                // no bar selected yet, open tray
+                jQuery('#collapsePhotoLikes').collapse('show');
+//                                togglePhotoTray1();
+            }
+            else if(String(current_selected_bar) != String(e.seriesValue)){
+                //Reset old bar to non-highlight
+                if(previous_selected_x)
+                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+                //Store the original tag name and colors of newly selected bar
+                //Iterate through ticks, unbold old selection, bold new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(previous_selected_x && d == String(previous_selected_x)){
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "normal")
+                    }
+
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight new bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                // Selecting new bar
+                if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                    // tray is open, do not change tray
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoLikes').collapse('show');
+                }
+            }
+            current_selected_bar = e.seriesValue;
+
+
+            chart.draw();
+            chart.setMargins(60,50,50,100);
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                    })
+
+        });
+
             //click event handler code here
 
             var chartObject = chart.draw();
@@ -444,7 +563,124 @@
         y.tickFormat = "i";
         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 
-        //click event handler code here
+        s.addEventHandler("click", function (e) {
+//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            for(var i = 0;i<6;i++) {
+                //console.log("Helloooo "+i);
+                if(comment_photos[e.seriesValue].length > i){
+                    document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
+                    document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
+                    jQuery('#commented-photo-box-'+i).show();
+                }
+                else{
+                    jQuery('#commented-photo-box-'+i).hide();
+                    document.getElementById('commented-photo-'+(i+1)).src = "";
+                    document.getElementById('commented-link-'+(i+1)).href = "";
+                }
+            }
+
+
+            if(String(current_selected_bar) == String(e.seriesValue)){
+                // Clicked same bar, close or open tray
+                if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                    // tray is open, close tray
+                    jQuery('#collapsePhotoLikes').collapse('hide');
+                    //Unhighlight the bar
+                    if(previous_selected_x){
+                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+
+                        x.shapes.selectAll('.tick').each(function(d, i) {
+                            if(d == String(previous_selected_x)) {
+                                d3.select(this)
+                                        .selectAll('text')
+                                        .style("font-weight", "normal")
+                            }
+                        });
+                    }
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoComments').collapse('show');
+                    //Highlight the bar
+                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                    //Iterate through ticks, make right one bold
+                    x.shapes.selectAll('.tick').each(function(d, i) {
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                }
+            }
+            else if(current_selected_bar == null){
+                //Store the original tag name and colors of the selectedbar
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                //Iterate through ticks and highlight new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                // no bar selected yet, open tray
+                jQuery('#collapsePhotoComments').collapse('show');
+//                                togglePhotoTray1();
+            }
+            else if(String(current_selected_bar) != String(e.seriesValue)){
+                //Reset old bar to non-highlight
+                if(previous_selected_x)
+                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+                //Store the original tag name and colors of newly selected bar
+                //Iterate through ticks, unbold old selection, bold new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(previous_selected_x && d == String(previous_selected_x)){
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "normal")
+                    }
+
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight new bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                // Selecting new bar
+                if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                    // tray is open, do not change tray
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoComments').collapse('show');
+                }
+            }
+            current_selected_bar = e.seriesValue;
+
+
+            chart.draw();
+            chart.setMargins(60,50,50,100);
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                    })
+
+        });
 
         var chartObject = chart.draw();
         x.shapes.selectAll("text").attr("transform",
@@ -1082,7 +1318,9 @@
     <div class="container">
       <div class="row-fluid">
         <div class="span12 text-center">
-			
+			<span id="tagged-photo-text">
+                    Click on a bar to see what they've tagged you in most recently!
+                  </span>
 			<span> Who do you think has tagged you the most in pictures?
 				<span class="inner">This graph shows the number of tags per person!</span>
               <div class="chart"></div>
@@ -1379,19 +1617,112 @@
                       </div>
                     </div>
                   </div>
-                  <span id="tagged-photo-text">
-                    Click on a bar to see what they've tagged you in most recently!
-                  </span>
+
                 </div>
               </div>
-            <div class="photoLikesChart">
 
-            </div>
-            <div class="photoCommentsChart">
 
-            </div>
 
 			</span>
+            <span> Who do you think has liked the most pictures of you?
+				<span class="inner">This graph shows the number of likes per person!</span>
+                <div class="photoLikesChart">
+
+                </div>
+                <div class="panel-group" id="accordionPhotoLikes">
+                  <div class="panel panel-default">
+
+                    <div id="collapsePhotoLikes" class="panel-collapse collapse">
+
+                      <!--<div class="row demo-tiles" id="show3">-->
+                      <div id="showPhotoLikes">
+                        <!--<div width="10"></div>-->
+                        <div class="span2">
+                          <div id="liked-photo-box-1" class="feature-box">
+                            <a target="_blank" id="liked-link-1" href=""><img id="liked-photo-1" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="liked-photo-box-2" class="feature-box">
+                            <a target="_blank" id="liked-link-2" href=""><img id="liked-photo-2" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="liked-photo-box-3" class="feature-box">
+                            <a target="_blank" id="liked-link-3" href=""><img id="liked-photo-3" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="liked-photo-box-4" class="feature-box">
+                            <a target="_blank" id="liked-link-4" href=""><img id="liked-photo-4" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="liked-photo-box-5" class="feature-box">
+                            <a target="_blank" id="liked-link-5" href=""><img id="liked-photo-5" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="liked-photo-box-6" class="feature-box">
+                            <a target="_blank" id="liked-link-6" href=""><img id="liked-photo-6" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+            </span>
+
+            <span> Who do you think has commented on the most pictures of you?
+				<span class="inner">This graph shows the number of comments per person!</span>
+                <div class="photoCommentsChart">
+
+                </div>
+                <div class="panel-group" id="accordionPhotoLikes">
+                  <div class="panel panel-default">
+
+                    <div id="collapsePhotoComments" class="panel-collapse collapse">
+
+                      <!--<div class="row demo-tiles" id="show3">-->
+                      <div id="showPhotoComments">
+                        <!--<div width="10"></div>-->
+                        <div class="span2">
+                          <div id="commented-photo-box-1" class="feature-box">
+                            <a target="_blank" id="commented-link-1" href=""><img id="commented-photo-1" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="commented-photo-box-2" class="feature-box">
+                            <a target="_blank" id="commented-link-2" href=""><img id="commented-photo-2" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="commented-photo-box-3" class="feature-box">
+                            <a target="_blank" id="commented-link-3" href=""><img id="commented-photo-3" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="commented-photo-box-4" class="feature-box">
+                            <a target="_blank" id="commented-link-4" href=""><img id="commented-photo-4" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="commented-photo-box-5" class="feature-box">
+                            <a target="_blank" id="commented-link-5" href=""><img id="commented-photo-5" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="commented-photo-box-6" class="feature-box">
+                            <a target="_blank" id="commented-link-6" href=""><img id="commented-photo-6" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+            </span>
         </div>
       </div>
     </div>
