@@ -211,6 +211,9 @@
        var numPhotos = photoResponse.data.length; //must be at least 1
         facebook_ids_to_tagged_photos = {};
         facebook_ids_to_tagged_photo_urls = {};
+
+        var comment_photos_urls = {};
+        var comment_photos = {};
         for (var i=0; i<numPhotos; i++){
             var photo = photoResponse.data[i];
             console.log(i);
@@ -258,9 +261,16 @@
                     }
                     else if (comment.from.name in user_to_photoComments) {
                         user_to_photoComments[comment.from.name]++;
+                        comment_photos[comment.from.name].push(photo.source);
+                        comment_photos_urls[comment.from.name].push(photo.link);
+
                     }
                     else {
                         user_to_photoComments[comment.from.name] = 1;
+                        comment_photos[comment.from.name] = [];
+                        comment_photos_urls[comment.from.name] = [];
+                        comment_photos[comment.from.name].push(photo.source);
+                        comment_photos_urls[comment.from.name].push(photo.link);
 
                     }
                 }
@@ -365,7 +375,33 @@
             console.log(facebook_ids_to_tagged_photo_urls);
 
             callback();
+        //COMMENTS
 
+            sorted_keys = getSortedKeys(user_to_photoComments);
+
+            sorted_values = getSortedValues(user_to_photoComments);
+
+            user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+
+            for (var i=0; i<20; i++){
+                facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+            }
+
+
+            console.log('Ids to Comments')
+            console.log(facebook_ids_to_tags);
+
+            console.log('Ids to Photos vector');
+            facebook_ids_to_tagged_photos = comment_photos;
+            console.log(facebook_ids_to_tagged_photos);
+
+
+            console.log('Ids to Photos urls');
+            facebook_ids_to_tagged_photo_urls = comment_photos_urls;
+            console.log(facebook_ids_to_tagged_photo_urls);
+
+            callback();
 
             //COMMENTS
             //sorted_ids = getSortedKeys(user_to_photoComments);
