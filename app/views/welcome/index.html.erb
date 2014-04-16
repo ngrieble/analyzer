@@ -173,7 +173,7 @@
             document.getElementById('home-btn').style.visibility = 'visible';
             document.getElementById('photos-btn').style.visibility = 'visible';
             document.getElementById('status-btn').style.visibility = 'visible';
-            document.getElementById('comments-btn').style.visibility = 'visible';
+            document.getElementById('rankings-btn').style.visibility = 'visible';
             document.getElementById('team-btn').style.visibility = 'visible';
             document.getElementById('contact-btn').style.visibility = 'visible';
             document.getElementById('splash').style.visibility = 'hidden';
@@ -185,7 +185,7 @@
         document.getElementById('home-btn').style.visibility = 'hidden';
         document.getElementById('photos-btn').style.visibility = 'hidden';
         document.getElementById('status-btn').style.visibility = 'hidden';
-        document.getElementById('comments-btn').style.visibility = 'hidden';
+        document.getElementById('rankings-btn').style.visibility = 'hidden';
         document.getElementById('team-btn').style.visibility = 'hidden';
         document.getElementById('contact-btn').style.visibility = 'hidden';
     }
@@ -272,6 +272,9 @@
             //COMMENTS
             var commentsResponse = photo.comments;
             //console.log('Comments object pic num'+i+':');
+
+           // console.log('Comments object pic num'+i+':');
+
             //console.log(commentsResponse);
             if(commentsResponse) {
                 for(var j=0;j<commentsResponse.data.length; j++) {
@@ -299,11 +302,19 @@
             //console.log("user to photo comments");
             //console.log(user_to_photoComments);
         }
+
             //console.log('After going through all pics');
             //console.log("user to photo likes");
            // console.log(user_to_photoLikes);
             //console.log("user to photo comments");
             //console.log(user_to_photoComments);
+
+            /*console.log('After going through all pics');
+            console.log("user to photo likes");
+            console.log(user_to_photoLikes);
+            console.log("user to photo comments");
+            console.log(user_to_photoComments);*/
+
             //Functions to sort
             function keysbyValue(O){
                 var A= [];
@@ -405,6 +416,125 @@
             y.tickFormat = "i";
             var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 
+        s.addEventHandler("click", function (e) {
+//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            for(var i = 0;i<6;i++) {
+                //console.log("Helloooo "+i);
+                if(like_photos[e.seriesValue].length > i){
+                    document.getElementById('liked-photo-'+(i+1)).src = like_photos[e.seriesValue][i];
+                    document.getElementById('liked-link-'+(i+1)).href = like_photos_urls[e.seriesValue][i];
+                    jQuery('#liked-photo-box-'+i).show();
+                }
+                else{
+                    jQuery('#liked-photo-box-'+i).hide();
+                    document.getElementById('liked-photo-'+(i+1)).src = "";
+                    document.getElementById('liked-link-'+(i+1)).href = "";
+                }
+            }
+
+
+            if(String(current_selected_bar) == String(e.seriesValue)){
+                // Clicked same bar, close or open tray
+                if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                    // tray is open, close tray
+                    jQuery('#collapsePhotoLikes').collapse('hide');
+                    //Unhighlight the bar
+                    if(previous_selected_x){
+                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+
+                        x.shapes.selectAll('.tick').each(function(d, i) {
+                            if(d == String(previous_selected_x)) {
+                                d3.select(this)
+                                        .selectAll('text')
+                                        .style("font-weight", "normal")
+                            }
+                        });
+                    }
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoLikes').collapse('show');
+                    //Highlight the bar
+                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                    //Iterate through ticks, make right one bold
+                    x.shapes.selectAll('.tick').each(function(d, i) {
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                }
+            }
+            else if(current_selected_bar == null){
+                //Store the original tag name and colors of the selectedbar
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                //Iterate through ticks and highlight new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                // no bar selected yet, open tray
+                jQuery('#collapsePhotoLikes').collapse('show');
+//                                togglePhotoTray1();
+            }
+            else if(String(current_selected_bar) != String(e.seriesValue)){
+                //Reset old bar to non-highlight
+                if(previous_selected_x)
+                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+                //Store the original tag name and colors of newly selected bar
+                //Iterate through ticks, unbold old selection, bold new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(previous_selected_x && d == String(previous_selected_x)){
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "normal")
+                    }
+
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight new bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                // Selecting new bar
+                if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                    // tray is open, do not change tray
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoLikes').collapse('show');
+                }
+            }
+            current_selected_bar = e.seriesValue;
+
+
+            chart.draw();
+            chart.setMargins(60,50,50,100);
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                    })
+
+        });
+
             //click event handler code here
 
             var chartObject = chart.draw();
@@ -458,7 +588,124 @@
         y.tickFormat = "i";
         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 
-        //click event handler code here
+        s.addEventHandler("click", function (e) {
+//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            for(var i = 0;i<6;i++) {
+                //console.log("Helloooo "+i);
+                if(comment_photos[e.seriesValue].length > i){
+                    document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
+                    document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
+                    jQuery('#commented-photo-box-'+i).show();
+                }
+                else{
+                    jQuery('#commented-photo-box-'+i).hide();
+                    document.getElementById('commented-photo-'+(i+1)).src = "";
+                    document.getElementById('commented-link-'+(i+1)).href = "";
+                }
+            }
+
+
+            if(String(current_selected_bar) == String(e.seriesValue)){
+                // Clicked same bar, close or open tray
+                if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                    // tray is open, close tray
+                    jQuery('#collapsePhotoLikes').collapse('hide');
+                    //Unhighlight the bar
+                    if(previous_selected_x){
+                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+
+                        x.shapes.selectAll('.tick').each(function(d, i) {
+                            if(d == String(previous_selected_x)) {
+                                d3.select(this)
+                                        .selectAll('text')
+                                        .style("font-weight", "normal")
+                            }
+                        });
+                    }
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoComments').collapse('show');
+                    //Highlight the bar
+                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                    //Iterate through ticks, make right one bold
+                    x.shapes.selectAll('.tick').each(function(d, i) {
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                }
+            }
+            else if(current_selected_bar == null){
+                //Store the original tag name and colors of the selectedbar
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                //Iterate through ticks and highlight new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                // no bar selected yet, open tray
+                jQuery('#collapsePhotoComments').collapse('show');
+//                                togglePhotoTray1();
+            }
+            else if(String(current_selected_bar) != String(e.seriesValue)){
+                //Reset old bar to non-highlight
+                if(previous_selected_x)
+                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+                //Store the original tag name and colors of newly selected bar
+                //Iterate through ticks, unbold old selection, bold new selection
+                x.shapes.selectAll('.tick').each(function(d, i) {
+                    if(previous_selected_x && d == String(previous_selected_x)){
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "normal")
+                    }
+
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                previous_selected_x = e.xValue;
+                previous_colors = chart.getColor(e.xValue);
+                //Highlight new bar
+                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                // Selecting new bar
+                if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                    // tray is open, do not change tray
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoComments').collapse('show');
+                }
+            }
+            current_selected_bar = e.seriesValue;
+
+
+            chart.draw();
+            chart.setMargins(60,50,50,100);
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                    })
+
+        });
 
         var chartObject = chart.draw();
         x.shapes.selectAll("text").attr("transform",
@@ -1108,8 +1355,8 @@
                 <ul class="nav pull-right" id="nav">
                   <li><a href="#header-section" id = "home-btn" style="visibility:hidden">Home</a> </li>
                   <li><a href="#photos-section" id = "photos-btn" style="visibility:hidden">Photos</a> </li>
-                  <li><a href="#status-section" id = "status-btn" style="visibility:hidden">Status</a> </li>
-                  <li><a href="#comment-section" id = "comments-btn" style="visibility:hidden">Comments</a> </li>
+                  <li><a href="#status-section" id = "status-btn" style="visibility:hidden">Statuses</a> </li>
+                  <li><a href="#rankings-section" id = "rankings-btn" style="visibility:hidden">Rankings</a> </li>
                   <li><a href="#team-section" id = "team-btn" style="visibility:hidden">Our team</a> </li>
                   <li><a href="#contact-section" id = "contact-btn" style="visibility:hidden">Contact</a> </li>
                 </ul>
@@ -1174,8 +1421,87 @@
 
 <section id = "mainbody" style = "display:none">
 
+<!-- ######################## INTRO SECTION ##################
+============================================================== -->
+
+<!-- MARKETING INTRO-->
+<div class="container">
+  <div class="row-fluid">
+    <header class="page-header span12">
+      <h3> Stalker Stats <small class="visible-desktop">// Find out who has been Stalking you!</small> </h3>
+      <h4>
+        What is Stalker Stats?
+      </h4>
+        Welcome to Stalker Stats! We pull data from your Facebook profile to show you which of your friends is interacting with you the most!
+        Stalker metrics are pulled from photos you've been tagged in and statuses you've posted. We then use an algorithm to show you your top Stalkers!
+        <p></p>
+          <!--<h4>-->
+            <!--Who's considered a Stalker?-->
+          <!--</h4>-->
+            <!--We've defined stalkers to be people who tag, comment, and like Facebook events related to you. Basically, the people who care about what you do and say.-->
+      <!--<p></p>-->
+
+
+<!--/ MARKETING INTRO-->
+<div class="container">
+
+  <!-- FEATURES ITEMS-->
+  <div class="row demo-tiles" id="show3">
+
+    <!-- FEATURE ITEM-->
+    <div class="span3">
+      <div class="feature-box">
+        <img id="feature-item-1" class="feature-box-image" alt="" src= "" >
+      </div>
+    </div>
+    <!-- / FEATURE ITEM-->
+
+    <!-- FEATURE ITEM-->
+    <div class="span3">
+      <div class="feature-box">
+        <img id="feature-item-2" class="feature-box-image" alt="" src="">
+      </div>
+    </div>
+    <!-- / FEATURE ITEM-->
+
+    <!-- FEATURE ITEM-->
+    <div class="span3">
+      <div class="feature-box">
+        <img id="feature-item-3" class="feature-box-image" alt="" src="">
+      </div>
+    </div>
+    <!--/ FEATURE ITEM-->
+
+    <!-- FEATURE ITEM-->
+    <div class="span3">
+      <div class="feature-box feature-box-hot">
+        <img id="feature-item-4" class="feature-box-image" alt="" src="">
+      </div>
+    </div>
+    <!--/ FEATURE ITEM-->
+  </div> <!-- / ROW-->
+</div> <!-- CONTAINER-->
+
+        <h4>
+            Scroll down to see your stats!
+        </h4>
+        <!--<h4>-->
+          <!--Are you saving my Data?-->
+        <!--</h4>-->
+        <!--Don't worry, we don't save any of your data. All data is refreshed every time you navigate away from or refresh the page!-->
+        <!--<p></p>-->
+        <!--<h4>-->
+          <!--Questions or Comments?-->
+        <!--</h4>-->
+        <!--Email us at <a href="mailto:stalker.stats@umich.edu" target="_top">stalker.stats@umich.edu</a>-->
+
+    </header>
+  </div>
+</div>
+
 <!-- ######################## PHOTOS SECTION ##################
 ============================================================== -->
+
 <section  id="photos-section">
 
   <div class="container">
@@ -1186,85 +1512,13 @@
     </div>
   </div>
 
-  <!-- MARKETING INTRO-->
-  <div class="panel first">
-    <div class="container">
-      <div class="row-fluid">
-        <div class="span12 text-center">
-				<span> Awesome connection to Facebook to get our information
-					<span class="inner">The number of features we have are growing!</span>
-				</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--/ MARKETING INTRO-->
-  <div class="container">
-
-    <!-- FEATURES HEADER-->
-    <!--<div class="row-fluid">
-        <header class="page-header span12" >
-                <h3>Introducing  <small class="visible-desktop">// Hello! We are BOOTSCROLLER!</small></h3>
-        </header>
-    </div>
-    -->
-    <!-- / FEATURES HEADER-->
-
-    <!-- FEATURES ITEMS-->
-    <div class="row demo-tiles" id="show3">
-
-      <!-- FEATURE ITEM-->
-      <div class="span3">
-        <div class="feature-box">
-          <img id="feature-item-1" class="feature-box-image" alt="" src= "" >
-          <!--<h4 class="feature-box-title">Easy to Customize</h4>-->
-          <!--<p>Included PSD vector-based shapes and layer styles.</p>-->
-          <!--<a class="btn btn-primary btn-large btn-block" href="#">Get Pro</a>-->
-        </div>
-      </div>
-      <!-- / FEATURE ITEM-->
-
-      <!-- FEATURE ITEM-->
-      <div class="span3">
-        <div class="feature-box">
-          <img id="feature-item-2" class="feature-box-image" alt="" src="assets/illustrations/colors.png">
-          <!--<h4 class="feature-box-title">Modern colors</h4>-->
-          <!--<p>Based on trend web colors - contrast, modern and bright </p>-->
-          <!--<a class="btn btn-info btn-large btn-block" href="#">Get Pro</a>-->
-        </div>
-      </div>
-      <!-- / FEATURE ITEM-->
-
-      <!-- FEATURE ITEM-->
-      <div class="span3">
-        <div class="feature-box">
-          <img id="feature-item-3" class="feature-box-image" alt="" src="assets/illustrations/retina.png">
-          <!--<h4 class="feature-box-title">Well coded</h4>-->
-          <!--<p>W3C valid HTML5 code, commented and well orginized</p>-->
-          <!--<a class="btn btn-success btn-large btn-block" href="#">Get Pro</a>-->
-        </div>
-      </div>
-      <!--/ FEATURE ITEM-->
-
-      <!-- FEATURE ITEM-->
-      <div class="span3">
-        <div class="feature-box feature-box-hot">
-          <img id="feature-item-4" class="feature-box-image" alt="" src="assets/illustrations/timec.png">
-          <!--<h4 class="feature-box-title">Saves time</h4>-->
-          <!--<p>Save up to 72 hours for your project kickstarting</p>-->
-          <!--<a class="btn btn-danger btn-large btn-block" href="#">Get Pro</a>-->
-        </div>
-      </div>
-      <!--/ FEATURE ITEM-->
-    </div> <!-- / ROW-->
-  </div> <!-- CONTAINER-->
-
   <div class="panel">
     <div class="container">
       <div class="row-fluid">
         <div class="span12 text-center">
-			
+			<span id="tagged-photo-text">
+                    Click on a bar to see what they've tagged you in most recently!
+                  </span>
 			<span> Who do you think has tagged you the most in pictures?
 				<span class="inner">This graph shows the number of tags per person!</span>
               <div class="chart"></div>
@@ -1560,19 +1814,110 @@
                       </div>
                     </div>
                   </div>
-                  <span id="tagged-photo-text">
-                    Click on a bar to see what they've tagged you in most recently!
-                  </span>
+
                 </div>
               </div>
-            <div class="photoLikesChart">
 
-            </div>
-            <div class="photoCommentsChart">
 
-            </div>
 
 			</span>
+            <span> Who do you think has liked the most pictures of you?
+				<span class="inner">This graph shows the number of likes per person!</span>
+                <div class="photoLikesChart">
+                </div>
+                <div class="panel-group" id="accordionPhotoLikes">
+                  <div class="panel panel-default">
+
+                    <div id="collapsePhotoLikes" class="panel-collapse collapse">
+
+                      <!--<div class="row demo-tiles" id="show3">-->
+                      <div id="showPhotoLikes">
+                        <!--<div width="10"></div>-->
+                        <div class="span2">
+                          <div id="liked-photo-box-1" class="feature-box">
+                            <a target="_blank" id="liked-link-1" href=""><img id="liked-photo-1" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="liked-photo-box-2" class="feature-box">
+                            <a target="_blank" id="liked-link-2" href=""><img id="liked-photo-2" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="liked-photo-box-3" class="feature-box">
+                            <a target="_blank" id="liked-link-3" href=""><img id="liked-photo-3" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="liked-photo-box-4" class="feature-box">
+                            <a target="_blank" id="liked-link-4" href=""><img id="liked-photo-4" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="liked-photo-box-5" class="feature-box">
+                            <a target="_blank" id="liked-link-5" href=""><img id="liked-photo-5" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="liked-photo-box-6" class="feature-box">
+                            <a target="_blank" id="liked-link-6" href=""><img id="liked-photo-6" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+            </span>
+
+            <span> Who do you think has commented on the most pictures of you?
+				<span class="inner">This graph shows the number of comments per person!</span>
+                <div class="photoCommentsChart">
+                </div>
+                <div class="panel-group" id="accordionPhotoComments">
+                  <div class="panel panel-default">
+
+                    <div id="collapsePhotoComments" class="panel-collapse collapse">
+
+                      <!--<div class="row demo-tiles" id="show3">-->
+                      <div id="showPhotoComments">
+                        <!--<div width="10"></div>-->
+                        <div class="span2">
+                          <div id="commented-photo-box-1" class="feature-box">
+                            <a target="_blank" id="commented-link-1" href=""><img id="commented-photo-1" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="commented-photo-box-2" class="feature-box">
+                            <a target="_blank" id="commented-link-2" href=""><img id="commented-photo-2" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div id="commented-photo-box-3" class="feature-box">
+                            <a target="_blank" id="commented-link-3" href=""><img id="commented-photo-3" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="commented-photo-box-4" class="feature-box">
+                            <a target="_blank" id="commented-link-4" href=""><img id="commented-photo-4" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="commented-photo-box-5" class="feature-box">
+                            <a target="_blank" id="commented-link-5" href=""><img id="commented-photo-5" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                        <div class="span2">
+                          <div  id="commented-photo-box-6" class="feature-box">
+                            <a target="_blank" id="commented-link-6" href=""><img id="commented-photo-6" class="tagged-images" alt="" src="" href=""> </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+            </span>
         </div>
       </div>
     </div>
@@ -1797,13 +2142,13 @@
 </section><!--/ portfolio section-->
 
 
-<section id="comment-section">
+<section id="rankings-section">
   <!-- ################ PRICE SECTION HEADER ############# -->
 
   <div class="container">
     <div class="row-fluid">
       <header class="page-header span12">
-        <h3> Comment Metrics <small class="visible-desktop">// Check out graphs based on Comments</small> </h3>
+        <h3> Stalker Rankings <small class="visible-desktop">// Stalker Scores based on all the graphs</small> </h3>
       </header>
     </div>
   </div>
