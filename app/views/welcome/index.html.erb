@@ -129,7 +129,7 @@
                     document.getElementById('splash').style.visibility = 'visible';
                     //call funcs to make graphs here
                     getUsersPhotos(makeGraph);
-                    getUserTaggedInStatuses(makeGraph);
+                    //getUserTaggedInStatuses(makeGraph);
                 }
                 first_graph_made = true;
 
@@ -167,7 +167,7 @@
     function showButtons(){
         graphs_made = graphs_made + 1;
         console.log('*****'+graphs_made+'****');
-        if(graphs_made == 6)
+        if(graphs_made == 5)
         {
             document.getElementById('mainbody').style.display = '';
             document.getElementById('home-btn').style.visibility = 'visible';
@@ -228,9 +228,16 @@
 
     function getPhotoLikesComments(photoResponse,callback) {
 
-       var user_to_photoLikes = [];
-       var user_to_photoComments = [];
-       var numPhotos = photoResponse.data.length; //must be at least 1
+
+    };
+    var photo_likes_sorted_ids;
+    var photo_comments_sorted_ids;
+
+    function getPhotoLikesComments(photoResponse,callback) {
+
+        var user_to_photoLikes = [];
+        var user_to_photoComments = [];
+        var numPhotos = photoResponse.data.length; //must be at least 1
         var like_photos_urls = {};
         var like_photos = {};
 
@@ -275,7 +282,7 @@
             var commentsResponse = photo.comments;
             //console.log('Comments object pic num'+i+':');
 
-           // console.log('Comments object pic num'+i+':');
+            // console.log('Comments object pic num'+i+':');
 
             //console.log(commentsResponse);
             if(commentsResponse) {
@@ -305,118 +312,121 @@
             //console.log(user_to_photoComments);
         }
 
-            //console.log('After going through all pics');
-            //console.log("user to photo likes");
-           // console.log(user_to_photoLikes);
-            //console.log("user to photo comments");
-            //console.log(user_to_photoComments);
+        //console.log('After going through all pics');
+        //console.log("user to photo likes");
+        // console.log(user_to_photoLikes);
+        //console.log("user to photo comments");
+        //console.log(user_to_photoComments);
 
-            /*console.log('After going through all pics');
-            console.log("user to photo likes");
-            console.log(user_to_photoLikes);
-            console.log("user to photo comments");
-            console.log(user_to_photoComments);*/
+        /*console.log('After going through all pics');
+         console.log("user to photo likes");
+         console.log(user_to_photoLikes);
+         console.log("user to photo comments");
+         console.log(user_to_photoComments);*/
 
-            //Functions to sort
-            function keysbyValue(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][0];
-                }
-                var obj = {};
-                for(var i= 0, L= A.length; i<L; i++){
-                    obj[i] = {key: A[i], value: O[A[i]]};
-                }
-                return obj;
+        //Functions to sort
+        function keysbyValue(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
             }
-
-            function getSortedKeys(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][0];
-                }
-                return A;
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][0];
             }
-
-            function getSortedValues(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][1];
-                }
-                return A;
+            var obj = {};
+            for(var i= 0, L= A.length; i<L; i++){
+                obj[i] = {key: A[i], value: O[A[i]]};
             }
+            return obj;
+        }
+
+        function getSortedKeys(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+            }
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][0];
+            }
+            return A;
+        }
+
+        function getSortedValues(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+            }
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][1];
+            }
+            return A;
+        }
 
 
-            //end functions to sort
+        //end functions to sort
 
-            ///////////LIKES GRAPH//////////
-            //var sorted_ids = getSortedKeys(user_to_photoLikes);
-            //var sorted_Counts = getSortedValues(user_to_photoLikes);
+        ///////////LIKES GRAPH//////////
+        //var sorted_ids = getSortedKeys(user_to_photoLikes);
+        //var sorted_Counts = getSortedValues(user_to_photoLikes);
 
-            //user_to_photoLikes = keysbyValue(user_to_photoLikes);
+        //user_to_photoLikes = keysbyValue(user_to_photoLikes);
 
-            //console.log("user_to_photoLikes");
-            //console.log(user_to_photoLikes);
-            //console.log("sorted_ids");
-            //console.log(sorted_ids);
-            //console.log("sorted_Counts");
-            //console.log(sorted_Counts);
-            //var facebook_ids_to_photoLikes = [];
-            //for (var i=0; i<20 && i<sorted_ids.length && i<sorted_Counts.length; i++){
-             //   facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
-            //}
-            //console.log("facebook_ids_to_photoLikes");
-            //console.log(facebook_ids_to_photoLikes);
+        //console.log("user_to_photoLikes");
+        //console.log(user_to_photoLikes);
+        //console.log("sorted_ids");
+        //console.log(sorted_ids);
+        //console.log("sorted_Counts");
+        //console.log(sorted_Counts);
+        //var facebook_ids_to_photoLikes = [];
+        //for (var i=0; i<20 && i<sorted_ids.length && i<sorted_Counts.length; i++){
+        //   facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+        //}
+        //console.log("facebook_ids_to_photoLikes");
+        //console.log(facebook_ids_to_photoLikes);
 
-            //make the graph with user_to_photoLikes
-            photo_likes_sorted_ids = getSortedKeys(user_to_photoLikes);
+        //make the graph with user_to_photoLikes
+        photo_likes_sorted_ids = getSortedKeys(user_to_photoLikes);
 
-            var sorted_counts = getSortedValues(user_to_photoLikes);
+        var sorted_counts = getSortedValues(user_to_photoLikes);
 
-            //user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+        //user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
 
-            var facebook_ids_to_photoLikes = [];
-                for (var i=0; i<20; i++){
-                    facebook_ids_to_photoLikes[i] = { "Facebook ID":photo_likes_sorted_ids[i], "Number of Photo Likes":sorted_counts[i] };
-                }
+        var facebook_ids_to_photoLikes = [];
+        for (var i=0; i<20; i++){
+            facebook_ids_to_photoLikes[i] = { "Facebook ID":photo_likes_sorted_ids[i], "Number of Photo Likes":sorted_counts[i] };
+        }
 
+        var current_selected_bar;
+        var previous_selected_x;
+        var previous_colors;
+        var tray_closed = true;
 
+        var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
+        var data = [
+            { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
+            { "Facebook ID":"World", "Number of Photo Likes":3000 }
+        ];
+        //console.log("data for fake chart");
+        //console.log(data);
 
-            var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
-            var data = [
-                { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
-                { "Facebook ID":"World", "Number of Photo Likes":3000 }
-            ];
-            //console.log("data for fake chart");
-            //console.log(data);
-
-            var chart = new dimple.chart(svg, facebook_ids_to_photoLikes);
-            var x = chart.addCategoryAxis("x", "Facebook ID");
-    //                        x.tickFormat = "%20.10s";
-            var y = chart.addMeasureAxis("y", "Number of Photo Likes");
-            y.tickFormat = "i";
-            var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+        var chart = new dimple.chart(svg, facebook_ids_to_photoLikes);
+        var x = chart.addCategoryAxis("x", "Facebook ID");
+        //                        x.tickFormat = "%20.10s";
+        var y = chart.addMeasureAxis("y", "Number of Photo Likes");
+        y.tickFormat = "i";
+        var s = chart.addSeries("Facebook ID", dimple.plot.bar);
 
         s.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
@@ -436,8 +446,10 @@
 
 
             if(String(current_selected_bar) == String(e.seriesValue)){
+                //console.log('hi1');
                 // Clicked same bar, close or open tray
                 if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                    //console.log('hi2');
                     // tray is open, close tray
                     jQuery('#collapsePhotoLikes').collapse('hide');
                     //Unhighlight the bar
@@ -454,6 +466,7 @@
                     }
                 }
                 else{
+                    //console.log('hi3');
                     // tray is closed, open tray
                     jQuery('#collapsePhotoLikes').collapse('show');
                     //Highlight the bar
@@ -469,6 +482,7 @@
                 }
             }
             else if(current_selected_bar == null){
+                //console.log('hi4');
                 //Store the original tag name and colors of the selectedbar
                 previous_selected_x = e.xValue;
                 previous_colors = chart.getColor(e.xValue);
@@ -487,6 +501,7 @@
 //                                togglePhotoTray1();
             }
             else if(String(current_selected_bar) != String(e.seriesValue)){
+                //console.log('hi5');
                 //Reset old bar to non-highlight
                 if(previous_selected_x)
                     chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
@@ -521,193 +536,23 @@
             current_selected_bar = e.seriesValue;
 
 
-            chart.draw();
-            chart.setMargins(60,50,50,100);
-            x.shapes.selectAll("text").attr("transform",
-                    function (d) {
-                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
-                    });
-            x.shapes.selectAll("text").style("text-anchor", "end");
-            x.titleShape.remove();
+            /*chart.draw();
+             chart.setMargins(60,50,50,100);
+             x.shapes.selectAll("text").attr("transform",
+             function (d) {
+             return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+             });
+             x.shapes.selectAll("text").style("text-anchor", "end");
+             x.titleShape.remove();
 
-            y.titleShape.attr("transform",
-                    function (d) {
-                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-                    })
-
-        });
-
-            //click event handler code here
-
-            var chartObject = chart.draw();
-            x.shapes.selectAll("text").attr("transform",
-                    function (d) {
-                        return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
-                    });
-            x.shapes.selectAll("text").style("text-anchor", "end");
-            x.titleShape.remove();
-
-            y.titleShape.attr("transform",
-                    function (d) {
-                        return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
-                    });
-
-            svg.attr("height", 1000);
-
-            while(!chartObject){}
-            if (chartObject){
-                showButtons();
-            }
-
-
-        /////////////COMMENTS GRAPH////////////////////////////
-        photo_comments_sorted_ids = getSortedKeys(user_to_photoComments);
-
-        sorted_counts = getSortedValues(user_to_photoComments);
-
-        //user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
-
-        var facebook_ids_to_photoComments = [];
-        for (var i=0; i<20; i++){
-            facebook_ids_to_photoComments[i] = { "Facebook ID":photo_comments_sorted_ids[i], "Number of Photo Comments":sorted_counts[i] };
-        }
-
-
-
-
-        var svg = dimple.newSvg(".photoCommentsChart", 1000, 600);
-        var data = [
-            { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
-            { "Facebook ID":"World", "Number of Photo Comments":3000 }
-        ];
-        //console.log("data for fake chart");
-        //console.log(data);
-
-        var chart = new dimple.chart(svg, facebook_ids_to_photoComments);
-        var x = chart.addCategoryAxis("x", "Facebook ID");
-        //                        x.tickFormat = "%20.10s";
-        var y = chart.addMeasureAxis("y", "Number of Photo Comments");
-        y.tickFormat = "i";
-        var s = chart.addSeries("Facebook ID", dimple.plot.bar);
-
-        s.addEventHandler("click", function (e) {
-//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
-            for(var i = 0;i<6;i++) {
-                //console.log("Helloooo "+i);
-                if(comment_photos[e.seriesValue].length > i){
-                    document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
-                    document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
-                    jQuery('#commented-photo-box-'+i).show();
-                }
-                else{
-                    jQuery('#commented-photo-box-'+i).hide();
-                    document.getElementById('commented-photo-'+(i+1)).src = "";
-                    document.getElementById('commented-link-'+(i+1)).href = "";
-                }
-            }
-
-
-            if(String(current_selected_bar) == String(e.seriesValue)){
-                // Clicked same bar, close or open tray
-                if (jQuery('#collapsePhotoComments').hasClass('in')) {
-                    // tray is open, close tray
-                    jQuery('#collapsePhotoLikes').collapse('hide');
-                    //Unhighlight the bar
-                    if(previous_selected_x){
-                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
-
-                        x.shapes.selectAll('.tick').each(function(d, i) {
-                            if(d == String(previous_selected_x)) {
-                                d3.select(this)
-                                        .selectAll('text')
-                                        .style("font-weight", "normal")
-                            }
-                        });
-                    }
-                }
-                else{
-                    // tray is closed, open tray
-                    jQuery('#collapsePhotoComments').collapse('show');
-                    //Highlight the bar
-                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
-                    //Iterate through ticks, make right one bold
-                    x.shapes.selectAll('.tick').each(function(d, i) {
-                        if(d == String(e.xValue)) {
-                            d3.select(this)
-                                    .selectAll('text')
-                                    .style("font-weight", "bold")
-                        }
-                    });
-                }
-            }
-            else if(current_selected_bar == null){
-                //Store the original tag name and colors of the selectedbar
-                previous_selected_x = e.xValue;
-                previous_colors = chart.getColor(e.xValue);
-                //Highlight bar
-                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
-                //Iterate through ticks and highlight new selection
-                x.shapes.selectAll('.tick').each(function(d, i) {
-                    if(d == String(e.xValue)) {
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "bold")
-                    }
-                });
-                // no bar selected yet, open tray
-                jQuery('#collapsePhotoComments').collapse('show');
-//                                togglePhotoTray1();
-            }
-            else if(String(current_selected_bar) != String(e.seriesValue)){
-                //Reset old bar to non-highlight
-                if(previous_selected_x)
-                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
-                //Store the original tag name and colors of newly selected bar
-                //Iterate through ticks, unbold old selection, bold new selection
-                x.shapes.selectAll('.tick').each(function(d, i) {
-                    if(previous_selected_x && d == String(previous_selected_x)){
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "normal")
-                    }
-
-                    if(d == String(e.xValue)) {
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "bold")
-                    }
-                });
-                previous_selected_x = e.xValue;
-                previous_colors = chart.getColor(e.xValue);
-                //Highlight new bar
-                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
-                // Selecting new bar
-                if (jQuery('#collapsePhotoComments').hasClass('in')) {
-                    // tray is open, do not change tray
-                }
-                else{
-                    // tray is closed, open tray
-                    jQuery('#collapsePhotoComments').collapse('show');
-                }
-            }
-            current_selected_bar = e.seriesValue;
-
-
-            chart.draw();
-            chart.setMargins(60,50,50,100);
-            x.shapes.selectAll("text").attr("transform",
-                    function (d) {
-                        return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
-                    });
-            x.shapes.selectAll("text").style("text-anchor", "end");
-            x.titleShape.remove();
-
-            y.titleShape.attr("transform",
-                    function (d) {
-                        return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-                    })
+             y.titleShape.attr("transform",
+             function (d) {
+             return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+             })*/
 
         });
+
+        //click event handler code here
 
         var chartObject = chart.draw();
         x.shapes.selectAll("text").attr("transform",
@@ -728,31 +573,208 @@
         if (chartObject){
             showButtons();
         }
-            /*sorted_keys = getSortedKeys(user_to_photoComments);
-
-            sorted_values = getSortedValues(user_to_photoComments);
-
-            user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
 
 
-            for (var i=0; i<20; i++){
-                facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+        /////////////COMMENTS GRAPH////////////////////////////
+        photo_comments_sorted_ids = getSortedKeys(user_to_photoComments);
+
+        sorted_counts = getSortedValues(user_to_photoComments);
+
+        //user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+        var facebook_ids_to_photoComments = [];
+        for (var i=0; i<20; i++){
+            facebook_ids_to_photoComments[i] = { "Facebook ID":photo_comments_sorted_ids[i], "Number of Photo Comments":sorted_counts[i] };
+        }
+
+        var current_selected_bar2;
+        var previous_selected_x2;
+        var previous_colors2;
+        var tray_closed2 = true;
+
+
+        var svg2 = dimple.newSvg(".photoCommentsChart", 1000, 600);
+        var data2 = [
+            { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
+            { "Facebook ID":"World", "Number of Photo Comments":3000 }
+        ];
+        //console.log("data for fake chart");
+        //console.log(data);
+
+        var chart2 = new dimple.chart(svg2, facebook_ids_to_photoComments);
+        var x2 = chart2.addCategoryAxis("x", "Facebook ID");
+        //                        x.tickFormat = "%20.10s";
+        var y2 = chart2.addMeasureAxis("y", "Number of Photo Comments");
+        y2.tickFormat = "i";
+        var s2 = chart2.addSeries("Facebook ID", dimple.plot.bar);
+
+        s2.addEventHandler("click", function (e) {
+//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            for(var i = 0;i<6;i++) {
+                //console.log("Helloooo "+i);
+                if(comment_photos[e.seriesValue].length > i){
+                    document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
+                    document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
+                    jQuery('#commented-photo-box-'+i).show();
+                }
+                else{
+                    jQuery('#commented-photo-box-'+i).hide();
+                    document.getElementById('commented-photo-'+(i+1)).src = "";
+                    document.getElementById('commented-link-'+(i+1)).href = "";
+                }
             }
 
 
-            console.log('Ids to Comments')
-            console.log(facebook_ids_to_tags);
+            if(String(current_selected_bar2) == String(e.seriesValue)){
+                // Clicked same bar, close or open tray
+                if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                    // tray is open, close tray
+                    jQuery('#collapsePhotoComments').collapse('hide');
+                    //Unhighlight the bar
+                    if(previous_selected_x2){
+                        chart2.assignColor(previous_selected_x2, previous_colors2.fill, previous_colors2.stroke, previous_colors2.opacity);
 
-            console.log('Ids to Photos vector');
-            facebook_ids_to_tagged_photos = comment_photos;
-            console.log(facebook_ids_to_tagged_photos);
+                        x2.shapes.selectAll('.tick').each(function(d, i) {
+                            if(d == String(previous_selected_x2)) {
+                                d3.select(this)
+                                        .selectAll('text')
+                                        .style("font-weight", "normal")
+                            }
+                        });
+                    }
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoComments').collapse('show');
+                    //Highlight the bar
+                    chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
+                    //Iterate through ticks, make right one bold
+                    x2.shapes.selectAll('.tick').each(function(d, i) {
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                }
+            }
+            else if(current_selected_bar2 == null){
+                //Store the original tag name and colors of the selectedbar
+                previous_selected_x2 = e.xValue;
+                previous_colors2 = chart2.getColor(e.xValue);
+                //Highlight bar
+                chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
+                //Iterate through ticks and highlight new selection
+                x2.shapes.selectAll('.tick').each(function(d, i) {
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                // no bar selected yet, open tray
+                jQuery('#collapsePhotoComments').collapse('show');
+//                                togglePhotoTray1();
+            }
+            else if(String(current_selected_bar2) != String(e.seriesValue)){
+                //Reset old bar to non-highlight
+                if(previous_selected_x2)
+                    chart2.assignColor(previous_selected_x2, previous_colors2.fill, previous_colors2.stroke, previous_colors2.opacity);
+                //Store the original tag name and colors of newly selected bar
+                //Iterate through ticks, unbold old selection, bold new selection
+                x2.shapes.selectAll('.tick').each(function(d, i) {
+                    if(previous_selected_x2 && d == String(previous_selected_x2)){
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "normal")
+                    }
+
+                    if(d == String(e.xValue)) {
+                        d3.select(this)
+                                .selectAll('text')
+                                .style("font-weight", "bold")
+                    }
+                });
+                previous_selected_x2 = e.xValue;
+                previous_colors2 = chart2.getColor(e.xValue);
+                //Highlight new bar
+                chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
+                // Selecting new bar
+                if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                    // tray is open, do not change tray
+                }
+                else{
+                    // tray is closed, open tray
+                    jQuery('#collapsePhotoComments').collapse('show');
+                }
+            }
+            current_selected_bar2 = e.seriesValue;
 
 
-            console.log('Ids to Photos urls');
-            facebook_ids_to_tagged_photo_urls = comment_photos_urls;
-            console.log(facebook_ids_to_tagged_photo_urls);
+            /*chart2.draw();
+             chart2.setMargins(60,50,50,100);
+             x2.shapes.selectAll("text").attr("transform",
+             function (d) {
+             return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+             });
+             x2.shapes.selectAll("text").style("text-anchor", "end");
+             x2.titleShape.remove();
 
-            callback();*/
+             y2.titleShape.attr("transform",
+             function (d) {
+             return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+             })*/
+
+        });
+
+        var chartObject2 = chart2.draw();
+        x2.shapes.selectAll("text").attr("transform",
+                function (d) {
+                    return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                });
+        x2.shapes.selectAll("text").style("text-anchor", "end");
+        x2.titleShape.remove();
+
+        y2.titleShape.attr("transform",
+                function (d) {
+                    return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                });
+
+        svg2.attr("height", 1000);
+
+
+
+
+            while(!chartObject2){}
+            if (chartObject2){
+                showButtons();
+
+            }
+            /*sorted_keys = getSortedKeys(user_to_photoComments);
+
+             sorted_values = getSortedValues(user_to_photoComments);
+
+             user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+
+             for (var i=0; i<20; i++){
+             facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+             }
+
+
+             console.log('Ids to Comments')
+             console.log(facebook_ids_to_tags);
+
+             console.log('Ids to Photos vector');
+             facebook_ids_to_tagged_photos = comment_photos;
+             console.log(facebook_ids_to_tagged_photos);
+
+
+             console.log('Ids to Photos urls');
+             facebook_ids_to_tagged_photo_urls = comment_photos_urls;
+             console.log(facebook_ids_to_tagged_photo_urls);
+
+             callback();*/
 
 
 
@@ -769,7 +791,7 @@
             //var facebook_ids_to_photoComments = [];
 
             //for (var i=0; i<20; i++){
-             //   facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+            //   facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
             //}
             //console.log("facebook_ids_to_photoComments");
             //console.log(facebook_ids_to_photoComments);
@@ -777,30 +799,30 @@
             //make the graph with user_to_photoComments
 
             /*
-            sorted_keys = getSortedKeys(user_to_photoLikes);
+             sorted_keys = getSortedKeys(user_to_photoLikes);
 
-            sorted_values = getSortedValues(user_to_photoLikes);
+             sorted_values = getSortedValues(user_to_photoLikes);
 
-            user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+             user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
 
-            for (var i=0; i<20; i++){
-                facebook_ids_to_tags[i] = facebook_ids_to_photoLikes[i];
-            }
+             for (var i=0; i<20; i++){
+             facebook_ids_to_tags[i] = facebook_ids_to_photoLikes[i];
+             }
 
-            console.log("facebook_ids_to_tags");
-            console.log(facebook_ids_to_tags);
+             console.log("facebook_ids_to_tags");
+             console.log(facebook_ids_to_tags);
 
-            //makegraph();
-
-
-
-        }
-    };
-
-            */
+             //makegraph();
 
 
-    };
+
+             }
+             };
+
+             */
+
+
+        };
 
     var max_params = {since:"01-01-2009", limit:5000};
 
