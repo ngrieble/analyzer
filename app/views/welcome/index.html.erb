@@ -167,7 +167,7 @@
     function showButtons(){
         graphs_made = graphs_made + 1;
         console.log('*****'+graphs_made+'****');
-        if(graphs_made == 4)
+        if(graphs_made == 6)
         {
             document.getElementById('mainbody').style.display = '';
             document.getElementById('home-btn').style.visibility = 'visible';
@@ -556,7 +556,7 @@
 
             while(!chartObject){}
             if (chartObject){
-                //showButtons();
+                showButtons();
             }
 
 
@@ -726,7 +726,7 @@
 
         while(!chartObject){}
         if (chartObject){
-            //showButtons();
+            showButtons();
         }
             /*sorted_keys = getSortedKeys(user_to_photoComments);
 
@@ -1730,10 +1730,10 @@
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
 
-//                        while(!chartObject){}
-//                        if (chartObject){
-//                            showButtons();
-//                        }
+                        while(!chartObject){}
+                        if (chartObject){
+                            showButtons();
+                        }
 
 
 //                        document.getElementById('category-1').class = "accordion-body show";
@@ -1819,12 +1819,6 @@
 
                 </div>
               </div>
-            <div class="photoLikesChart">
-
-            </div>
-            <div class="photoCommentsChart">
-
-            </div>
 
 			</span>
             <span> Who do you think has liked the most pictures of you?
@@ -2186,6 +2180,7 @@
             <div class="rank-box">
                 <img id="ranked-user-2" class="rank-box-image" alt="" src= "" >
                 <h4 id="ranked-user-text-2" class="feature-box-title"></h4>
+                <p id="ranked-user-score-2"></p>
             </div>
           </a>
         </div>
@@ -2194,6 +2189,7 @@
             <div class="rank-box">
               <img id="ranked-user-1" class="rank-box-image" alt="" src= "" >
               <h4 id="ranked-user-text-1" class="feature-box-title"></h4>
+              <p id="ranked-user-score-1"></p>
             </div>
           </a>
         </div>
@@ -2202,6 +2198,7 @@
             <div class="rank-box">
               <img id="ranked-user-3" class="rank-box-image" alt="" src= "" >
               <h4 id="ranked-user-text-3" class="feature-box-title"></h4>
+              <p id="ranked-user-score-3"></p>
             </div>
           </a>
         </div>
@@ -2334,8 +2331,9 @@
 
             // Get profile pictures
             var name1 = stalker_rankings[0].key;
-
             jQuery('#ranked-user-text-1').text(name1);
+            var score1 = "Score: " + stalker_rankings[0].value;
+            jQuery('#ranked-user-score-1').text(score1);
 
             console.log(name1);
             var query1 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name1 + "%22";
@@ -2350,6 +2348,8 @@
 
             var name2 = stalker_rankings[1].key;
             jQuery('#ranked-user-text-2').text(name2);
+            var score2 = "Score: " + stalker_rankings[1].value;
+            jQuery('#ranked-user-score-2').text(score2);
 
             console.log(name2);
             var query2 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name2 + "%22";
@@ -2364,6 +2364,8 @@
 
             var name3 = stalker_rankings[2].key;
             jQuery('#ranked-user-text-3').text(name3);
+            var score3 = "Score: " + stalker_rankings[2].value;
+            jQuery('#ranked-user-score-3').text(score3);
 
             console.log(name3);
             var query3 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name3 + "%22";
