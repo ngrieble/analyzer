@@ -91,6 +91,19 @@
     var facebook_ids_to_liked_status_urls = {};
     var all_status_ids;
 
+    var status_commented_sorted_values = [];
+    var status_commented_sorted_keys = [];
+    var user_to_num_status_commented ={};
+    var facebook_ids_to_status_commented = [];
+    var facebook_ids_to_commented_status = {};
+    var facebook_ids_to_commented_status_urls = {};
+
+    var status_tagged_sorted_values = [];
+    var status_tagged_sorted_keys = [];
+    var user_to_num_status_taggeded ={};
+    var facebook_ids_to_status_tagged = [];
+    var facebook_ids_to_tagged_status_urls = {};
+
     window.fbAsyncInit = function() {
         FB.init({
             appId      : '682201798512608',
@@ -116,7 +129,7 @@
                     document.getElementById('splash').style.visibility = 'visible';
                     //call funcs to make graphs here
                     getUsersPhotos(makeGraph);
-
+                    getUserTaggedInStatuses(makeGraph);
                 }
                 first_graph_made = true;
 
@@ -153,7 +166,8 @@
     }
     function showButtons(){
         graphs_made = graphs_made + 1;
-        if(graphs_made == 1)
+        console.log('*****'+graphs_made+'****');
+        if(graphs_made == 4)
         {
             document.getElementById('mainbody').style.display = '';
             document.getElementById('home-btn').style.visibility = 'visible';
@@ -193,7 +207,7 @@
         console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
             console.log('Good to see you, ' + response.name + '.');
-            console.log(response);
+            //console.log(response);
             user_id = response.id;
 
         }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
@@ -222,13 +236,13 @@
         var comment_photos = {};
         for (var i=0; i<numPhotos; i++){
             var photo = photoResponse.data[i];
-            console.log(i);
+            //console.log(i);
             //console.log("HELLOOOOOOO");
             //console.log(photo);
             //LIKES
             var likesResponse = photo.likes;
-            console.log('Likes object pic num'+i+':');
-            console.log(likesResponse);
+            //console.log('Likes object pic num'+i+':');
+            //console.log(likesResponse);
 
             if(likesResponse) {
                 for(var j=0;j<likesResponse.data.length; j++) {
@@ -252,13 +266,13 @@
                 }
             }
 
-            console.log("user to photo likes");
-            console.log(user_to_photoLikes);
+            //console.log("user to photo likes");
+            //console.log(user_to_photoLikes);
 
             //COMMENTS
             var commentsResponse = photo.comments;
-            console.log('Comments object pic num'+i+':');
-            console.log(commentsResponse);
+            //console.log('Comments object pic num'+i+':');
+            //console.log(commentsResponse);
             if(commentsResponse) {
                 for(var j=0;j<commentsResponse.data.length; j++) {
                     var comment = commentsResponse.data[j];
@@ -282,14 +296,14 @@
                 }
             }
 
-            console.log("user to photo comments");
-            console.log(user_to_photoComments);
+            //console.log("user to photo comments");
+            //console.log(user_to_photoComments);
         }
-            console.log('After going through all pics');
-            console.log("user to photo likes");
-            console.log(user_to_photoLikes);
-            console.log("user to photo comments");
-            console.log(user_to_photoComments);
+            //console.log('After going through all pics');
+            //console.log("user to photo likes");
+           // console.log(user_to_photoLikes);
+            //console.log("user to photo comments");
+            //console.log(user_to_photoComments);
             //Functions to sort
             function keysbyValue(O){
                 var A= [];
@@ -539,12 +553,59 @@
 
     };
 
-    var max_params = {since:"01-01-2010",limit:5000};
+    var max_params = {since:"01-01-2009", limit:5000};
+
+    function getStatusComments(response){
+        var post = response;
+//        console.log('get status commment response');
+//        console.log(response);
+        if('comments' in post){
+            for( var j = 0; j < post.comments.data.length; j++){
+                var user_name = post.comments.data[j].from.name;
+                //console.log('username: '+ user_name);
+                if(post.comments.data[j].from.id != user_id){
+                    if( user_name in user_to_num_status_commented){
+                        user_to_num_status_commented[user_name]++;
+                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                    }else{
+                        user_to_num_status_commented[user_name] = 1;
+                        //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
+                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
+                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                    }
+                }
+            }
+        }else if('data' in post){
+            for( var j = 0; j < post.data.length; j++){
+                var user_name = post.data[j].from.name;
+                //console.log('paged adding name: '+ user_name);
+                if( user_name in user_to_num_status_commented){
+                    user_to_num_status_commented[user_name]++;
+                }else{
+                    user_to_num_status_commented[user_name] = 1;
+                }
+            }
+        }
+
+        if('comments' in post){
+            if ('paging' in post.comments && 'next' in post.comments.paging && post.comments.paging.next != 'undefined' ){
+//                console.log('paging comments');
+                FB.api(response.comments.paging.next, max_params , getStatusComments);
+            }
+        }else if('data' in post){
+            if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
+//                console.log('paging comments again');
+                FB.api(response.paging.next, max_params ,  getStatusComments);
+            }
+        }
+    }
 
     function getLikes(response){
         var post = response;
-        console.log('response');
-        console.log(response);
+//        console.log('get likes response');
+        //console.log(response);
         if('likes' in post){
             for( var j = 0; j < post.likes.data.length; j++){
                 var user_name = post.likes.data[j].name;
@@ -573,12 +634,12 @@
 
         if('likes' in post){
             if ('paging' in post.likes && 'next' in post.likes.paging && post.likes.paging.next != 'undefined' ){
-                console.log('paging likes');
+//                console.log('paging likes');
                 FB.api(response.likes.paging.next,max_params , getLikes);
             }
         }else if('data' in post){
             if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
-                console.log('paging likes again');
+//                console.log('paging likes again');
                 FB.api(response.likes.paging.next, max_params ,  getLikes);
             }
         }
@@ -591,19 +652,22 @@
         all_status_ids = response.data;
         // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
         for (var i=0; i< all_status_ids.length; i++){
-            if(all_status_ids[i].from.id == user_id){
                 if('likes' in all_status_ids[i] && all_status_ids[i].type != "question"){
                     //console.log(all_status_ids[i]);
-                    console.log('calling get likes for ' + i);
+//                    console.log('calling get likes for ' + i);
                     getLikes(all_status_ids[i]);
                 }
-            }
+                if('comments' in all_status_ids[i] && all_status_ids[i].type != "question"){
+//                    console.log('calling get comments for '+i);
+                    getStatusComments(all_status_ids[i]);
+                }
         }
 
         if ('paging' in response && response.paging.next != "undefined"){
             FB.api(response.paging.next, max_params ,getAllstatus);
         }else{
-            finishStatusGraph(makeStatusGraph);
+            //console.log('calling finishing');
+            finishStatusGraph(makeStatusGraph, makeStatusCommentGraph);
         }
     }
 
@@ -612,15 +676,125 @@
 //        setTimeout(function(){
 //            console.log('after');
 //        },800);
-        console.log('getting status ids....');
-        console.log('/' +user_id + '/feed');
+//        console.log('getting status ids....');
+//        console.log('/' +user_id + '/feed');
         FB.api('/me/statuses?limit=5000', max_params, getAllstatus);
     }
 
-    function finishStatusGraph(callback){
+
+
+    function getAllStatusTags(response){
+        var all_tags = response.data;
+        console.log('all_tags');
+        console.log(response);
+
+        for(var i = 0; i < all_tags.length; i++){
+
+            //console.log(all_tags[i]);
+            var name = all_tags[i].from.name;
+
+            if(name in user_to_num_status_taggeded){
+                user_to_num_status_taggeded[name]++;
+            }else{
+                user_to_num_status_taggeded[name]=1;
+            }
+        }
+
+        if('paging' in response && response.paging.next != 'undefined'){
+            FB.api(response.paging.next,max_params ,getAllStatusTags);
+        }else{
+            console.log('finished');
+            finishTaggedStatusGraph(makeTaggedStatusGraph);
+        }
+    }
+
+    function getUserTaggedInStatuses(callback){
+        console.log('getting tagged statuses');
+        console.log('/me/tagged');
+
+        FB.api('/me/tagged', max_params , getAllStatusTags);
+    }
+
+    function finishTaggedStatusGraph(callback){
+        function keysbyValue(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+            }
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][0];
+            }
+            var obj = {};
+            for(var i= 0, L= A.length; i<L; i++){
+                obj[i] = {key: A[i], value: O[A[i]]};
+            }
+            return obj;
+        }
+
+        function getSortedKeys(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+            }
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][0];
+            }
+            return A;
+        }
+
+        function getSortedValues(O){
+            var A= [];
+            for(var p in O){
+                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+            }
+            A.sort(function(a, b){
+                var a1= a[1], b1= b[1];
+                return b1 - a1;
+            });
+            for(var i= 0, L= A.length; i<L; i++){
+                A[i]= A[i][1];
+            }
+            return A;
+        }
+//    var status_tagged_sorted_values = [];
+//    var status_tagged_sorted_keys = [];
+//    var user_to_num_status_taggeded ={};
+//    var facebook_ids_to_status_tagged = [];
+//    var facebook_ids_to_tagged_status_urls = {};
+
+        status_tagged_sorted_keys = getSortedKeys(user_to_num_status_taggeded);
+        status_tagged_sorted_values = getSortedValues(user_to_num_status_taggeded);
+        user_to_num_status_taggeded = keysbyValue(user_to_num_status_taggeded);
+
+
+        console.log("user to num status tagged");
+        console.log(user_to_num_status_taggeded);
+
+        for (var x=0; x<20; x++){
+            facebook_ids_to_status_tagged[x] = { "Facebook ID":status_tagged_sorted_keys[x], "Number of Statuses Tagged":status_tagged_sorted_values[x] };
+        }
+
+
+        console.log('facebook_ids_to_status_tagged');
+        console.log(facebook_ids_to_status_tagged);
+
+        console.log('calling make tagged Graph');
+        callback();
+    }
+
+    function finishStatusGraph(callback1, callback2){
 
         console.log("in finishStatusGraph");
-        console.log(user_to_num_status_liked);
+        //console.log(user_to_num_status_liked);
+        //console.log(user_to_num_status_commented);
         //sort it now
         function keysbyValue(O){
             var A= [];
@@ -672,32 +846,42 @@
         }
 
         status_sorted_keys = getSortedKeys(user_to_num_status_liked);
-
         status_sorted_values = getSortedValues(user_to_num_status_liked);
-
         user_to_num_status_liked = keysbyValue(user_to_num_status_liked);
 
-        console.log("user to num status liked 2.0");
+        status_commented_sorted_keys = getSortedKeys(user_to_num_status_commented);
+        status_commented_sorted_values = getSortedValues(user_to_num_status_commented);
+        user_to_num_status_commented = keysbyValue(user_to_num_status_commented);
+
+        console.log("user to num status liked");
         console.log(user_to_num_status_liked);
+        console.log(user_to_num_status_commented);
 
         console.log("sorted_keys status ");
         console.log(status_sorted_keys);
+        console.log(status_commented_sorted_keys);
 
         console.log("sorted_values status");
         console.log(status_sorted_values);
+        console.log(status_commented_sorted_values);
 
         for (var x=0; x<20; x++){
-            facebook_ids_to_likes[x] = { "Facebook ID":status_sorted_keys[x], "Number of Posts Liked":status_sorted_values[x] };
-//            facebook_ids_to_likes[x] = {"Name":user_to_num_status_liked[x].key,"Number of Posts Liked":user_to_num_status_liked[x].value};
+                facebook_ids_to_likes[x] = { "Facebook ID":status_sorted_keys[x], "Number of Posts Liked":status_sorted_values[x] };
+                facebook_ids_to_status_commented[x] = { "Facebook ID":status_commented_sorted_keys[x], "Number of Posts Commented":status_commented_sorted_values[x] };
         }
+
         console.log("facebook_ids_to_likes");
         console.log(facebook_ids_to_likes);
+        console.log('facebook_ids_commented_status');
+        console.log(facebook_ids_to_status_commented);
 
         console.log('calling make status Graph');
-
-        callback();
+        callback1();
+        callback2();
 
     }
+
+
 
     // Grab all users' photos
     function getUsersPhotos(callback) {
@@ -715,8 +899,8 @@
             //console.log(photoResponse);
             //getPhotoLikesComments(photoResponse);
 
-            console.log("photoResponse");
-            console.log(photoResponse);
+//            console.log("photoResponse");
+//            console.log(photoResponse);
 
             var all_data;
             all_data = photoResponse.data;
@@ -857,15 +1041,13 @@
             for (var i=0; i<20; i++){
                 facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
             }
-
-            console.log("facebook_ids_to_tags");
-            console.log(facebook_ids_to_tags);
+//            console.log("facebook_ids_to_tags");
+//            console.log(facebook_ids_to_tags);
 
             callback();
             getPhotoLikesComments(photoResponse,callback);
         });
     }
-
 
 </script>
 
@@ -1293,11 +1475,10 @@
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
 
-//                        while(!chartObject){}
-//                        if (chartObject){
-//                            showButtons();
-//                        }
-
+                        while(!chartObject){}
+                        if (chartObject){
+                            showButtons();
+                        }
 
 //                        document.getElementById('category-1').class = "accordion-body show";
 
@@ -1457,15 +1638,59 @@
     <div class="row-fluid">
       <div class="span12 text-center">
 
+        <span> Who do you think has liked your statuses the most?
+	      <span class="inner">This graph shows the number of likes per person on all statuses!</span>
+          <div class = "chart4"></div>
+          <script>
+              var current_selected_bar;
+              var tray_closed = true;
+
+              function makeStatusCommentGraph(){
+
+                      // CHART USING D3 AND DIMPLY: PRETTY
+                      var svg = dimple.newSvg(".chart4", 1000, 600);
+                      var chart = new dimple.chart(svg, facebook_ids_to_status_commented );
+                      console.log('made');
+                      var x = chart.addCategoryAxis("x", "Facebook ID");
+////                        x.tickFormat = "%20.10s";
+                      var y = chart.addMeasureAxis("y", "Number of Posts Commented");
+//                  y.tickFormat = "i";
+                      var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+                      //click event handler code here
+
+                      console.log('draw');
+                      var postLikesChart = chart.draw();
+                      console.log('done');
+                      x.shapes.selectAll("text").attr("transform",
+                              function (d) {
+                                  return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                              });
+                      x.shapes.selectAll("text").style("text-anchor", "end");
+                      x.titleShape.remove();
+
+                      y.titleShape.attr("transform",
+                              function (d) {
+                                  return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                              });
+
+                      svg.attr("height", 1000);
+
+                      while(!postLikesChart){}
+                      if (postLikesChart){
+                          showButtons();
+                      }
+              }
+          </script>
+        </span>
+
+
 	    <span> Who do you think has liked your statuses the most?
 	      <span class="inner">This graph shows the number of likes per person on all statuses!</span>
-
-            <script src="http://d3js.org/d3.v3.min.js"></script>
-            <script src="http://dimplejs.org/dist/dimple.v1.1.5.min.js"></script>
-
           <div class="chart3"></div>
 
           <script>
+
 
               var current_selected_bar;
               var tray_closed = true;
@@ -1514,6 +1739,57 @@
 
           </script>
         </span>
+
+        <span> Who do you think has tagged you the most in statuses?
+	      <span class="inner">This graph shows the number of tags per person in all their statuses!</span>
+          <div class="chart5"></div>
+
+          <script>
+              var current_selected_bar;
+              var tray_closed = true;
+
+              function makeTaggedStatusGraph(){
+                  var svg = dimple.newSvg(".chart5", 1000, 600);
+
+                  var chart = new dimple.chart(svg, facebook_ids_to_status_tagged);
+                  console.log('made');
+                  var x = chart.addCategoryAxis("x", "Facebook ID");
+////                        x.tickFormat = "%20.10s";
+                  var y = chart.addMeasureAxis("y", "Number of Statuses Tagged");
+//                  y.tickFormat = "i";
+                  var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+                  //click event handler code here
+//                  s.addEventHandler("click", function (e) {
+//
+//
+//                  }
+                  console.log('draw');
+                  var postLikesChart = chart.draw();
+                  console.log('done');
+
+                  x.shapes.selectAll("text").attr("transform",
+                          function (d) {
+                              return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                          });
+                  x.shapes.selectAll("text").style("text-anchor", "end");
+                  x.titleShape.remove();
+
+                  y.titleShape.attr("transform",
+                          function (d) {
+                              return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                          });
+
+                  svg.attr("height", 1000);
+
+                  while(!postLikesChart){}
+                  if (postLikesChart){
+                      showButtons();
+                  }
+              }
+          </script>
+        </span>
+
       </div>
     </div>
   </div>
