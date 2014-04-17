@@ -507,6 +507,8 @@
 
         s.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            svg.attr("height", 550);
+
             jQuery('html, body').animate({
                 scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
             }, 2500);
@@ -528,10 +530,10 @@
 
 
             if(String(current_selected_bar) == String(e.seriesValue)){
-                //console.log('hi1');
+                console.log('hi1');
                 // Clicked same bar, close or open tray
                 if (jQuery('#collapsePhotoLikes').hasClass('in')) {
-                    //console.log('hi2');
+                    console.log('hi2');
                     // tray is open, close tray
                     jQuery('#collapsePhotoLikes').collapse('hide');
                     //Unhighlight the bar
@@ -548,7 +550,7 @@
                     }
                 }
                 else{
-                    //console.log('hi3');
+                    console.log('hi3');
                     // tray is closed, open tray
                     jQuery('#collapsePhotoLikes').collapse('show');
                     //Highlight the bar
@@ -564,7 +566,7 @@
                 }
             }
             else if(current_selected_bar == null){
-                //console.log('hi4');
+                console.log('hi4'+ e.xValue);
                 //Store the original tag name and colors of the selectedbar
                 previous_selected_x = e.xValue;
                 previous_colors = chart.getColor(e.xValue);
@@ -583,7 +585,7 @@
 //                                togglePhotoTray1();
             }
             else if(String(current_selected_bar) != String(e.seriesValue)){
-                //console.log('hi5');
+                console.log('hi5');
                 //Reset old bar to non-highlight
                 if(previous_selected_x)
                     chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
@@ -618,8 +620,8 @@
             current_selected_bar = e.seriesValue;
 
 
-            /*chart.draw();
-             chart.setMargins(60,50,50,100);
+            chart.draw();
+             chart.setMargins(60,50,50,150);
              x.shapes.selectAll("text").attr("transform",
              function (d) {
              return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
@@ -630,19 +632,20 @@
              y.titleShape.attr("transform",
              function (d) {
              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-             })*/
-
+             });
+            svg.attr("height", 600);
         });
 
         //click event handler code here
 
         var chartObject = chart.draw();
-        //chart.setMargins(60,50,50,100);
+        chart.setMargins(60,50,50,150);
         x.shapes.selectAll("text").attr("transform",
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
                 });
         x.shapes.selectAll("text").style("text-anchor", "end");
+        console.log('x.titleShape in photo likes graph removed');
         x.titleShape.remove();
 
         y.titleShape.attr("transform",
@@ -702,8 +705,6 @@
 
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
-
-
                 if(comment_photos[e.seriesValue].length > i){
                     document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
                     document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
@@ -803,8 +804,8 @@
             current_selected_bar2 = e.seriesValue;
 
 
-            /*chart2.draw();
-             chart2.setMargins(60,50,50,100);
+            chart2.draw();
+             chart2.setMargins(60,50,50,150);
              x2.shapes.selectAll("text").attr("transform",
              function (d) {
              return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
@@ -815,14 +816,14 @@
              y2.titleShape.attr("transform",
              function (d) {
              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-             })*/
+             });
             svg2.attr("height", 600);
 
 
         });
 
         var chartObject2 = chart2.draw();
-        //chart.setMargins(60,50,50,100);
+        chart2.setMargins(60,50,50,150);
         x2.shapes.selectAll("text").attr("transform",
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
