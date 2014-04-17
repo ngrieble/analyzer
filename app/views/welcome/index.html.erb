@@ -145,7 +145,16 @@
                 // (2) it is a bad experience to be continually prompted to login upon page load.
                 hideButtons();
                 FB.login(function(response) {
-                    // handle the response
+                    if(response.status === 'connected'){
+                        if(first_graph_made == false){
+                            document.getElementById('splash').style.visibility = 'visible';
+                            //call funcs to make graphs here
+                            getUsersPhotos(makeGraph);
+                            //getUserTaggedInStatuses(makeGraph);
+                        }
+                        first_graph_made = true;
+                    }
+                    else{}
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             } else {
                 // In this case, the person is not logged into Facebook, so we call the login()
@@ -155,11 +164,29 @@
                 // The same caveats as above apply to the FB.login() call here.
                 hideButtons();
                 FB.login(function(response) {
-                    // handle the response
+                    if(response.status === 'connected'){
+                        if(first_graph_made == false){
+                            document.getElementById('splash').style.visibility = 'visible';
+                            //call funcs to make graphs here
+                            getUsersPhotos(makeGraph);
+                            //getUserTaggedInStatuses(makeGraph);
+                        }
+                        first_graph_made = true;
+                    }
+                    else{}
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             }
         });
+
+        FB.Event.subscribe('auth.logout', function(response) {
+            hideButtons();
+            console.log("logout_event");
+            console.log(response.status);
+            console.log(response);
+            first_graph_made = false;
+        });
     };
+
 
     function refreshScroll(){
         jQuery('[data-spy="scroll"]').each(function () {
@@ -233,13 +260,6 @@
 
     function getPhotoLikesComments(photoResponse,callback) {
 
-
-    };
-    var photo_likes_sorted_ids;
-    var photo_comments_sorted_ids;
-
-    function getPhotoLikesComments(photoResponse,callback) {
-
         var user_to_photoLikes = [];
         var user_to_photoComments = [];
         var numPhotos = photoResponse.data.length; //must be at least 1
@@ -293,22 +313,26 @@
             if(commentsResponse) {
                 for(var j=0;j<commentsResponse.data.length; j++) {
                     var comment = commentsResponse.data[j];
-                    if(comment.from.id == user_id) {
-                        //do not add yourself
-                    }
-                    else if (comment.from.name in user_to_photoComments) {
-                        user_to_photoComments[comment.from.name]++;
-                        comment_photos[comment.from.name].push(photo.source);
-                        comment_photos_urls[comment.from.name].push(photo.link);
+//                    console.log("printing comment");
+//                    console.log(comment);
+                    if('from' in comment){
+                        if(comment.from.id == user_id) {
+                            //do not add yourself
+                        }
+                        else if (comment.from.name in user_to_photoComments) {
+                            user_to_photoComments[comment.from.name]++;
+                            comment_photos[comment.from.name].push(photo.source);
+                            comment_photos_urls[comment.from.name].push(photo.link);
 
-                    }
-                    else {
-                        user_to_photoComments[comment.from.name] = 1;
-                        comment_photos[comment.from.name] = [];
-                        comment_photos_urls[comment.from.name] = [];
-                        comment_photos[comment.from.name].push(photo.source);
-                        comment_photos_urls[comment.from.name].push(photo.link);
+                        }
+                        else {
+                            user_to_photoComments[comment.from.name] = 1;
+                            comment_photos[comment.from.name] = [];
+                            comment_photos_urls[comment.from.name] = [];
+                            comment_photos[comment.from.name].push(photo.source);
+                            comment_photos_urls[comment.from.name].push(photo.link);
 
+                        }
                     }
                 }
             }
@@ -418,7 +442,7 @@
         var previous_colors;
         var tray_closed = true;
 
-        var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
+        var svg = dimple.newSvg("#photoLikesChart", 1000, 500);
         var data = [
             { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
             { "Facebook ID":"World", "Number of Photo Likes":3000 }
@@ -435,6 +459,11 @@
 
         s.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            jQuery('html, body').animate({
+                scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+            }, 2500);
+            refreshScroll();
+
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
                 if(like_photos[e.seriesValue].length > i){
@@ -560,6 +589,7 @@
         //click event handler code here
 
         var chartObject = chart.draw();
+        //chart.setMargins(60,50,50,100);
         x.shapes.selectAll("text").attr("transform",
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -572,7 +602,7 @@
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
 
-        svg.attr("height", 1000);
+        svg.attr("height", 600);
 
         while(!chartObject){}
         if (chartObject){
@@ -598,7 +628,7 @@
         var tray_closed2 = true;
 
 
-        var svg2 = dimple.newSvg(".photoCommentsChart", 1000, 600);
+        var svg2 = dimple.newSvg("#photoCommentsChart", 1000, 500);
         var data2 = [
             { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
             { "Facebook ID":"World", "Number of Photo Comments":3000 }
@@ -615,8 +645,17 @@
 
         s2.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            svg2.attr("height", 550);
+
+            jQuery('html, body').animate({
+                scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+            }, 2500);
+            refreshScroll();
+
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
+
+
                 if(comment_photos[e.seriesValue].length > i){
                     document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
                     document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
@@ -729,10 +768,13 @@
              function (d) {
              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
              })*/
+            svg2.attr("height", 600);
+
 
         });
 
         var chartObject2 = chart2.draw();
+        //chart.setMargins(60,50,50,100);
         x2.shapes.selectAll("text").attr("transform",
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -744,8 +786,7 @@
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
-
-        svg2.attr("height", 1000);
+        svg2.attr("height", 600);
 
 
 
@@ -838,30 +879,38 @@
 //        console.log(response);
         if('comments' in post){
             for( var j = 0; j < post.comments.data.length; j++){
-                var user_name = post.comments.data[j].from.name;
-                //console.log('username: '+ user_name);
-                if(post.comments.data[j].from.id != user_id){
-                    if( user_name in user_to_num_status_commented){
-                        user_to_num_status_commented[user_name]++;
-                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
-                    }else{
-                        user_to_num_status_commented[user_name] = 1;
-                        //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
-                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+//                console.log('printing status content');
+//                console.log(post.comments.data[j]);
+                if('from'in post.comments.data[j]){
+                    var user_name = post.comments.data[j].from.name;
+                    //console.log('username: '+ user_name);
+                    if(post.comments.data[j].from.id != user_id){
+                        if( user_name in user_to_num_status_commented){
+                            user_to_num_status_commented[user_name]++;
+                            //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                            //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                        }else{
+                            user_to_num_status_commented[user_name] = 1;
+                            //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
+                            //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
+                            //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                            //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                        }
                     }
                 }
             }
         }else if('data' in post){
             for( var j = 0; j < post.data.length; j++){
-                var user_name = post.data[j].from.name;
-                //console.log('paged adding name: '+ user_name);
-                if( user_name in user_to_num_status_commented){
-                    user_to_num_status_commented[user_name]++;
-                }else{
-                    user_to_num_status_commented[user_name] = 1;
+                if('from' in post.data[j]){
+                    var user_name = post.data[j].from.name;
+                    //console.log('paged adding name: '+ user_name);
+                    if(post.data[j].from.id != user_id){
+                        if( user_name in user_to_num_status_commented){
+                            user_to_num_status_commented[user_name]++;
+                        }else{
+                            user_to_num_status_commented[user_name] = 1;
+                        }
+                    }
                 }
             }
         }
@@ -885,26 +934,30 @@
         //console.log(response);
         if('likes' in post){
             for( var j = 0; j < post.likes.data.length; j++){
-                var user_name = post.likes.data[j].name;
-                if( user_name in user_to_num_status_liked){
-                    user_to_num_status_liked[post.likes.data[j].name]++;
-                    //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                    //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
-                }else{
-                    user_to_num_status_liked[post.likes.data[j].name] = 1;
-                    //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
-                    //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
-                    //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                    //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                if('name' in post.likes.data[j]){
+                    var user_name = post.likes.data[j].name;
+                    if( user_name in user_to_num_status_liked){
+                        user_to_num_status_liked[post.likes.data[j].name]++;
+                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                    }else{
+                        user_to_num_status_liked[post.likes.data[j].name] = 1;
+                        //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
+                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
+                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                    }
                 }
             }
         }else if('data' in post){
             for( var j = 0; j < post.data.length; j++){
-                var user_name = post.data[j].name;
-                if( user_name in user_to_num_status_liked){
-                    user_to_num_status_liked[post.data[j].name]++;
-                }else{
-                    user_to_num_status_liked[post.data[j].name] = 1;
+                if('name' in post.data[j]){
+                    var user_name = post.data[j].name;
+                    if( user_name in user_to_num_status_liked){
+                        user_to_num_status_liked[post.data[j].name]++;
+                    }else{
+                        user_to_num_status_liked[post.data[j].name] = 1;
+                    }
                 }
             }
         }
@@ -1554,7 +1607,11 @@
 			
 			<span> Who do you think has tagged you the most in pictures?
 				<span class="inner">This graph shows the number of tags per person!</span>
-              <div class="chart2"></div>
+              <!--<div class="chart2"></div>-->
+            <svg id="chart2" width="1000" height="600"
+                 viewBox="0 0 1000 600"
+                 preserveAspectRatio="xMidYMid">
+            </svg>
                   <h4>Click on a bar to see what they've tagged you in most recently!</h4>
 
                 <script>
@@ -1569,8 +1626,7 @@
                         getUsersStatusLikes(finishStatusGraph);
 
                         // CHART USING D3 AND DIMPLY: PRETTY
-                        var svg = dimple.newSvg(".chart2", 1000, 600);
-
+                        var svg = dimple.newSvg("#chart2", 1000, 550);
 
                         var chart = new dimple.chart(svg, facebook_ids_to_tags);
                         var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -1579,7 +1635,14 @@
                         y.tickFormat = "i";
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
                         s.addEventHandler("click", function (e) {
+
+
+                            jQuery('html, body').animate({
+                                scrollTop: jQuery("#collapseOne").offset().top - 200
+                            }, 2500);
+                            refreshScroll();
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+                            svg.attr("height", 550);
 
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 0){
                                 document.getElementById('tagged-photo-1').src = facebook_ids_to_tagged_photos[e.seriesValue][0];
@@ -1733,7 +1796,7 @@
 
 
                             chart.draw();
-                            chart.setMargins(60,50,50,100);
+                            chart.setMargins(60,50,50,150);
                             x.shapes.selectAll("text").attr("transform",
                                     function (d) {
                                         return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
@@ -1746,10 +1809,12 @@
                                         return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
                                     })
 
+                            svg.attr("height", 600);
+
                         });
 
                         var chartObject = chart.draw();
-                        chart.setMargins(60,50,50,100);
+                        chart.setMargins(60,50,50,150);
                         x.shapes.selectAll("text").attr("transform",
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -1761,6 +1826,9 @@
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
+//                        d3.select("xAxis").attr("height", 600);
+
+                        svg.attr("height", 600);
 
                         while(!chartObject){}
                         if (chartObject){
@@ -1855,8 +1923,12 @@
 			</span>
             <span> Who do you think has liked the most pictures of you?
 				<span class="inner">This graph shows the number of likes per person!</span>
-                <div class="photoLikesChart">
-                </div>
+                <svg id="photoLikesChart" width="1000" height="600"
+                     viewBox="0 0 1000 600"
+                     preserveAspectRatio="xMidYMid">
+                </svg>
+                                <h4>Click on a bar to see what they've liked most recently!</h4>
+
                 <div class="panel-group" id="accordionPhotoLikes">
                   <div class="panel panel-default">
 
@@ -1904,8 +1976,12 @@
 
             <span> Who do you think has commented on the most pictures of you?
 				<span class="inner">This graph shows the number of comments per person!</span>
-                <div class="photoCommentsChart">
-                </div>
+                <svg id="photoCommentsChart" width="1000" height="600"
+                     viewBox="0 0 1000 600"
+                     preserveAspectRatio="xMidYMid">
+                </svg>
+                                <h4>Click on a bar to see what they've commented on most recently!</h4>
+
                 <div class="panel-group" id="accordionPhotoComments">
                   <div class="panel panel-default">
 
@@ -2017,7 +2093,10 @@
 
         <span> Who do you think has commented on your statuses the most?
 	      <span class="inner">This graph shows the number of comments per person on all statuses!</span>
-          <div class = "chart4"></div>
+          <svg id="chart4" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
           <script>
               var current_selected_bar;
               var tray_closed = true;
@@ -2025,7 +2104,7 @@
               function makeStatusCommentGraph(){
 
                       // CHART USING D3 AND DIMPLY: PRETTY
-                      var svg = dimple.newSvg(".chart4", 1000, 600);
+                      var svg = dimple.newSvg("#chart4", 1000, 500);
                       var chart = new dimple.chart(svg, facebook_ids_to_status_commented );
                       console.log('made');
                       var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -2038,6 +2117,7 @@
 
                       console.log('draw');
                       var postLikesChart = chart.draw();
+                      //chart.setMargins(60,50,50,100);
                       console.log('done');
                       x.shapes.selectAll("text").attr("transform",
                               function (d) {
@@ -2051,7 +2131,8 @@
                                   return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                               });
 
-                      svg.attr("height", 1000);
+                      svg.attr("height", 600);
+
 
                       while(!postLikesChart){}
                       if (postLikesChart){
@@ -2064,7 +2145,10 @@
 
 	    <span> Who do you think has liked your statuses the most?
 	      <span class="inner">This graph shows the number of likes per person on all statuses!</span>
-          <div class="chart3"></div>
+          <svg id="chart3" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
 
           <script>
 
@@ -2074,7 +2158,7 @@
 
               function makeStatusGraph(){
                   // CHART USING D3 AND DIMPLY: PRETTY
-                  var svg = dimple.newSvg(".chart3", 1000, 600);
+                  var svg = dimple.newSvg("#chart3", 1000, 500);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_likes);
 //                  console.log('made');
@@ -2094,6 +2178,7 @@
 //                   console.log('draw');
                   var postLikesChart = chart.draw();
 //                   console.log('done');
+                  //chart.setMargins(60,50,50,100);
                   x.shapes.selectAll("text").attr("transform",
                           function (d) {
                               return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -2106,7 +2191,7 @@
                               return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                           });
 
-                  svg.attr("height", 1000);
+                  svg.attr("height", 600);
 
                   while(!postLikesChart){}
                   if (postLikesChart){
@@ -2120,24 +2205,47 @@
 
         <span> Who do you think has tagged you the most in statuses?
 	      <span class="inner">This graph shows the number of tags per person in all their statuses!</span>
-          <div class="chart5"></div>
 
-              <div id="splash2" style="visibility:visible"> <br> Loading Your Tag Information!
-                <h1 class="loading">There are a lot of tags, this could take some time!</h1>
-                <ul class="bokeh">
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                </ul>
-              </div>
+                                    <div id="splash2" style="visibility:visible">
+                                      <div id = "temp">
+
+                                      <h1 class="loading"></h1>
+
+                                      <ul class="bokeh">
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                      </ul>
+                                        <h2 >Still Loading! </h2>
+                                        <h4>Feel free to play with other parts of the site while this finishes!</h4>
+                                        </div>
+                                    </div>
+
+          <svg id="chart5"
+               width="0" height="0">
+               <!--viewBox="0 0 1000 600"-->
+               <!--preserveAspectRatio="xMidYMid"-->
+          </svg>
+
 
           <script>
+
               var current_selected_bar;
               var tray_closed = true;
 
               function makeTaggedStatusGraph(){
-                  var svg = dimple.newSvg(".chart5", 1000, 600);
+                  var div = document.getElementById("temp");
+                  div.parentNode.removeChild(div);
+
+
+                  var svg_chart5 = document.getElementById("chart5");
+                  svg_chart5.style.width = "1000";
+                  svg_chart5.style.height = "600";
+                  svg_chart5.style.viewBox = "0 0 1000 600";
+                  svg_chart5.style.preservAspectRation="xMidYMid";
+
+                  var svg = dimple.newSvg("#chart5", 1000, 500);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_status_tagged);
                   console.log('made');
@@ -2154,6 +2262,9 @@
 //                  }
                   var postLikesChart = chart.draw();
                   chart.setMargins(60,50,50,100);
+                  console.log('done');
+                  //chart.setMargins(60,50,50,100);
+
                   x.shapes.selectAll("text").attr("transform",
                           function (d) {
                               return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
@@ -2163,8 +2274,14 @@
 
                   y.titleShape.attr("transform",
                           function (d) {
-                              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-                          })
+
+//                              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+//                          })
+
+                              return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                          });
+
+                  svg.attr("height", 600);
 
                   while(!postLikesChart){}
                   if (postLikesChart){
@@ -2191,8 +2308,12 @@
       </header>
 
       <div class="row demo-tiles" id="show3">
-        <div class="span2"></div>
         <div class="span1"></div>
+        <div class="span2">
+          <div class="forth">
+            <p>4th</p>
+          </div>
+        </div>
         <div class="span2">
           <div class="second">
             <p>2nd</p>
@@ -2208,26 +2329,39 @@
             <p>3rd</p>
           </div>
         </div>
+        <div class="span2">
+          <div class="fifth">
+            <p>5th</p>
+          </div>
+        </div>
       </div>
 <p></p>
       <div class="row demo-tiles" id="show3">
-        <div class="span2"></div>
         <div class="span1"></div>
+        <div class="span2">
+          <a target="_blank" id="ranked-user-url-4" href="">
+            <div class="rank-box">
+              <img id="ranked-user-4" class="rank-box-image" alt="" src= "" >
+              <h4 id="ranked-user-text-4" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-4" class=feature-box-title"></h4>
+            </div>
+          </a>
+        </div>
         <div class="span2">
           <a target="_blank" id="ranked-user-url-2" href="">
             <div class="rank-box">
                 <img id="ranked-user-2" class="rank-box-image" alt="" src= "" >
-                <h4 id="ranked-user-text-2" class="feature-box-title"></h4>
-                <p id="ranked-user-score-2"></p>
+              <h4 id="ranked-user-text-2" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-2" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
         <div class="span2">
           <a target="_blank" id="ranked-user-url-1" href="">
             <div class="rank-box">
-              <img id="ranked-user-1" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-1" class="feature-box-title"></h4>
-              <p id="ranked-user-score-1"></p>
+              <img id="ranked-user-1" class="rank-box-image" src= "" >
+              <h4 id="ranked-user-text-1" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-1" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
@@ -2235,8 +2369,17 @@
           <a target="_blank" id="ranked-user-url-3" href="">
             <div class="rank-box">
               <img id="ranked-user-3" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-3" class="feature-box-title"></h4>
-              <p id="ranked-user-score-3"></p>
+              <h4 id="ranked-user-text-3" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-3" class=feature-box-title"></h4>
+            </div>
+          </a>
+        </div>
+        <div class="span2">
+          <a target="_blank" id="ranked-user-url-5" href="">
+            <div class="rank-box">
+              <img id="ranked-user-5" class="rank-box-image" alt="" src= "" >
+              <h4 id="ranked-user-text-5" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-5" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
@@ -2370,7 +2513,7 @@
             // Get profile pictures
             var name1 = stalker_rankings[0].key;
             jQuery('#ranked-user-text-1').text(name1);
-            var score1 = "Score: " + stalker_rankings[0].value;
+            var score1 = "Stalker Score: " + stalker_rankings[0].value;
             jQuery('#ranked-user-score-1').text(score1);
 
             console.log(name1);
@@ -2386,7 +2529,7 @@
 
             var name2 = stalker_rankings[1].key;
             jQuery('#ranked-user-text-2').text(name2);
-            var score2 = "Score: " + stalker_rankings[1].value;
+            var score2 = "Stalker Score: " + stalker_rankings[1].value;
             jQuery('#ranked-user-score-2').text(score2);
 
             console.log(name2);
@@ -2402,7 +2545,7 @@
 
             var name3 = stalker_rankings[2].key;
             jQuery('#ranked-user-text-3').text(name3);
-            var score3 = "Score: " + stalker_rankings[2].value;
+            var score3 = "Stalker Score: " + stalker_rankings[2].value;
             jQuery('#ranked-user-score-3').text(score3);
 
             console.log(name3);
@@ -2415,6 +2558,39 @@
                 var url = "http://www.facebook.com/" + friend3.data[0].uid;
                 document.getElementById('ranked-user-url-3').href = url;
             });
+
+            var name4 = stalker_rankings[3].key;
+            jQuery('#ranked-user-text-4').text(name4);
+            var score4 = "Stalker Score: " + stalker_rankings[3].value;
+            jQuery('#ranked-user-score-4').text(score4);
+
+            console.log(name4);
+            var query4 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name4 + "%22";
+
+            FB.api(query4 , function(friend4) {
+                // the response is different:
+                console.log(friend4);
+                document.getElementById('ranked-user-4').src = friend4.data[0].pic_big;
+                var url = "http://www.facebook.com/" + friend4.data[0].uid;
+                document.getElementById('ranked-user-url-4').href = url;
+            });
+
+            var name5 = stalker_rankings[4].key;
+            jQuery('#ranked-user-text-5').text(name5);
+            var score5 = "Stalker Score: " + stalker_rankings[4].value;
+            jQuery('#ranked-user-score-5').text(score5);
+
+            console.log(name5);
+            var query5 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name5 + "%22";
+
+            FB.api(query5 , function(friend5) {
+                // the response is different:
+                console.log(friend5);
+                document.getElementById('ranked-user-5').src = friend5.data[0].pic_big;
+                var url = "http://www.facebook.com/" + friend5.data[0].uid;
+                document.getElementById('ranked-user-url-5').href = url;
+            });
+
 
         }
 
