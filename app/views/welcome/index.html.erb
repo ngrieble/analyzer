@@ -977,29 +977,38 @@
         }
     }
 
-    function getLikes(response){
+    function getLikes(response, post_message, post_id){
         var post = response;
+
+        a = typeof post_message !== 'undefined' ? post_id : -1;
+        b = typeof post_id !== 'undefined' ? post_id : -1;
+
 //        console.log('get likes response');
-        //console.log(response);
+//        console.log(response);
         if('likes' in post){
             for( var j = 0; j < post.likes.data.length; j++){
                 if('name' in post.likes.data[j]){
                     var user_name = post.likes.data[j].name;
                     if( user_name in user_to_num_status_liked){
                         user_to_num_status_liked[post.likes.data[j].name]++;
-                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+//                        facebook_ids_to_liked_status[user_name].push(post.message);
+//                        facebook_ids_to_liked_status_urls[user_name].push(post.id);
                     }else{
                         user_to_num_status_liked[post.likes.data[j].name] = 1;
-                        //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
-                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+//                        facebook_ids_to_liked_status[user_name] = [];
+//                        facebook_ids_to_liked_status_urls[user_name] = [];
+//                        facebook_ids_to_liked_status[user_name].push(post.message);
+//                        facebook_ids_to_liked_status_urls[user_name].push(post.id);
                     }
                 }
             }
         }else if('data' in post){
+            console.log('paged')
+            console.log(temp_id_likes)
+            console.log(temp_message_likes)
             for( var j = 0; j < post.data.length; j++){
+//                console.log('paged likes');
+//                console.log(post);
                 if('name' in post.data[j]){
                     var user_name = post.data[j].name;
                     if( user_name in user_to_num_status_liked){
@@ -1010,11 +1019,15 @@
                 }
             }
         }
-
         if('likes' in post){
             if ('paging' in post.likes && 'next' in post.likes.paging && post.likes.paging.next != 'undefined' ){
 //                console.log('paging likes');
-                FB.api(response.likes.paging.next,max_params , getLikes);
+                temp_message_likes = post.message;
+                temp_id_likes = post.id;
+                console.log('paging likes')
+                console.log(temp_id_likes)
+                console.log(temp_message_likes)
+                FB.api(response.likes.paging.next, max_params , getLikes);
             }
         }else if('data' in post){
             if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
@@ -1026,7 +1039,6 @@
     }
 
     function getAllstatus(response){
-
         console.log(response);
         all_status_ids = response.data;
         // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
@@ -1247,6 +1259,10 @@
         console.log("sorted_values status");
         console.log(status_sorted_values);
         console.log(status_commented_sorted_values);
+
+        console.log('FB likes statuses')
+        console.log(facebook_ids_to_liked_status);
+        console.log(facebook_ids_to_liked_status_urls);
 
         for (var x=0; x<20; x++){
                 facebook_ids_to_likes[x] = { "Facebook ID":status_sorted_keys[x], "Number of Posts Liked":status_sorted_values[x] };
@@ -2142,6 +2158,7 @@
 
         <span> Who do you think has commented on your statuses the most?
 	      <span class="inner">This graph shows the number of comments per person on all statuses!</span>
+
           <svg id="chart4" width="1000" height="600"
                viewBox="0 0 1000 600"
                preserveAspectRatio="xMidYMid">
@@ -2243,7 +2260,6 @@
 
                   while(!postLikesChart){}
                   if (postLikesChart){
-                      get_stalker_rankings();
                       showButtons();
                   }
               }
@@ -2286,6 +2302,7 @@
                   var div = document.getElementById("temp");
                   div.parentNode.removeChild(div);
 
+                  get_stalker_rankings();
 
                   var svg_chart5 = document.getElementById("chart5");
                   svg_chart5.style.width = "1000";
@@ -2355,6 +2372,25 @@
         <h3> Stalker Rankings <small class="visible-desktop">// Stalker Scores based on all the graphs</small> </h3>
       </header>
 
+
+          <div id="splash3" style="visibility:visible">
+            <div id = "temp2">
+              <br><br><br><br><br>
+              <h1 class="loading"></h1>
+              <ul class="bokeh">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+              </ul>
+                <h2 class = "text-center" >Still Loading! </h2>
+                <h4 class = "text-center">Once the graphs finish loading your stalker rankings will appear here!!</h4>
+            </div>
+          </div>
+
+
+
+ <div id = "all rankings" style = "display:none">
       <div class="row demo-tiles" id="show3">
         <div class="span1"></div>
         <div class="span2">
@@ -2432,11 +2468,18 @@
           </a>
         </div>
       </div>
+ </div>
 
       <script>
 
         function get_stalker_rankings(){
          // Burger
+
+            var div = document.getElementById("temp2");
+            div.parentNode.removeChild(div);
+
+            var ranking_div = document.getElementById("all rankings");
+            ranking_div.style.display = '';
 
             // Photo Tags rankings: sorted_keys
             // Photo Likes rankings: photo_likes_sorted_ids
@@ -2490,6 +2533,19 @@
                 }
                 else{
                     stalker_rankings[status_sorted_keys[i]] = score;
+                }
+                score = score - 1;
+            }
+
+            // Add Status Like Scores
+            score = 20;
+            for(var i=0;i<20;i++){
+
+                if (status_tagged_sorted_keys[i] in stalker_rankings) {
+                    stalker_rankings[status_tagged_sorted_keys[i]] += score;
+                }
+                else{
+                    stalker_rankings[status_tagged_sorted_keys[i]] = score;
                 }
                 score = score - 1;
             }
