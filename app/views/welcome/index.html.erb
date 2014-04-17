@@ -205,50 +205,7 @@
         });
 
         FB.Event.subscribe('auth.logout', function(response) {
-            console.log("logout_event");
-            hideButtons();
-            document.getElementById('chart2').innerHTML = "";
-            graphs_made = 0;
-            first_graph_made = false;
-            sorted_values = [];
-            sorted_keys = [];
-            user_to_num_photos_uploaded = {};
-            facebook_ids_to_tags = [];
-            facebook_ids_to_tagged_photos = {};
-            facebook_ids_to_tagged_photo_urls = {};
-
-            status_sorted_values = [];
-            status_sorted_keys = [];
-            user_to_num_status_liked ={};
-            facebook_ids_to_likes = [];
-            facebook_ids_to_liked_status = {};
-            facebook_ids_to_liked_status_urls = {};
-            all_status_ids;
-
-            status_commented_sorted_values = [];
-            status_commented_sorted_keys = [];
-            user_to_num_status_commented ={};
-            facebook_ids_to_status_commented = [];
-            facebook_ids_to_commented_status = {};
-            facebook_ids_to_commented_status_urls = {};
-
-            status_tagged_sorted_values = [];
-            status_tagged_sorted_keys = [];
-            user_to_num_status_taggeded ={};
-            facebook_ids_to_status_tagged = [];
-            facebook_ids_to_tagged_status_urls = {};
-
-            stalker_rankings = {};
-            sorted_stalker_rankings_keys = [];
-            sorted_stalker_rankings_values = [];
-
-            jQuery("#chart2").empty();
-            jQuery("#photoLikesChart").empty();
-            jQuery("#photoCommentsChart").empty();
-            jQuery("chart3").empty();
-            jQuery("chart4").empty();
-            jQuery("chart5").empty();
-
+            location.reload(true);
         });
     };
 
