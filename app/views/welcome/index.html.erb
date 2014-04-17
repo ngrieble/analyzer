@@ -142,7 +142,7 @@
         // will be handled.
         FB.Event.subscribe('auth.authResponseChange', function(response) {
             if(!response || response.error){
-                alert("an error occured, please refresh your page")
+                alert("An error from Facebook occured. Please refresh your page")
             }else{
                 // Here we specify what we do with the response anytime this event occurs.
                 if (response.status === 'connected') {
@@ -150,7 +150,7 @@
                     // login status of the person. In this case, we're handling the situation where they
                     // have logged in to the app.
                     testAPI();
-                    console.log('Status: connected');
+//                    console.log('Status: connected');
 
                     if(first_graph_made == false){
                         document.getElementById('splash').style.visibility = 'visible';
@@ -172,10 +172,10 @@
                     // (2) it is a bad experience to be continually prompted to login upon page load.
                     hideButtons();
                     FB.login(function(response) {
-                        console.log('Status: not authorized');
-                        console.log(response);
+//                        console.log('Status: not authorized');
+//                        console.log(response);
                         if(!response || response.error){
-                            alert("an error occured, please refresh your page")
+                            alert("An error from Facebook occured. Please refresh your page")
                         }else{
                             if(response.status === 'connected'){
                                 if(first_graph_made == false){
@@ -196,10 +196,10 @@
                     // The same caveats as above apply to the FB.login() call here.
                     hideButtons();
                     FB.login(function(response) {
-                        console.log('Status: not logged in');
-                        console.log(response);
+//                        console.log('Status: not logged in');
+//                        console.log(response);
                         if(!response || response.error){
-                            alert("an error occured, please refresh your page")
+                            alert("An error from Facebook occured. Please refresh your page")
                         }else{
                             if(response.status === 'connected'){
                                 if(first_graph_made == false){
@@ -269,10 +269,10 @@
     // Here we run a very simple test of the Graph API after login is successful.
     // This testAPI() function is only called in those cases.
     function testAPI() {
-        console.log('Welcome!  Fetching your information.... ');
+//        console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
-            console.log('Good to see you, ' + response.name + '.');
-            console.log(response);
+//            console.log('Good to see you, ' + response.name + '.');
+//            console.log(response);
             //console.log(response);
             user_id = response.id;
 
@@ -281,7 +281,7 @@
 
     function getPhotoLikesComments(photoResponse,callback) {
         if(!photoResponse || photoResponse.error){
-            alert("an error occured, please refresh your page")
+            alert("An error from Facebook occured. Please refresh your page")
         }else{
 
             var user_to_photoLikes = [];
@@ -501,10 +501,10 @@
 
 
                 if(String(current_selected_bar) == String(e.seriesValue)){
-                    console.log('hi1');
+//                    console.log('hi1');
                     // Clicked same bar, close or open tray
                     if (jQuery('#collapsePhotoLikes').hasClass('in')) {
-                        console.log('hi2');
+//                        console.log('hi2');
                         // tray is open, close tray
                         jQuery('#collapsePhotoLikes').collapse('hide');
                         //Unhighlight the bar
@@ -521,7 +521,7 @@
                         }
                     }
                     else{
-                        console.log('hi3');
+//                        console.log('hi3');
                         // tray is closed, open tray
                         jQuery('#collapsePhotoLikes').collapse('show');
                         //Highlight the bar
@@ -541,7 +541,7 @@
                     }
                 }
                 else if(current_selected_bar == null){
-                    console.log('hi4'+ e.xValue);
+//                    console.log('hi4'+ e.xValue);
                     //Store the original tag name and colors of the selectedbar
                     previous_selected_x = e.xValue;
                     previous_colors = chart.getColor(e.xValue);
@@ -564,7 +564,7 @@
     //                                togglePhotoTray1();
                 }
                 else if(String(current_selected_bar) != String(e.seriesValue)){
-                    console.log('hi5');
+//                    console.log('hi5');
                     //Reset old bar to non-highlight
                     if(previous_selected_x)
                         chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
@@ -628,7 +628,7 @@
                         return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
                     });
             x.shapes.selectAll("text").style("text-anchor", "end");
-            console.log('x.titleShape in photo likes graph removed');
+//            console.log('x.titleShape in photo likes graph removed');
             x.titleShape.remove();
 
             y.titleShape.attr("transform",
@@ -914,7 +914,7 @@
 
     function getStatusComments(response){
         if(!response || response.error){
-            alert("an error occured, please refresh your page")
+            alert("An error from Facebook occured. Please refresh your page")
         }else{
             var post = response;
     //        console.log('get status commment response');
@@ -973,7 +973,7 @@
 
     function getLikes(response){
         if(!response || response.error){
-            alert("an error occured, please refresh your page")
+            alert("An error from Facebook occured. Please refresh your page")
         }else{
             var post = response;
 //        console.log('get likes response');
@@ -996,9 +996,9 @@
                     }
                 }
             }else if('data' in post){
-                console.log('paged')
-                console.log(temp_id_likes)
-                console.log(temp_message_likes)
+//                console.log('paged')
+//                console.log(temp_id_likes)
+//                console.log(temp_message_likes)
                 for( var j = 0; j < post.data.length; j++){
 //                console.log('paged likes');
 //                console.log(post);
@@ -1017,9 +1017,9 @@
 //                console.log('paging likes');
                     temp_message_likes = post.message;
                     temp_id_likes = post.id;
-                    console.log('paging likes')
-                    console.log(temp_id_likes)
-                    console.log(temp_message_likes)
+//                    console.log('paging likes')
+//                    console.log(temp_id_likes)
+//                    console.log(temp_message_likes)
                     FB.api(response.likes.paging.next, max_params , getLikes);
                 }
             }else if('data' in post){
@@ -1034,9 +1034,9 @@
 
     function getAllstatus(response){
         if(!response || response.error){
-            alert("an error occured, please refresh your page")
+            alert("An error from Facebook occured. Please refresh your page")
         }else{
-            console.log(response);
+//            console.log(response);
             all_status_ids = response.data;
             // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
             for (var i=0; i< all_status_ids.length; i++){
@@ -1074,11 +1074,11 @@
 
     function getAllStatusTags(response){
         if(!response || response.error){
-            alert("an error occured, please refresh your page")
+            alert("An error from Facebook occured. Please refresh your page")
         }else{
             var all_tags = response.data;
-            console.log('all_tags');
-            console.log(response);
+//            console.log('all_tags');
+//            console.log(response);
 
             for(var i = 0; i < all_tags.length; i++){
 
@@ -1095,15 +1095,15 @@
             if('paging' in response && response.paging.next != 'undefined'){
                 FB.api(response.paging.next,max_params ,getAllStatusTags);
             }else{
-                console.log('finished');
+//                console.log('finished');
                 finishTaggedStatusGraph(makeTaggedStatusGraph);
             }
         }
     }
 
     function getUserTaggedInStatuses(callback){
-        console.log('getting tagged statuses');
-        console.log('/me/tagged');
+//        console.log('getting tagged statuses');
+//        console.log('/me/tagged');
 
         FB.api('me/tagged?fields=id,from&limit=1000&offset=0',max_params, getAllStatusTags);
 //        FB.api('me/tagged?fields=id,from&limit=1000&offset=0', function(response){
@@ -1172,24 +1172,24 @@
         user_to_num_status_taggeded = keysbyValue(user_to_num_status_taggeded);
 
 
-        console.log("user to num status tagged");
-        console.log(user_to_num_status_taggeded);
+//        console.log("user to num status tagged");
+//        console.log(user_to_num_status_taggeded);
 
         for (var x=0; x<20; x++){
             facebook_ids_to_status_tagged[x] = { "Facebook ID":status_tagged_sorted_keys[x], "Number of Statuses Tagged":status_tagged_sorted_values[x] };
         }
 
 
-        console.log('facebook_ids_to_status_tagged');
-        console.log(facebook_ids_to_status_tagged);
+//        console.log('facebook_ids_to_status_tagged');
+//        console.log(facebook_ids_to_status_tagged);
 
-        console.log('calling make tagged Graph');
+//        console.log('calling make tagged Graph');
         callback();
     }
 
     function finishStatusGraph(callback1, callback2){
 
-        console.log("in finishStatusGraph");
+//        console.log("in finishStatusGraph");
         //console.log(user_to_num_status_liked);
         //console.log(user_to_num_status_commented);
         //sort it now
@@ -1250,33 +1250,33 @@
         status_commented_sorted_values = getSortedValues(user_to_num_status_commented);
         user_to_num_status_commented = keysbyValue(user_to_num_status_commented);
 
-        console.log("user to num status liked");
-        console.log(user_to_num_status_liked);
-        console.log(user_to_num_status_commented);
+//        console.log("user to num status liked");
+//        console.log(user_to_num_status_liked);
+//        console.log(user_to_num_status_commented);
 
-        console.log("sorted_keys status ");
-        console.log(status_sorted_keys);
-        console.log(status_commented_sorted_keys);
+//        console.log("sorted_keys status ");
+//        console.log(status_sorted_keys);
+//        console.log(status_commented_sorted_keys);
 
-        console.log("sorted_values status");
-        console.log(status_sorted_values);
-        console.log(status_commented_sorted_values);
+//        console.log("sorted_values status");
+//        console.log(status_sorted_values);
+//        console.log(status_commented_sorted_values);
 
-        console.log('FB likes statuses')
-        console.log(facebook_ids_to_liked_status);
-        console.log(facebook_ids_to_liked_status_urls);
+//        console.log('FB likes statuses')
+//        console.log(facebook_ids_to_liked_status);
+//        console.log(facebook_ids_to_liked_status_urls);
 
         for (var x=0; x<20; x++){
                 facebook_ids_to_likes[x] = { "Facebook ID":status_sorted_keys[x], "Number of Posts Liked":status_sorted_values[x] };
                 facebook_ids_to_status_commented[x] = { "Facebook ID":status_commented_sorted_keys[x], "Number of Posts Commented":status_commented_sorted_values[x] };
         }
 
-        console.log("facebook_ids_to_likes");
-        console.log(facebook_ids_to_likes);
-        console.log('facebook_ids_commented_status');
-        console.log(facebook_ids_to_status_commented);
+//        console.log("facebook_ids_to_likes");
+//        console.log(facebook_ids_to_likes);
+//        console.log('facebook_ids_commented_status');
+//        console.log(facebook_ids_to_status_commented);
 
-        console.log('calling make status Graph');
+//        console.log('calling make status Graph');
         callback1();
         callback2();
 
@@ -1286,7 +1286,7 @@
 
     // Grab all users' photos
     function getUsersPhotos(callback) {
-        console.log('Fetching photos.... ');
+//        console.log('Fetching photos.... ');
 
 //        var params = {limit:500};
         var params = {since:"01-01-2010", limit:5000};
@@ -1303,7 +1303,7 @@
 //            console.log("photoResponse");
 //            console.log(photoResponse);
             if(!photoResponse || photoResponse.error){
-                alert("an error occured, please refresh your page")
+                alert("An error from Facebook occured. Please refresh your page")
             }else{
                 var all_data;
                 all_data = photoResponse.data;
@@ -2187,7 +2187,7 @@
                       // CHART USING D3 AND DIMPLY: PRETTY
                       var svg = dimple.newSvg("#chart4", 1000, 500);
                       var chart = new dimple.chart(svg, facebook_ids_to_status_commented );
-                      console.log('made');
+//                      console.log('made');
                       var x = chart.addCategoryAxis("x", "Facebook ID");
 ////                        x.tickFormat = "%20.10s";
                       var y = chart.addMeasureAxis("y", "Number of Posts Commented");
@@ -2196,10 +2196,10 @@
 
                       //click event handler code here
 
-                      console.log('draw');
+//                      console.log('draw');
                       var postLikesChart = chart.draw();
                       //chart.setMargins(60,50,50,100);
-                      console.log('done');
+//                      console.log('done');
                       x.shapes.selectAll("text").attr("transform",
                               function (d) {
                                   return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -2328,7 +2328,7 @@
                   var svg = dimple.newSvg("#chart5", 1000, 500);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_status_tagged);
-                  console.log('made');
+//                  console.log('made');
                   var x = chart.addCategoryAxis("x", "Facebook ID");
 ////                        x.tickFormat = "%20.10s";
                   var y = chart.addMeasureAxis("y", "Number of Statuses Tagged");
@@ -2342,7 +2342,7 @@
 //                  }
                   var postLikesChart = chart.draw();
                   chart.setMargins(60,50,50,100);
-                  console.log('done');
+//                  console.log('done');
                   //chart.setMargins(60,50,50,100);
 
                   x.shapes.selectAll("text").attr("transform",
@@ -2611,8 +2611,8 @@
                 score = score - 1;
             }
 
-            console.log("stalker_rankings");
-            console.log(stalker_rankings)
+//            console.log("stalker_rankings");
+//            console.log(stalker_rankings)
 
             function keysbyValue(O){
                 var A= [];
@@ -2669,8 +2669,8 @@
 
             stalker_rankings = keysbyValue(stalker_rankings);
 
-            console.log("stalker_rankings sorted");
-            console.log(stalker_rankings);
+//            console.log("stalker_rankings sorted");
+//            console.log(stalker_rankings);
 
             // Get profile pictures
             var name1 = stalker_rankings[0].key;
@@ -2678,12 +2678,12 @@
             var score1 = "Stalker Score: " + stalker_rankings[0].value;
             jQuery('#ranked-user-score-1').text(score1);
 
-            console.log(name1);
+//            console.log(name1);
             var query1 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name1 + "%22";
 
             FB.api(query1 , function(friend1) {
                 // the response is different:
-                console.log(friend1);
+//                console.log(friend1);
                 document.getElementById('ranked-user-1').src = friend1.data[0].pic_big;
                 var url = "http://www.facebook.com/" + friend1.data[0].uid;
                 document.getElementById('ranked-user-url-1').href = url;
@@ -2694,12 +2694,12 @@
             var score2 = "Stalker Score: " + stalker_rankings[1].value;
             jQuery('#ranked-user-score-2').text(score2);
 
-            console.log(name2);
+//            console.log(name2);
             var query2 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name2 + "%22";
 
             FB.api(query2 , function(friend2) {
                 // the response is different:
-                console.log(friend2);
+//                console.log(friend2);
                 document.getElementById('ranked-user-2').src = friend2.data[0].pic_big;
                 var url = "http://www.facebook.com/" + friend2.data[0].uid;
                 document.getElementById('ranked-user-url-2').href = url;
@@ -2710,12 +2710,12 @@
             var score3 = "Stalker Score: " + stalker_rankings[2].value;
             jQuery('#ranked-user-score-3').text(score3);
 
-            console.log(name3);
+//            console.log(name3);
             var query3 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name3 + "%22";
 
             FB.api(query3 , function(friend3) {
                 // the response is different:
-                console.log(friend3);
+//                photoResponseg(friend3);
                 document.getElementById('ranked-user-3').src = friend3.data[0].pic_big;
                 var url = "http://www.facebook.com/" + friend3.data[0].uid;
                 document.getElementById('ranked-user-url-3').href = url;
@@ -2726,12 +2726,12 @@
             var score4 = "Stalker Score: " + stalker_rankings[3].value;
             jQuery('#ranked-user-score-4').text(score4);
 
-            console.log(name4);
+//            console.log(name4);
             var query4 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name4 + "%22";
 
             FB.api(query4 , function(friend4) {
                 // the response is different:
-                console.log(friend4);
+//                console.log(friend4);
                 document.getElementById('ranked-user-4').src = friend4.data[0].pic_big;
                 var url = "http://www.facebook.com/" + friend4.data[0].uid;
                 document.getElementById('ranked-user-url-4').href = url;
@@ -2742,12 +2742,12 @@
             var score5 = "Stalker Score: " + stalker_rankings[4].value;
             jQuery('#ranked-user-score-5').text(score5);
 
-            console.log(name5);
+//            console.log(name5);
             var query5 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name5 + "%22";
 
             FB.api(query5 , function(friend5) {
                 // the response is different:
-                console.log(friend5);
+//                console.log(friend5);
                 document.getElementById('ranked-user-5').src = friend5.data[0].pic_big;
                 var url = "http://www.facebook.com/" + friend5.data[0].uid;
                 document.getElementById('ranked-user-url-5').href = url;
