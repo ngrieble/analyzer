@@ -143,7 +143,16 @@
                 // (2) it is a bad experience to be continually prompted to login upon page load.
                 hideButtons();
                 FB.login(function(response) {
-                    // handle the response
+                    if(response.status === 'connected'){
+                        if(first_graph_made == false){
+                            document.getElementById('splash').style.visibility = 'visible';
+                            //call funcs to make graphs here
+                            getUsersPhotos(makeGraph);
+                            //getUserTaggedInStatuses(makeGraph);
+                        }
+                        first_graph_made = true;
+                    }
+                    else{}
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             } else {
                 // In this case, the person is not logged into Facebook, so we call the login()
@@ -153,11 +162,29 @@
                 // The same caveats as above apply to the FB.login() call here.
                 hideButtons();
                 FB.login(function(response) {
-                    // handle the response
+                    if(response.status === 'connected'){
+                        if(first_graph_made == false){
+                            document.getElementById('splash').style.visibility = 'visible';
+                            //call funcs to make graphs here
+                            getUsersPhotos(makeGraph);
+                            //getUserTaggedInStatuses(makeGraph);
+                        }
+                        first_graph_made = true;
+                    }
+                    else{}
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             }
         });
+
+        FB.Event.subscribe('auth.logout', function(response) {
+            hideButtons();
+            console.log("logout_event");
+            console.log(response.status);
+            console.log(response);
+            first_graph_made = false;
+        });
     };
+
 
     function refreshScroll(){
         jQuery('[data-spy="scroll"]').each(function () {
