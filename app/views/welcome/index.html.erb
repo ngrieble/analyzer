@@ -80,6 +80,7 @@
 
 <script>
 
+/*************************GLOBALS********************************/
     var first_graph_made = false;
     var graphs_made = 0;
 
@@ -104,6 +105,24 @@
     var facebook_ids_to_status_tagged = [];
     var facebook_ids_to_tagged_status_urls = {};
 
+    //for first graph, photos tagged in by
+    var sorted_values = [];
+    var sorted_keys = [];
+    var user_to_num_photos_uploaded = {};
+    var facebook_ids_to_tags = [];
+    var facebook_ids_to_tagged_photos = {};
+    var facebook_ids_to_tagged_photo_urls = {};
+
+    //for status you uploaded, like count
+    var photo_likes_sorted_ids;
+    var photo_comments_sorted_ids;
+
+    var stalker_rankings = {};
+    var sorted_stalker_rankings_keys = [];
+    var sorted_stalker_rankings_values = [];
+
+/**********************END OF GLOBALS*****************************/
+
     window.fbAsyncInit = function() {
         FB.init({
             appId      : '682201798512608',
@@ -124,6 +143,7 @@
                 // login status of the person. In this case, we're handling the situation where they
                 // have logged in to the app.
                 testAPI();
+                console.log('Status: connected');
 
                 if(first_graph_made == false){
                     document.getElementById('splash').style.visibility = 'visible';
@@ -145,6 +165,8 @@
                 // (2) it is a bad experience to be continually prompted to login upon page load.
                 hideButtons();
                 FB.login(function(response) {
+                    console.log('Status: not authorized');
+                    console.log(response);
                     if(response.status === 'connected'){
                         if(first_graph_made == false){
                             document.getElementById('splash').style.visibility = 'visible';
@@ -154,7 +176,6 @@
                         }
                         first_graph_made = true;
                     }
-                    else{}
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             } else {
                 // In this case, the person is not logged into Facebook, so we call the login()
@@ -164,6 +185,8 @@
                 // The same caveats as above apply to the FB.login() call here.
                 hideButtons();
                 FB.login(function(response) {
+                    console.log('Status: not logged in');
+                    console.log(response);
                     if(response.status === 'connected'){
                         if(first_graph_made == false){
                             document.getElementById('splash').style.visibility = 'visible';
@@ -173,17 +196,46 @@
                         }
                         first_graph_made = true;
                     }
-                    else{}
                 }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             }
         });
 
         FB.Event.subscribe('auth.logout', function(response) {
             hideButtons();
+            graphs_made = 0;
             console.log("logout_event");
-            console.log(response.status);
-            console.log(response);
             first_graph_made = false;
+            sorted_values = [];
+            sorted_keys = [];
+            user_to_num_photos_uploaded = {};
+            facebook_ids_to_tags = [];
+            facebook_ids_to_tagged_photos = {};
+            facebook_ids_to_tagged_photo_urls = {};
+
+            status_sorted_values = [];
+            status_sorted_keys = [];
+            user_to_num_status_liked ={};
+            facebook_ids_to_likes = [];
+            facebook_ids_to_liked_status = {};
+            facebook_ids_to_liked_status_urls = {};
+            all_status_ids;
+
+            status_commented_sorted_values = [];
+            status_commented_sorted_keys = [];
+            user_to_num_status_commented ={};
+            facebook_ids_to_status_commented = [];
+            facebook_ids_to_commented_status = {};
+            facebook_ids_to_commented_status_urls = {};
+
+            status_tagged_sorted_values = [];
+            status_tagged_sorted_keys = [];
+            user_to_num_status_taggeded ={};
+            facebook_ids_to_status_tagged = [];
+            facebook_ids_to_tagged_status_urls = {};
+
+            stalker_rankings = {};
+            sorted_stalker_rankings_keys = [];
+            sorted_stalker_rankings_values = [];
         });
     };
 
@@ -195,7 +247,7 @@
     }
     function showButtons(){
         graphs_made = graphs_made + 1;
-        console.log('*****'+graphs_made+'****');
+        console.log('graphs made = *****'+graphs_made+'****');
         if(graphs_made == 5)
         {
             document.getElementById('mainbody').style.display = '';
@@ -244,19 +296,6 @@
 
         }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
     }
-
-    //for first graph, photos tagged in by
-    var sorted_values = [];
-    var sorted_keys = [];
-    var user_to_num_photos_uploaded = {};
-    var facebook_ids_to_tags = [];
-    var facebook_ids_to_tagged_photos = {};
-    var facebook_ids_to_tagged_photo_urls = {};
-
-    //for status you uploaded, like count
-
-    var photo_likes_sorted_ids;
-    var photo_comments_sorted_ids;
 
     function getPhotoLikesComments(photoResponse,callback) {
 
@@ -2386,9 +2425,6 @@
       </div>
 
       <script>
-        var stalker_rankings = {};
-        var sorted_stalker_rankings_keys = [];
-        var sorted_stalker_rankings_values = [];
 
         function get_stalker_rankings(){
          // Burger
