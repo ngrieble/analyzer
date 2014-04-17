@@ -509,11 +509,6 @@
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
             svg.attr("height", 550);
 
-            jQuery('html, body').animate({
-                scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
-            }, 2500);
-            //refreshScroll();
-
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
                 if(like_photos[e.seriesValue].length > i){
@@ -563,6 +558,10 @@
                                     .style("font-weight", "bold")
                         }
                     });
+                    //Scroll to accordian
+                    jQuery('html, body').animate({
+                        scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+                    }, {duration: 375}, 2500);
                 }
             }
             else if(current_selected_bar == null){
@@ -580,6 +579,10 @@
                                 .style("font-weight", "bold")
                     }
                 });
+                //Scroll to accordian
+                jQuery('html, body').animate({
+                    scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+                }, {duration: 375}, 2500);
                 // no bar selected yet, open tray
                 jQuery('#collapsePhotoLikes').collapse('show');
 //                                togglePhotoTray1();
@@ -608,6 +611,10 @@
                 previous_colors = chart.getColor(e.xValue);
                 //Highlight new bar
                 chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                //Scroll to accordian
+                jQuery('html, body').animate({
+                    scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+                }, {duration: 375}, 2500);
                 // Selecting new bar
                 if (jQuery('#collapsePhotoLikes').hasClass('in')) {
                     // tray is open, do not change tray
@@ -698,11 +705,6 @@
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
             svg2.attr("height", 550);
 
-            jQuery('html, body').animate({
-                scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
-            }, 2500);
-            //refreshScroll();
-
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
                 if(comment_photos[e.seriesValue].length > i){
@@ -749,6 +751,10 @@
                                     .style("font-weight", "bold")
                         }
                     });
+                    //Scroll to accordion
+                    jQuery('html, body').animate({
+                        scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+                    }, {duration: 375}, 2500);
                 }
             }
             else if(current_selected_bar2 == null){
@@ -765,6 +771,10 @@
                                 .style("font-weight", "bold")
                     }
                 });
+                //Scroll to accordion
+                jQuery('html, body').animate({
+                    scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+                }, {duration: 375}, 2500);
                 // no bar selected yet, open tray
                 jQuery('#collapsePhotoComments').collapse('show');
 //                                togglePhotoTray1();
@@ -792,6 +802,10 @@
                 previous_colors2 = chart2.getColor(e.xValue);
                 //Highlight new bar
                 chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
+                //Scroll to accordion
+                jQuery('html, body').animate({
+                    scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+                }, {duration: 375}, 2500);
                 // Selecting new bar
                 if (jQuery('#collapsePhotoComments').hasClass('in')) {
                     // tray is open, do not change tray
@@ -1701,11 +1715,6 @@
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
                         s.addEventHandler("click", function (e) {
 
-
-                            jQuery('html, body').animate({
-                                scrollTop: jQuery("#collapseOne").offset().top - 200
-                            }, 2500);
-                            //refreshScroll();
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
                             svg.attr("height", 550);
 
@@ -1805,6 +1814,10 @@
                                                     .style("font-weight", "bold")
                                         }
                                     });
+                                    //Scroll to accordian
+                                    jQuery('html, body').animate({
+                                        scrollTop: jQuery("#collapseOne").offset().top - 200
+                                    }, {duration: 375}, 2500);
                                 }
                             }
                             else if(current_selected_bar == null){
@@ -1823,7 +1836,10 @@
                                 });
                                 // no bar selected yet, open tray
                                 jQuery('#collapseOne').collapse('show');
-//                                togglePhotoTray1();
+//                              //Scroll to accordian
+                                jQuery('html, body').animate({
+                                    scrollTop: jQuery("#collapseOne").offset().top - 200
+                                }, {duration: 375}, 2500);
                             }
                             else if(String(current_selected_bar) != String(e.seriesValue)){
                                 //Reset old bar to non-highlight
@@ -1848,6 +1864,10 @@
                                 previous_colors = chart.getColor(e.xValue);
                                 //Highlight new bar
                                 chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                                //Scroll to accordian
+                                jQuery('html, body').animate({
+                                    scrollTop: jQuery("#collapseOne").offset().top - 200
+                                }, {duration: 375}, 2500);
                                 // Selecting new bar
                                 if (jQuery('#collapseOne').hasClass('in')) {
                                     // tray is open, do not change tray
