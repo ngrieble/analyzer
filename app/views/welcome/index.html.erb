@@ -561,7 +561,7 @@
                     //Scroll to accordian
                     jQuery('html, body').animate({
                         scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
-                    }, 2500);
+                    }, {duration: 375}, 2500);
                 }
             }
             else if(current_selected_bar == null){
@@ -582,7 +582,7 @@
                 //Scroll to accordian
                 jQuery('html, body').animate({
                     scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
-                }, 2500);
+                }, {duration: 375}, 2500);
                 // no bar selected yet, open tray
                 jQuery('#collapsePhotoLikes').collapse('show');
 //                                togglePhotoTray1();
@@ -614,7 +614,7 @@
                 //Scroll to accordian
                 jQuery('html, body').animate({
                     scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
-                }, 2500);
+                }, {duration: 375}, 2500);
                 // Selecting new bar
                 if (jQuery('#collapsePhotoLikes').hasClass('in')) {
                     // tray is open, do not change tray
@@ -754,7 +754,7 @@
                     //Scroll to accordion
                     jQuery('html, body').animate({
                         scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
-                    }, 2500);
+                    }, {duration: 375}, 2500);
                 }
             }
             else if(current_selected_bar2 == null){
@@ -774,7 +774,7 @@
                 //Scroll to accordion
                 jQuery('html, body').animate({
                     scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
-                }, 2500);
+                }, {duration: 375}, 2500);
                 // no bar selected yet, open tray
                 jQuery('#collapsePhotoComments').collapse('show');
 //                                togglePhotoTray1();
@@ -805,7 +805,7 @@
                 //Scroll to accordion
                 jQuery('html, body').animate({
                     scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
-                }, 2500);
+                }, {duration: 375}, 2500);
                 // Selecting new bar
                 if (jQuery('#collapsePhotoComments').hasClass('in')) {
                     // tray is open, do not change tray
@@ -1801,7 +1801,7 @@
                                     //Scroll to accordian
                                     jQuery('html, body').animate({
                                         scrollTop: jQuery("#collapseOne").offset().top - 200
-                                    }, 2500);
+                                    }, {duration: 375}, 2500);
                                 }
                             }
                             else if(current_selected_bar == null){
@@ -1823,7 +1823,7 @@
 //                              //Scroll to accordian
                                 jQuery('html, body').animate({
                                     scrollTop: jQuery("#collapseOne").offset().top - 200
-                                }, 2500);
+                                }, {duration: 375}, 2500);
                             }
                             else if(String(current_selected_bar) != String(e.seriesValue)){
                                 //Reset old bar to non-highlight
@@ -1851,7 +1851,7 @@
                                 //Scroll to accordian
                                 jQuery('html, body').animate({
                                     scrollTop: jQuery("#collapseOne").offset().top - 200
-                                }, 2500);
+                                }, {duration: 375}, 2500);
                                 // Selecting new bar
                                 if (jQuery('#collapseOne').hasClass('in')) {
                                     // tray is open, do not change tray
