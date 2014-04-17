@@ -10,7 +10,11 @@
   <meta charset="utf-8">
   <title>StalkerStats | View interesting statistics based on your Facebook data</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="stalker stats statistics facebook photos data likes comments">
+  <meta name="description" content="This project is a web app for viewing interesting analytics based on Facebook interactions. User's log into their Facebook accounts which then triggers graphs to be displayed showing information ranging from who tags them in the most photos to who likes their status' the most.">
+  <meta name="image" content="assets/headerbg.png" />
+  <meta property="og:title" content="Stalker Stats" />
+  <meta property="og:description" content="This project is a web app for viewing interesting analytics based on Facebook interactions. User's log into their Facebook accounts which then triggers graphs to be displayed showing information ranging from who tags them in the most photos to who likes their status' the most." />
+  <meta property="og:image" content="http://stalker-stats.herokuapp.com/assets/headerbg.png" />
   <!--<meta name="author" content="ArtLabs">-->
 
   <!-- ######################## Styles ######################
@@ -2432,11 +2436,57 @@
           </a>
         </div>
       </div>
+      <img id="hidden-background-image" src="http://stalker-stats.herokuapp.com/assets/headerbg.png" style="display: none;" />
+      <!--<header class="page-header span12">-->
+      <h2 class="text-center">
+        <!--<p></p>-->
+        <!--<div class="fb-like-box" data-href="https://www.facebook.com/StalkerStats" data-width="200" data-height="100" data-colorscheme="light" data-show-faces="false" data-header="false" data-stream="false" data-show-border="false"></div>-->
+        <!--<div class="fb-share-button" data-href="https://www.facebook.com/stalkerstats" data-width="100" data-type="button_count"></div>-->
+      <!--<iframe class="fbiframe">-->
+        <!--<html>-->
+        <!--<body>-->
+        <!--<div style='text-align: center;' class="fb-like" data-href="https://www.facebook.com/stalkerstats" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>-->
+        <!--&lt;!&ndash;</body>&ndash;&gt;<i class="fa-icon-facebook"></i>-->
+        <!--</html>-->
+      <!--</iframe>-->
+        <p></p>
+        <!--<div height="25px"></div>-->
+        <a href="#" class="btn btn-primary btn-large" onclick="window.open('http://www.facebook.com/sharer.php?u=http://stalker-stats.herokuapp.com', 'Share on Facebook', 'width=600, height=350'); return false;"><i class="icon-white icon-facebook fa-icon-facebook"></i> Share</a>
+        <a href="#" class="btn btn-primary btn-large" onclick="window.open('http://facebook.com/StalkerStats'); return false;"><i class="icon-white icon-facebook fa-icon-facebook"></i> Like </a>
+
+        <!--<a id="share-button" class="btn btn-primary btn-large btn-block" href="">Share on Facebook</a>-->
+
+        <!--<script>-->
+<!--//            function fbs_click() {-->
+<!--//                var u="http://stalker-stats.herokuapp.com";-->
+<!--//                var t="Stalker Stats";-->
+<!--//                var i=document.getElementById('hidden-background-image').src;-->
+<!--//                window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t)+'&i='+encodeURIComponent(i),'sharer','toolbar=0,status=0,width=626,height=436');-->
+<!--//                return false;-->
+<!--//            }-->
+        <!--</script>-->
+
+        <!--<a href="http://www.facebook.com/share.php?u=http://stalker-stats.herokuapp.com" onClick="return fbs_click()" target="_blank" title="Share This on Facebook">-->
+        <!--<img src="http://stalker-stats.herokuapp.com/assets/headerbg.png" alt="facebook" width="20" height="20" border="0" />-->
+        <!--</a>-->
+
+        <!--<div class="fb-like btn btn-large btn-primary" data-href="#"-->
+             <!--data-width="550" data-layout="button" data-show-faces="true"-->
+             <!--data-share="false"></div>-->
+      </h2>
+      <!--</header>-->
 
       <script>
 
         function get_stalker_rankings(){
          // Burger
+
+//            var YOUR_TITLE = "Stalker Stats";
+//            var YOUR_SUMMARY = "This project is a web app for viewing interesting analytics based on Facebook interactions. User's log into their Facebook accounts which then triggers graphs to be displayed showing information ranging from who tags them in the most photos to who likes their status' the most.";
+//            var YOUR_URL = "http://stalker-stats.herokuapp.com";
+//            var YOUR_IMAGE_TO_SHARE_OBJECT = "http://stalker-stats.herokuapp.com/assets/headerbg.png";
+//            var sharebuttonurl = "http://www.facebook.com/sharer.php?s=100&title=" + encodeURIComponent(YOUR_TITLE) + "&summary="+encodeURIComponent(YOUR_SUMMARY)+"&url="+encodeURIComponent(YOUR_URL)+"&images="+encodeURIComponent(YOUR_IMAGE_TO_SHARE_OBJECT);
+//            document.getElementById('share-button').href = sharebuttonurl;
 
             // Photo Tags rankings: sorted_keys
             // Photo Likes rankings: photo_likes_sorted_ids
