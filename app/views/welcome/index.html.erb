@@ -10,7 +10,11 @@
   <meta charset="utf-8">
   <title>StalkerStats | View interesting statistics based on your Facebook data</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="stalker stats statistics facebook photos data likes comments">
+  <meta name="description" content="This project is a web app for viewing interesting analytics based on Facebook interactions. User's log into their Facebook accounts which then triggers graphs to be displayed showing information ranging from who tags them in the most photos to who likes their status' the most.">
+  <meta name="image" content="assets/headerbg.png" />
+  <meta property="og:title" content="Stalker Stats" />
+  <meta property="og:description" content="This project is a web app for viewing interesting analytics based on Facebook interactions. User's log into their Facebook accounts which then triggers graphs to be displayed showing information ranging from who tags them in the most photos to who likes their status' the most." />
+  <meta property="og:image" content="http://stalker-stats.herokuapp.com/assets/headerbg.png" />
   <!--<meta name="author" content="ArtLabs">-->
 
   <!-- ######################## Styles ######################
@@ -948,29 +952,38 @@
         }
     }
 
-    function getLikes(response){
+    function getLikes(response, post_message, post_id){
         var post = response;
+
+        a = typeof post_message !== 'undefined' ? post_id : -1;
+        b = typeof post_id !== 'undefined' ? post_id : -1;
+
 //        console.log('get likes response');
-        //console.log(response);
+//        console.log(response);
         if('likes' in post){
             for( var j = 0; j < post.likes.data.length; j++){
                 if('name' in post.likes.data[j]){
                     var user_name = post.likes.data[j].name;
                     if( user_name in user_to_num_status_liked){
                         user_to_num_status_liked[post.likes.data[j].name]++;
-                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+//                        facebook_ids_to_liked_status[user_name].push(post.message);
+//                        facebook_ids_to_liked_status_urls[user_name].push(post.id);
                     }else{
                         user_to_num_status_liked[post.likes.data[j].name] = 1;
-                        //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
-                        //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                        //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+//                        facebook_ids_to_liked_status[user_name] = [];
+//                        facebook_ids_to_liked_status_urls[user_name] = [];
+//                        facebook_ids_to_liked_status[user_name].push(post.message);
+//                        facebook_ids_to_liked_status_urls[user_name].push(post.id);
                     }
                 }
             }
         }else if('data' in post){
+            console.log('paged')
+            console.log(temp_id_likes)
+            console.log(temp_message_likes)
             for( var j = 0; j < post.data.length; j++){
+//                console.log('paged likes');
+//                console.log(post);
                 if('name' in post.data[j]){
                     var user_name = post.data[j].name;
                     if( user_name in user_to_num_status_liked){
@@ -981,11 +994,15 @@
                 }
             }
         }
-
         if('likes' in post){
             if ('paging' in post.likes && 'next' in post.likes.paging && post.likes.paging.next != 'undefined' ){
 //                console.log('paging likes');
-                FB.api(response.likes.paging.next,max_params , getLikes);
+                temp_message_likes = post.message;
+                temp_id_likes = post.id;
+                console.log('paging likes')
+                console.log(temp_id_likes)
+                console.log(temp_message_likes)
+                FB.api(response.likes.paging.next, max_params , getLikes);
             }
         }else if('data' in post){
             if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
@@ -997,7 +1014,6 @@
     }
 
     function getAllstatus(response){
-
         console.log(response);
         all_status_ids = response.data;
         // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
@@ -1218,6 +1234,10 @@
         console.log("sorted_values status");
         console.log(status_sorted_values);
         console.log(status_commented_sorted_values);
+
+        console.log('FB likes statuses')
+        console.log(facebook_ids_to_liked_status);
+        console.log(facebook_ids_to_liked_status_urls);
 
         for (var x=0; x<20; x++){
                 facebook_ids_to_likes[x] = { "Facebook ID":status_sorted_keys[x], "Number of Posts Liked":status_sorted_values[x] };
@@ -1496,11 +1516,15 @@
                   Below we include the Login Button social plugin. This button uses the JavaScript SDK to
                   present a graphical Login button that triggers the FB.login() function when clicked. -->
                 <fb:login-button show-faces="false" autologoutlink="true" size="xlarge" width="200" max-rows="1" auto-logout="true" scope="user_photos,friends_photos,user_status,friends_status,read_stream,user_location,user_checkins"></fb:login-button>
+
                 <!--<a href="#" class="btn btn-large btn-info" title="">LOGIN WITH FACEBOOK</a>-->
                 <!--<i class="or">- or -</i>-->
                 <!--<a href="#" class="btn btn-large btn-block-third btn-warning" title="">FUCKING SEND IT</a>-->
               </p>
+
             </div>
+            <a href="#" class="btn btn-success btn-large" onclick="window.open('https://docs.google.com/forms/d/1YVUbUXwQQzoDdSLiqv8lt02F8Mfo8Rrj_rWhWxlEhD4/viewform?usp=send_form'); return false;">Give us Feedback!</a>
+
 
 
           </div>
@@ -2119,6 +2143,7 @@
 
         <span> Who do you think has commented on your statuses the most?
 	      <span class="inner">This graph shows the number of comments per person on all statuses!</span>
+
           <svg id="chart4" width="1000" height="600"
                viewBox="0 0 1000 600"
                preserveAspectRatio="xMidYMid">
@@ -2220,7 +2245,6 @@
 
                   while(!postLikesChart){}
                   if (postLikesChart){
-                      get_stalker_rankings();
                       showButtons();
                   }
               }
@@ -2263,6 +2287,7 @@
                   var div = document.getElementById("temp");
                   div.parentNode.removeChild(div);
 
+                  get_stalker_rankings();
 
                   var svg_chart5 = document.getElementById("chart5");
                   svg_chart5.style.width = "1000";
@@ -2332,6 +2357,25 @@
         <h3> Stalker Rankings <small class="visible-desktop">// Stalker Scores based on all the graphs</small> </h3>
       </header>
 
+
+          <div id="splash3" style="visibility:visible">
+            <div id = "temp2">
+              <br><br><br><br><br>
+              <h1 class="loading"></h1>
+              <ul class="bokeh">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+              </ul>
+                <h2 class = "text-center" >Still Loading! </h2>
+                <h4 class = "text-center">Once the graphs finish loading your stalker rankings will appear here!!</h4>
+            </div>
+          </div>
+
+
+
+ <div id = "all rankings" style = "display:none">
       <div class="row demo-tiles" id="show3">
         <div class="span1"></div>
         <div class="span2">
@@ -2367,7 +2411,7 @@
           <a target="_blank" id="ranked-user-url-4" href="">
             <div class="rank-box">
               <img id="ranked-user-4" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-4" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-text-4" class="btn btn-info btn-large btn-block" href=""></h4>
               <h4 id="ranked-user-score-4" class=feature-box-title"></h4>
             </div>
           </a>
@@ -2376,7 +2420,7 @@
           <a target="_blank" id="ranked-user-url-2" href="">
             <div class="rank-box">
                 <img id="ranked-user-2" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-2" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-text-2" class="btn btn-info btn-large btn-block" href=""></h4>
               <h4 id="ranked-user-score-2" class=feature-box-title"></h4>
             </div>
           </a>
@@ -2385,7 +2429,7 @@
           <a target="_blank" id="ranked-user-url-1" href="">
             <div class="rank-box">
               <img id="ranked-user-1" class="rank-box-image" src= "" >
-              <h4 id="ranked-user-text-1" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-text-1" class="btn btn-info btn-large btn-block" href=""></h4>
               <h4 id="ranked-user-score-1" class=feature-box-title"></h4>
             </div>
           </a>
@@ -2394,7 +2438,7 @@
           <a target="_blank" id="ranked-user-url-3" href="">
             <div class="rank-box">
               <img id="ranked-user-3" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-3" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-text-3" class="btn btn-info btn-large btn-block" href=""></h4>
               <h4 id="ranked-user-score-3" class=feature-box-title"></h4>
             </div>
           </a>
@@ -2403,17 +2447,70 @@
           <a target="_blank" id="ranked-user-url-5" href="">
             <div class="rank-box">
               <img id="ranked-user-5" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-5" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-text-5" class="btn btn-info btn-large btn-block" href=""></h4>
               <h4 id="ranked-user-score-5" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
       </div>
+      </div>
+      <img id="hidden-background-image" src="http://stalker-stats.herokuapp.com/assets/headerbg.png" style="display: none;" />
+      <!--<header class="page-header span12">-->
+      <h2 class="text-center">
+        <!--<p></p>-->
+        <!--<div class="fb-like-box" data-href="https://www.facebook.com/StalkerStats" data-width="200" data-height="100" data-colorscheme="light" data-show-faces="false" data-header="false" data-stream="false" data-show-border="false"></div>-->
+        <!--<div class="fb-share-button" data-href="https://www.facebook.com/stalkerstats" data-width="100" data-type="button_count"></div>-->
+      <!--<iframe class="fbiframe">-->
+        <!--<html>-->
+        <!--<body>-->
+        <!--<div style='text-align: center;' class="fb-like" data-href="https://www.facebook.com/stalkerstats" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>-->
+        <!--&lt;!&ndash;</body>&ndash;&gt;<i class="fa-icon-facebook"></i>-->
+        <!--</html>-->
+      <!--</iframe>-->
+        <p></p>
+        <!--<div height="25px"></div>-->
+        <a href="#" class="btn btn-primary btn-large" onclick="window.open('http://www.facebook.com/sharer.php?u=http://stalker-stats.herokuapp.com', 'Share on Facebook', 'width=600, height=350'); return false;"><i class="icon-white icon-facebook fa-icon-facebook"></i> Share</a>
+        <a href="#" class="btn btn-primary btn-large" onclick="window.open('http://facebook.com/StalkerStats'); return false;"><i class="icon-white icon-facebook fa-icon-facebook"></i> Like </a>
+
+        <!--<a id="share-button" class="btn btn-primary btn-large btn-block" href="">Share on Facebook</a>-->
+
+        <!--<script>-->
+<!--//            function fbs_click() {-->
+<!--//                var u="http://stalker-stats.herokuapp.com";-->
+<!--//                var t="Stalker Stats";-->
+<!--//                var i=document.getElementById('hidden-background-image').src;-->
+<!--//                window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t)+'&i='+encodeURIComponent(i),'sharer','toolbar=0,status=0,width=626,height=436');-->
+<!--//                return false;-->
+<!--//            }-->
+        <!--</script>-->
+
+        <!--<a href="http://www.facebook.com/share.php?u=http://stalker-stats.herokuapp.com" onClick="return fbs_click()" target="_blank" title="Share This on Facebook">-->
+        <!--<img src="http://stalker-stats.herokuapp.com/assets/headerbg.png" alt="facebook" width="20" height="20" border="0" />-->
+        <!--</a>-->
+
+        <!--<div class="fb-like btn btn-large btn-primary" data-href="#"-->
+             <!--data-width="550" data-layout="button" data-show-faces="true"-->
+             <!--data-share="false"></div>-->
+      </h2>
+      <!--</header>-->
 
       <script>
 
         function get_stalker_rankings(){
          // Burger
+
+//            var YOUR_TITLE = "Stalker Stats";
+//            var YOUR_SUMMARY = "This project is a web app for viewing interesting analytics based on Facebook interactions. User's log into their Facebook accounts which then triggers graphs to be displayed showing information ranging from who tags them in the most photos to who likes their status' the most.";
+//            var YOUR_URL = "http://stalker-stats.herokuapp.com";
+//            var YOUR_IMAGE_TO_SHARE_OBJECT = "http://stalker-stats.herokuapp.com/assets/headerbg.png";
+//            var sharebuttonurl = "http://www.facebook.com/sharer.php?s=100&title=" + encodeURIComponent(YOUR_TITLE) + "&summary="+encodeURIComponent(YOUR_SUMMARY)+"&url="+encodeURIComponent(YOUR_URL)+"&images="+encodeURIComponent(YOUR_IMAGE_TO_SHARE_OBJECT);
+//            document.getElementById('share-button').href = sharebuttonurl;
+
+            var div = document.getElementById("temp2");
+            div.parentNode.removeChild(div);
+
+            var ranking_div = document.getElementById("all rankings");
+            ranking_div.style.display = '';
 
             // Photo Tags rankings: sorted_keys
             // Photo Likes rankings: photo_likes_sorted_ids
@@ -2467,6 +2564,19 @@
                 }
                 else{
                     stalker_rankings[status_sorted_keys[i]] = score;
+                }
+                score = score - 1;
+            }
+
+            // Add Status Like Scores
+            score = 20;
+            for(var i=0;i<20;i++){
+
+                if (status_tagged_sorted_keys[i] in stalker_rankings) {
+                    stalker_rankings[status_tagged_sorted_keys[i]] += score;
+                }
+                else{
+                    stalker_rankings[status_tagged_sorted_keys[i]] = score;
                 }
                 score = score - 1;
             }
