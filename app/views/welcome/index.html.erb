@@ -127,9 +127,11 @@
 
                 if(first_graph_made == false){
                     document.getElementById('splash').style.visibility = 'visible';
+                    document.getElementById('splash2').style.visability = 'visible';
+
                     //call funcs to make graphs here
                     getUsersPhotos(makeGraph);
-                    //getUserTaggedInStatuses(makeGraph);
+                    getUserTaggedInStatuses(makeGraph);
                 }
                 first_graph_made = true;
 
@@ -178,6 +180,8 @@
             document.getElementById('contact-btn').style.visibility = 'visible';
             document.getElementById('splash').style.visibility = 'hidden';
             refreshScroll();
+        }else if(graphs_made == 6){
+            document.getElementById('splash2').style.visibility = 'hidden';
         }
     }
     function hideButtons(){
@@ -207,6 +211,7 @@
         console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
             console.log('Good to see you, ' + response.name + '.');
+            console.log(response);
             //console.log(response);
             user_id = response.id;
 
@@ -824,7 +829,8 @@
 
         };
 
-    var max_params = {since:"01-01-2009", limit:5000};
+//    var max_params = {limit:1000};
+    var max_params = {since:"01-01-2010", limit:1000};
 
     function getStatusComments(response){
         var post = response;
@@ -983,7 +989,11 @@
         console.log('getting tagged statuses');
         console.log('/me/tagged');
 
-        FB.api('/me/tagged', max_params , getAllStatusTags);
+        FB.api('me/tagged?fields=id,from&limit=1000&offset=0',max_params, getAllStatusTags);
+//        FB.api('me/tagged?fields=id,from&limit=1000&offset=0', function(response){
+//            console.log("testPprint");
+//            console.log(response);
+//        });
     }
 
     function finishTaggedStatusGraph(callback){
@@ -2112,6 +2122,16 @@
 	      <span class="inner">This graph shows the number of tags per person in all their statuses!</span>
           <div class="chart5"></div>
 
+              <div id="splash2" style="visibility:visible"> <br> Loading Your Tag Information!
+                <h1 class="loading">There are a lot of tags, this could take some time!</h1>
+                <ul class="bokeh">
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                </ul>
+              </div>
+
           <script>
               var current_selected_bar;
               var tray_closed = true;
@@ -2132,23 +2152,19 @@
 //
 //
 //                  }
-                  console.log('draw');
                   var postLikesChart = chart.draw();
-                  console.log('done');
-
+                  chart.setMargins(60,50,50,100);
                   x.shapes.selectAll("text").attr("transform",
                           function (d) {
-                              return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                              return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
                           });
                   x.shapes.selectAll("text").style("text-anchor", "end");
                   x.titleShape.remove();
 
                   y.titleShape.attr("transform",
                           function (d) {
-                              return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
-                          });
-
-                  svg.attr("height", 1000);
+                              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                          })
 
                   while(!postLikesChart){}
                   if (postLikesChart){
