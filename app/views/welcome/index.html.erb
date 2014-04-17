@@ -2227,8 +2227,12 @@
       </header>
 
       <div class="row demo-tiles" id="show3">
-        <div class="span2"></div>
         <div class="span1"></div>
+        <div class="span2">
+          <div class="forth">
+            <p>4th</p>
+          </div>
+        </div>
         <div class="span2">
           <div class="second">
             <p>2nd</p>
@@ -2244,11 +2248,24 @@
             <p>3rd</p>
           </div>
         </div>
+        <div class="span2">
+          <div class="fifth">
+            <p>5th</p>
+          </div>
+        </div>
       </div>
 <p></p>
       <div class="row demo-tiles" id="show3">
-        <div class="span2"></div>
         <div class="span1"></div>
+        <div class="span2">
+          <a target="_blank" id="ranked-user-url-4" href="">
+            <div class="rank-box">
+              <img id="ranked-user-4" class="rank-box-image" alt="" src= "" >
+              <h4 id="ranked-user-text-4" class="feature-box-title"></h4>
+              <p id="ranked-user-score-4"></p>
+            </div>
+          </a>
+        </div>
         <div class="span2">
           <a target="_blank" id="ranked-user-url-2" href="">
             <div class="rank-box">
@@ -2273,6 +2290,15 @@
               <img id="ranked-user-3" class="rank-box-image" alt="" src= "" >
               <h4 id="ranked-user-text-3" class="feature-box-title"></h4>
               <p id="ranked-user-score-3"></p>
+            </div>
+          </a>
+        </div>
+        <div class="span2">
+          <a target="_blank" id="ranked-user-url-5" href="">
+            <div class="rank-box">
+              <img id="ranked-user-5" class="rank-box-image" alt="" src= "" >
+              <h4 id="ranked-user-text-5" class="feature-box-title"></h4>
+              <p id="ranked-user-score-5"></p>
             </div>
           </a>
         </div>
@@ -2406,7 +2432,7 @@
             // Get profile pictures
             var name1 = stalker_rankings[0].key;
             jQuery('#ranked-user-text-1').text(name1);
-            var score1 = "Score: " + stalker_rankings[0].value;
+            var score1 = "Stalker Score: " + stalker_rankings[0].value;
             jQuery('#ranked-user-score-1').text(score1);
 
             console.log(name1);
@@ -2422,7 +2448,7 @@
 
             var name2 = stalker_rankings[1].key;
             jQuery('#ranked-user-text-2').text(name2);
-            var score2 = "Score: " + stalker_rankings[1].value;
+            var score2 = "Stalker Score: " + stalker_rankings[1].value;
             jQuery('#ranked-user-score-2').text(score2);
 
             console.log(name2);
@@ -2438,7 +2464,7 @@
 
             var name3 = stalker_rankings[2].key;
             jQuery('#ranked-user-text-3').text(name3);
-            var score3 = "Score: " + stalker_rankings[2].value;
+            var score3 = "Stalker Score: " + stalker_rankings[2].value;
             jQuery('#ranked-user-score-3').text(score3);
 
             console.log(name3);
@@ -2451,6 +2477,39 @@
                 var url = "http://www.facebook.com/" + friend3.data[0].uid;
                 document.getElementById('ranked-user-url-3').href = url;
             });
+
+            var name4 = stalker_rankings[3].key;
+            jQuery('#ranked-user-text-4').text(name4);
+            var score4 = "Stalker Score: " + stalker_rankings[3].value;
+            jQuery('#ranked-user-score-4').text(score4);
+
+            console.log(name4);
+            var query4 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name4 + "%22";
+
+            FB.api(query4 , function(friend4) {
+                // the response is different:
+                console.log(friend4);
+                document.getElementById('ranked-user-4').src = friend4.data[0].pic_big;
+                var url = "http://www.facebook.com/" + friend4.data[0].uid;
+                document.getElementById('ranked-user-url-4').href = url;
+            });
+
+            var name5 = stalker_rankings[4].key;
+            jQuery('#ranked-user-text-5').text(name5);
+            var score5 = "Stalker Score: " + stalker_rankings[4].value;
+            jQuery('#ranked-user-score-5').text(score5);
+
+            console.log(name5);
+            var query5 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name5 + "%22";
+
+            FB.api(query5 , function(friend5) {
+                // the response is different:
+                console.log(friend5);
+                document.getElementById('ranked-user-5').src = friend5.data[0].pic_big;
+                var url = "http://www.facebook.com/" + friend5.data[0].uid;
+                document.getElementById('ranked-user-url-5').href = url;
+            });
+
 
         }
 
