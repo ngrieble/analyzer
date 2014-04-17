@@ -2058,7 +2058,7 @@
               function makeStatusCommentGraph(){
 
                       // CHART USING D3 AND DIMPLY: PRETTY
-                      var svg = dimple.newSvg("#chart4", 1000, 550);
+                      var svg = dimple.newSvg("#chart4", 1000, 500);
                       var chart = new dimple.chart(svg, facebook_ids_to_status_commented );
                       console.log('made');
                       var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -2112,7 +2112,7 @@
 
               function makeStatusGraph(){
                   // CHART USING D3 AND DIMPLY: PRETTY
-                  var svg = dimple.newSvg("#chart3", 1000, 550);
+                  var svg = dimple.newSvg("#chart3", 1000, 500);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_likes);
 //                  console.log('made');
