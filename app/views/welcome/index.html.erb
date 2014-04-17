@@ -440,7 +440,7 @@
         var previous_colors;
         var tray_closed = true;
 
-        var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
+        var svg = dimple.newSvg("#photoLikesChart", 1000, 500);
         var data = [
             { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
             { "Facebook ID":"World", "Number of Photo Likes":3000 }
@@ -600,7 +600,7 @@
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
 
-        svg.attr("height", 700);
+        svg.attr("height", 600);
 
         while(!chartObject){}
         if (chartObject){
@@ -626,7 +626,7 @@
         var tray_closed2 = true;
 
 
-        var svg2 = dimple.newSvg(".photoCommentsChart", 1000, 600);
+        var svg2 = dimple.newSvg("#photoCommentsChart", 1000, 500);
         var data2 = [
             { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
             { "Facebook ID":"World", "Number of Photo Comments":3000 }
@@ -643,6 +643,7 @@
 
         s2.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            svg2.attr("height", 550);
 
             jQuery('html, body').animate({
                 scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
@@ -765,6 +766,8 @@
              function (d) {
              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
              })*/
+            svg2.attr("height", 600);
+
 
         });
 
@@ -781,8 +784,7 @@
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
-
-        svg2.attr("height", 700);
+        svg2.attr("height", 600);
 
 
 
@@ -1586,7 +1588,11 @@
 			
 			<span> Who do you think has tagged you the most in pictures?
 				<span class="inner">This graph shows the number of tags per person!</span>
-              <div class="chart2"></div>
+              <!--<div class="chart2"></div>-->
+            <svg id="chart2" width="1000" height="600"
+                 viewBox="0 0 1000 600"
+                 preserveAspectRatio="xMidYMid">
+            </svg>
                   <h4>Click on a bar to see what they've tagged you in most recently!</h4>
 
                 <script>
@@ -1601,8 +1607,7 @@
                         getUsersStatusLikes(finishStatusGraph);
 
                         // CHART USING D3 AND DIMPLY: PRETTY
-                        var svg = dimple.newSvg(".chart2", 1000, 600);
-
+                        var svg = dimple.newSvg("#chart2", 1000, 550);
 
                         var chart = new dimple.chart(svg, facebook_ids_to_tags);
                         var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -1618,6 +1623,7 @@
                             }, 2500);
                             refreshScroll();
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+                            svg.attr("height", 550);
 
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 0){
                                 document.getElementById('tagged-photo-1').src = facebook_ids_to_tagged_photos[e.seriesValue][0];
@@ -1784,6 +1790,8 @@
                                         return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
                                     })
 
+                            svg.attr("height", 600);
+
                         });
 
                         var chartObject = chart.draw();
@@ -1799,6 +1807,9 @@
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
+//                        d3.select("xAxis").attr("height", 600);
+
+                        svg.attr("height", 600);
 
                         while(!chartObject){}
                         if (chartObject){
@@ -1893,8 +1904,12 @@
 			</span>
             <span> Who do you think has liked the most pictures of you?
 				<span class="inner">This graph shows the number of likes per person!</span>
-                <div class="photoLikesChart">
-                </div>
+                <svg id="photoLikesChart" width="1000" height="600"
+                     viewBox="0 0 1000 600"
+                     preserveAspectRatio="xMidYMid">
+                </svg>
+                                <h4>Click on a bar to see what they've liked most recently!</h4>
+
                 <div class="panel-group" id="accordionPhotoLikes">
                   <div class="panel panel-default">
 
@@ -1942,8 +1957,12 @@
 
             <span> Who do you think has commented on the most pictures of you?
 				<span class="inner">This graph shows the number of comments per person!</span>
-                <div class="photoCommentsChart">
-                </div>
+                <svg id="photoCommentsChart" width="1000" height="600"
+                     viewBox="0 0 1000 600"
+                     preserveAspectRatio="xMidYMid">
+                </svg>
+                                <h4>Click on a bar to see what they've commented on most recently!</h4>
+
                 <div class="panel-group" id="accordionPhotoComments">
                   <div class="panel panel-default">
 
@@ -2055,7 +2074,10 @@
 
         <span> Who do you think has commented on your statuses the most?
 	      <span class="inner">This graph shows the number of comments per person on all statuses!</span>
-          <div class = "chart4"></div>
+          <svg id="chart4" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
           <script>
               var current_selected_bar;
               var tray_closed = true;
@@ -2063,7 +2085,7 @@
               function makeStatusCommentGraph(){
 
                       // CHART USING D3 AND DIMPLY: PRETTY
-                      var svg = dimple.newSvg(".chart4", 1000, 600);
+                      var svg = dimple.newSvg("#chart4", 1000, 500);
                       var chart = new dimple.chart(svg, facebook_ids_to_status_commented );
                       console.log('made');
                       var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -2090,7 +2112,8 @@
                                   return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                               });
 
-                      svg.attr("height", 700);
+                      svg.attr("height", 600);
+
 
                       while(!postLikesChart){}
                       if (postLikesChart){
@@ -2103,7 +2126,10 @@
 
 	    <span> Who do you think has liked your statuses the most?
 	      <span class="inner">This graph shows the number of likes per person on all statuses!</span>
-          <div class="chart3"></div>
+          <svg id="chart3" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
 
           <script>
 
@@ -2113,7 +2139,7 @@
 
               function makeStatusGraph(){
                   // CHART USING D3 AND DIMPLY: PRETTY
-                  var svg = dimple.newSvg(".chart3", 1000, 600);
+                  var svg = dimple.newSvg("#chart3", 1000, 500);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_likes);
 //                  console.log('made');
@@ -2146,7 +2172,7 @@
                               return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                           });
 
-                  svg.attr("height", 700);
+                  svg.attr("height", 600);
 
                   while(!postLikesChart){}
                   if (postLikesChart){
@@ -2160,14 +2186,17 @@
 
         <span> Who do you think has tagged you the most in statuses?
 	      <span class="inner">This graph shows the number of tags per person in all their statuses!</span>
-          <div class="chart5"></div>
+          <svg id="chart5" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
 
           <script>
               var current_selected_bar;
               var tray_closed = true;
 
               function makeTaggedStatusGraph(){
-                  var svg = dimple.newSvg(".chart5", 1000, 600);
+                  var svg = dimple.newSvg("#chart5", 1000, 550);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_status_tagged);
                   console.log('made');
@@ -2198,7 +2227,7 @@
                               return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                           });
 
-                  svg.attr("height", 700);
+                  svg.attr("height", 600);
 
                   while(!postLikesChart){}
                   if (postLikesChart){
@@ -2225,8 +2254,12 @@
       </header>
 
       <div class="row demo-tiles" id="show3">
-        <div class="span2"></div>
         <div class="span1"></div>
+        <div class="span2">
+          <div class="forth">
+            <p>4th</p>
+          </div>
+        </div>
         <div class="span2">
           <div class="second">
             <p>2nd</p>
@@ -2242,26 +2275,39 @@
             <p>3rd</p>
           </div>
         </div>
+        <div class="span2">
+          <div class="fifth">
+            <p>5th</p>
+          </div>
+        </div>
       </div>
 <p></p>
       <div class="row demo-tiles" id="show3">
-        <div class="span2"></div>
         <div class="span1"></div>
+        <div class="span2">
+          <a target="_blank" id="ranked-user-url-4" href="">
+            <div class="rank-box">
+              <img id="ranked-user-4" class="rank-box-image" alt="" src= "" >
+              <h4 id="ranked-user-text-4" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-4" class=feature-box-title"></h4>
+            </div>
+          </a>
+        </div>
         <div class="span2">
           <a target="_blank" id="ranked-user-url-2" href="">
             <div class="rank-box">
                 <img id="ranked-user-2" class="rank-box-image" alt="" src= "" >
-                <h4 id="ranked-user-text-2" class="feature-box-title"></h4>
-                <p id="ranked-user-score-2"></p>
+              <h4 id="ranked-user-text-2" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-2" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
         <div class="span2">
           <a target="_blank" id="ranked-user-url-1" href="">
             <div class="rank-box">
-              <img id="ranked-user-1" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-1" class="feature-box-title"></h4>
-              <p id="ranked-user-score-1"></p>
+              <img id="ranked-user-1" class="rank-box-image" src= "" >
+              <h4 id="ranked-user-text-1" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-1" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
@@ -2269,8 +2315,17 @@
           <a target="_blank" id="ranked-user-url-3" href="">
             <div class="rank-box">
               <img id="ranked-user-3" class="rank-box-image" alt="" src= "" >
-              <h4 id="ranked-user-text-3" class="feature-box-title"></h4>
-              <p id="ranked-user-score-3"></p>
+              <h4 id="ranked-user-text-3" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-3" class=feature-box-title"></h4>
+            </div>
+          </a>
+        </div>
+        <div class="span2">
+          <a target="_blank" id="ranked-user-url-5" href="">
+            <div class="rank-box">
+              <img id="ranked-user-5" class="rank-box-image" alt="" src= "" >
+              <h4 id="ranked-user-text-5" class="btn btn-primary btn-large btn-block" href=""></h4>
+              <h4 id="ranked-user-score-5" class=feature-box-title"></h4>
             </div>
           </a>
         </div>
@@ -2404,7 +2459,7 @@
             // Get profile pictures
             var name1 = stalker_rankings[0].key;
             jQuery('#ranked-user-text-1').text(name1);
-            var score1 = "Score: " + stalker_rankings[0].value;
+            var score1 = "Stalker Score: " + stalker_rankings[0].value;
             jQuery('#ranked-user-score-1').text(score1);
 
             console.log(name1);
@@ -2420,7 +2475,7 @@
 
             var name2 = stalker_rankings[1].key;
             jQuery('#ranked-user-text-2').text(name2);
-            var score2 = "Score: " + stalker_rankings[1].value;
+            var score2 = "Stalker Score: " + stalker_rankings[1].value;
             jQuery('#ranked-user-score-2').text(score2);
 
             console.log(name2);
@@ -2436,7 +2491,7 @@
 
             var name3 = stalker_rankings[2].key;
             jQuery('#ranked-user-text-3').text(name3);
-            var score3 = "Score: " + stalker_rankings[2].value;
+            var score3 = "Stalker Score: " + stalker_rankings[2].value;
             jQuery('#ranked-user-score-3').text(score3);
 
             console.log(name3);
@@ -2449,6 +2504,39 @@
                 var url = "http://www.facebook.com/" + friend3.data[0].uid;
                 document.getElementById('ranked-user-url-3').href = url;
             });
+
+            var name4 = stalker_rankings[3].key;
+            jQuery('#ranked-user-text-4').text(name4);
+            var score4 = "Stalker Score: " + stalker_rankings[3].value;
+            jQuery('#ranked-user-score-4').text(score4);
+
+            console.log(name4);
+            var query4 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name4 + "%22";
+
+            FB.api(query4 , function(friend4) {
+                // the response is different:
+                console.log(friend4);
+                document.getElementById('ranked-user-4').src = friend4.data[0].pic_big;
+                var url = "http://www.facebook.com/" + friend4.data[0].uid;
+                document.getElementById('ranked-user-url-4').href = url;
+            });
+
+            var name5 = stalker_rankings[4].key;
+            jQuery('#ranked-user-text-5').text(name5);
+            var score5 = "Stalker Score: " + stalker_rankings[4].value;
+            jQuery('#ranked-user-score-5').text(score5);
+
+            console.log(name5);
+            var query5 = "/fql?q=SELECT uid%2C name%2C pic_big FROM user WHERE uid IN %28SELECT uid2 FROM friend WHERE uid1 %3D me%28%29%29 AND name %3D%22" + name5 + "%22";
+
+            FB.api(query5 , function(friend5) {
+                // the response is different:
+                console.log(friend5);
+                document.getElementById('ranked-user-5').src = friend5.data[0].pic_big;
+                var url = "http://www.facebook.com/" + friend5.data[0].uid;
+                document.getElementById('ranked-user-url-5').href = url;
+            });
+
 
         }
 
