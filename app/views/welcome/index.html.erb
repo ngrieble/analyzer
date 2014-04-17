@@ -141,66 +141,78 @@
         // whenever someone who was previously logged out tries to log in again, the correct case below
         // will be handled.
         FB.Event.subscribe('auth.authResponseChange', function(response) {
-            // Here we specify what we do with the response anytime this event occurs.
-            if (response.status === 'connected') {
-                // The response object is returned with a status field that lets the app know the current
-                // login status of the person. In this case, we're handling the situation where they
-                // have logged in to the app.
-                testAPI();
-                console.log('Status: connected');
+            if(!response || response.error){
+                alert("an error occured, please refresh your page")
+            }else{
+                // Here we specify what we do with the response anytime this event occurs.
+                if (response.status === 'connected') {
+                    // The response object is returned with a status field that lets the app know the current
+                    // login status of the person. In this case, we're handling the situation where they
+                    // have logged in to the app.
+                    testAPI();
+                    console.log('Status: connected');
 
-                if(first_graph_made == false){
-                    document.getElementById('splash').style.visibility = 'visible';
-                    document.getElementById('splash2').style.visability = 'visible';
+                    if(first_graph_made == false){
+                        document.getElementById('splash').style.visibility = 'visible';
+                        document.getElementById('splash2').style.visability = 'visible';
 
-                    //call funcs to make graphs here
-                    getUsersPhotos(makeGraph);
-                    getUserTaggedInStatuses(makeGraph);
+                        //call funcs to make graphs here
+                        getUsersPhotos(makeGraph);
+                        getUserTaggedInStatuses(makeGraph);
+                    }
+                    first_graph_made = true;
+
+                } else if (response.status === 'not_authorized') {
+                    // In this case, the person is logged into Facebook, but not into the app, so we call
+                    // FB.login() to prompt them to do so.
+                    // In real-life usage, you wouldn't want to immediately prompt someone to login
+                    // like this, for two reasons:
+                    // (1) JavaScript created popup windows are blocked by most browsers unless they
+                    // result from direct interaction from people using the app (such as a mouse click)
+                    // (2) it is a bad experience to be continually prompted to login upon page load.
+                    hideButtons();
+                    FB.login(function(response) {
+                        console.log('Status: not authorized');
+                        console.log(response);
+                        if(!response || response.error){
+                            alert("an error occured, please refresh your page")
+                        }else{
+                            if(response.status === 'connected'){
+                                if(first_graph_made == false){
+                                    document.getElementById('splash').style.visibility = 'visible';
+                                    //call funcs to make graphs here
+                                    getUsersPhotos(makeGraph);
+                                    //getUserTaggedInStatuses(makeGraph);
+                                }
+                                first_graph_made = true;
+                            }
+                        }
+                    }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
+                } else {
+                    // In this case, the person is not logged into Facebook, so we call the login()
+                    // function to prompt them to do so. Note that at this stage there is no indication
+                    // of whether they are logged into the app. If they aren't then they'll see the Login
+                    // dialog right after they log in to Facebook.
+                    // The same caveats as above apply to the FB.login() call here.
+                    hideButtons();
+                    FB.login(function(response) {
+                        console.log('Status: not logged in');
+                        console.log(response);
+                        if(!response || response.error){
+                            alert("an error occured, please refresh your page")
+                        }else{
+                            if(response.status === 'connected'){
+                                if(first_graph_made == false){
+                                    document.getElementById('splash').style.visibility = 'visible';
+                                    //call funcs to make graphs here
+                                    getUsersPhotos(makeGraph);
+                                    //getUserTaggedInStatuses(makeGraph);
+                                }
+                                first_graph_made = true;
+                            }
+                        }
+                    }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
                 }
-                first_graph_made = true;
-
-            } else if (response.status === 'not_authorized') {
-                // In this case, the person is logged into Facebook, but not into the app, so we call
-                // FB.login() to prompt them to do so.
-                // In real-life usage, you wouldn't want to immediately prompt someone to login
-                // like this, for two reasons:
-                // (1) JavaScript created popup windows are blocked by most browsers unless they
-                // result from direct interaction from people using the app (such as a mouse click)
-                // (2) it is a bad experience to be continually prompted to login upon page load.
-                hideButtons();
-                FB.login(function(response) {
-                    console.log('Status: not authorized');
-                    console.log(response);
-                    if(response.status === 'connected'){
-                        if(first_graph_made == false){
-                            document.getElementById('splash').style.visibility = 'visible';
-                            //call funcs to make graphs here
-                            getUsersPhotos(makeGraph);
-                            //getUserTaggedInStatuses(makeGraph);
-                        }
-                        first_graph_made = true;
-                    }
-                }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
-            } else {
-                // In this case, the person is not logged into Facebook, so we call the login()
-                // function to prompt them to do so. Note that at this stage there is no indication
-                // of whether they are logged into the app. If they aren't then they'll see the Login
-                // dialog right after they log in to Facebook.
-                // The same caveats as above apply to the FB.login() call here.
-                hideButtons();
-                FB.login(function(response) {
-                    console.log('Status: not logged in');
-                    console.log(response);
-                    if(response.status === 'connected'){
-                        if(first_graph_made == false){
-                            document.getElementById('splash').style.visibility = 'visible';
-                            //call funcs to make graphs here
-                            getUsersPhotos(makeGraph);
-                            //getUserTaggedInStatuses(makeGraph);
-                        }
-                        first_graph_made = true;
-                    }
-                }, {scope: 'user_photos,friends_photos,user_status,friends_status'});
             }
         });
 
@@ -268,250 +280,274 @@
     }
 
     function getPhotoLikesComments(photoResponse,callback) {
+        if(!photoResponse || photoResponse.error){
+            alert("an error occured, please refresh your page")
+        }else{
 
-        var user_to_photoLikes = [];
-        var user_to_photoComments = [];
-        var numPhotos = photoResponse.data.length; //must be at least 1
-        var like_photos_urls = {};
-        var like_photos = {};
+            var user_to_photoLikes = [];
+            var user_to_photoComments = [];
+            var numPhotos = photoResponse.data.length; //must be at least 1
+            var like_photos_urls = {};
+            var like_photos = {};
 
-        var comment_photos_urls = {};
-        var comment_photos = {};
-        for (var i=0; i<numPhotos; i++){
-            var photo = photoResponse.data[i];
-            //console.log(i);
-            //console.log("HELLOOOOOOO");
-            //console.log(photo);
-            //LIKES
-            var likesResponse = photo.likes;
-            //console.log('Likes object pic num'+i+':');
-            //console.log(likesResponse);
+            var comment_photos_urls = {};
+            var comment_photos = {};
+            for (var i=0; i<numPhotos; i++){
+                var photo = photoResponse.data[i];
+                //console.log(i);
+                //console.log("HELLOOOOOOO");
+                //console.log(photo);
+                //LIKES
+                var likesResponse = photo.likes;
+                //console.log('Likes object pic num'+i+':');
+                //console.log(likesResponse);
 
-            if(likesResponse) {
-                for(var j=0;j<likesResponse.data.length; j++) {
-                    var user = likesResponse.data[j];
-                    if(user.id == user_id) {
-                        //do not add yourself
-                    }
-                    else if (user.name in user_to_photoLikes) {
-                        user_to_photoLikes[user.name]++;
-                        like_photos[user.name].push(photo.source);
-                        like_photos_urls[user.name].push(photo.link);
-
-                    }
-                    else {
-                        user_to_photoLikes[user.name] = 1;
-                        like_photos[user.name] = [];
-                        like_photos_urls[user.name] = [];
-                        like_photos[user.name].push(photo.source);
-                        like_photos_urls[user.name].push(photo.link);
-                    }
-                }
-            }
-
-            //console.log("user to photo likes");
-            //console.log(user_to_photoLikes);
-
-            //COMMENTS
-            var commentsResponse = photo.comments;
-            //console.log('Comments object pic num'+i+':');
-
-            // console.log('Comments object pic num'+i+':');
-
-            //console.log(commentsResponse);
-            if(commentsResponse) {
-                for(var j=0;j<commentsResponse.data.length; j++) {
-                    var comment = commentsResponse.data[j];
-//                    console.log("printing comment");
-//                    console.log(comment);
-                    if('from' in comment){
-                        if(comment.from.id == user_id) {
+                if(likesResponse) {
+                    for(var j=0;j<likesResponse.data.length; j++) {
+                        var user = likesResponse.data[j];
+                        if(user.id == user_id) {
                             //do not add yourself
                         }
-                        else if (comment.from.name in user_to_photoComments) {
-                            user_to_photoComments[comment.from.name]++;
-                            comment_photos[comment.from.name].push(photo.source);
-                            comment_photos_urls[comment.from.name].push(photo.link);
+                        else if (user.name in user_to_photoLikes) {
+                            user_to_photoLikes[user.name]++;
+                            like_photos[user.name].push(photo.source);
+                            like_photos_urls[user.name].push(photo.link);
 
                         }
                         else {
-                            user_to_photoComments[comment.from.name] = 1;
-                            comment_photos[comment.from.name] = [];
-                            comment_photos_urls[comment.from.name] = [];
-                            comment_photos[comment.from.name].push(photo.source);
-                            comment_photos_urls[comment.from.name].push(photo.link);
-
+                            user_to_photoLikes[user.name] = 1;
+                            like_photos[user.name] = [];
+                            like_photos_urls[user.name] = [];
+                            like_photos[user.name].push(photo.source);
+                            like_photos_urls[user.name].push(photo.link);
                         }
                     }
                 }
-            }
 
-            //console.log("user to photo comments");
-            //console.log(user_to_photoComments);
-        }
+                //console.log("user to photo likes");
+                //console.log(user_to_photoLikes);
 
-        //console.log('After going through all pics');
-        //console.log("user to photo likes");
-        // console.log(user_to_photoLikes);
-        //console.log("user to photo comments");
-        //console.log(user_to_photoComments);
+                //COMMENTS
+                var commentsResponse = photo.comments;
+                //console.log('Comments object pic num'+i+':');
 
-        /*console.log('After going through all pics');
-         console.log("user to photo likes");
-         console.log(user_to_photoLikes);
-         console.log("user to photo comments");
-         console.log(user_to_photoComments);*/
+                // console.log('Comments object pic num'+i+':');
 
-        //Functions to sort
-        function keysbyValue(O){
-            var A= [];
-            for(var p in O){
-                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-            }
-            A.sort(function(a, b){
-                var a1= a[1], b1= b[1];
-                return b1 - a1;
-            });
-            for(var i= 0, L= A.length; i<L; i++){
-                A[i]= A[i][0];
-            }
-            var obj = {};
-            for(var i= 0, L= A.length; i<L; i++){
-                obj[i] = {key: A[i], value: O[A[i]]};
-            }
-            return obj;
-        }
-
-        function getSortedKeys(O){
-            var A= [];
-            for(var p in O){
-                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-            }
-            A.sort(function(a, b){
-                var a1= a[1], b1= b[1];
-                return b1 - a1;
-            });
-            for(var i= 0, L= A.length; i<L; i++){
-                A[i]= A[i][0];
-            }
-            return A;
-        }
-
-        function getSortedValues(O){
-            var A= [];
-            for(var p in O){
-                if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-            }
-            A.sort(function(a, b){
-                var a1= a[1], b1= b[1];
-                return b1 - a1;
-            });
-            for(var i= 0, L= A.length; i<L; i++){
-                A[i]= A[i][1];
-            }
-            return A;
-        }
-
-
-        //end functions to sort
-
-        ///////////LIKES GRAPH//////////
-        //var sorted_ids = getSortedKeys(user_to_photoLikes);
-        //var sorted_Counts = getSortedValues(user_to_photoLikes);
-
-        //user_to_photoLikes = keysbyValue(user_to_photoLikes);
-
-        //console.log("user_to_photoLikes");
-        //console.log(user_to_photoLikes);
-        //console.log("sorted_ids");
-        //console.log(sorted_ids);
-        //console.log("sorted_Counts");
-        //console.log(sorted_Counts);
-        //var facebook_ids_to_photoLikes = [];
-        //for (var i=0; i<20 && i<sorted_ids.length && i<sorted_Counts.length; i++){
-        //   facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
-        //}
-        //console.log("facebook_ids_to_photoLikes");
-        //console.log(facebook_ids_to_photoLikes);
-
-        //make the graph with user_to_photoLikes
-        photo_likes_sorted_ids = getSortedKeys(user_to_photoLikes);
-
-        var sorted_counts = getSortedValues(user_to_photoLikes);
-
-        //user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
-
-        var facebook_ids_to_photoLikes = [];
-        for (var i=0; i<20; i++){
-            facebook_ids_to_photoLikes[i] = { "Facebook ID":photo_likes_sorted_ids[i], "Number of Photo Likes":sorted_counts[i] };
-        }
-
-        var current_selected_bar;
-        var previous_selected_x;
-        var previous_colors;
-        var tray_closed = true;
-
-        var svg = dimple.newSvg("#photoLikesChart", 1000, 500);
-        var data = [
-            { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
-            { "Facebook ID":"World", "Number of Photo Likes":3000 }
-        ];
-        //console.log("data for fake chart");
-        //console.log(data);
-
-        var chart = new dimple.chart(svg, facebook_ids_to_photoLikes);
-        var x = chart.addCategoryAxis("x", "Facebook ID");
-        //                        x.tickFormat = "%20.10s";
-        var y = chart.addMeasureAxis("y", "Number of Photo Likes");
-        y.tickFormat = "i";
-        var s = chart.addSeries("Facebook ID", dimple.plot.bar);
-
-        s.addEventHandler("click", function (e) {
-//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
-            svg.attr("height", 550);
-
-            for(var i = 0;i<6;i++) {
-                //console.log("Helloooo "+i);
-                if(like_photos[e.seriesValue].length > i){
-                    document.getElementById('liked-photo-'+(i+1)).src = like_photos[e.seriesValue][i];
-                    document.getElementById('liked-link-'+(i+1)).href = like_photos_urls[e.seriesValue][i];
-                    jQuery('#liked-photo-box-'+i).show();
-                }
-                else{
-                    jQuery('#liked-photo-box-'+i).hide();
-                    document.getElementById('liked-photo-'+(i+1)).src = "";
-                    document.getElementById('liked-link-'+(i+1)).href = "";
-                }
-            }
-
-
-            if(String(current_selected_bar) == String(e.seriesValue)){
-                console.log('hi1');
-                // Clicked same bar, close or open tray
-                if (jQuery('#collapsePhotoLikes').hasClass('in')) {
-                    console.log('hi2');
-                    // tray is open, close tray
-                    jQuery('#collapsePhotoLikes').collapse('hide');
-                    //Unhighlight the bar
-                    if(previous_selected_x){
-                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
-
-                        x.shapes.selectAll('.tick').each(function(d, i) {
-                            if(d == String(previous_selected_x)) {
-                                d3.select(this)
-                                        .selectAll('text')
-                                        .style("font-weight", "normal")
+                //console.log(commentsResponse);
+                if(commentsResponse) {
+                    for(var j=0;j<commentsResponse.data.length; j++) {
+                        var comment = commentsResponse.data[j];
+    //                    console.log("printing comment");
+    //                    console.log(comment);
+                        if('from' in comment){
+                            if(comment.from.id == user_id) {
+                                //do not add yourself
                             }
-                        });
+                            else if (comment.from.name in user_to_photoComments) {
+                                user_to_photoComments[comment.from.name]++;
+                                comment_photos[comment.from.name].push(photo.source);
+                                comment_photos_urls[comment.from.name].push(photo.link);
+
+                            }
+                            else {
+                                user_to_photoComments[comment.from.name] = 1;
+                                comment_photos[comment.from.name] = [];
+                                comment_photos_urls[comment.from.name] = [];
+                                comment_photos[comment.from.name].push(photo.source);
+                                comment_photos_urls[comment.from.name].push(photo.link);
+
+                            }
+                        }
                     }
                 }
-                else{
-                    console.log('hi3');
-                    // tray is closed, open tray
-                    jQuery('#collapsePhotoLikes').collapse('show');
-                    //Highlight the bar
+
+                //console.log("user to photo comments");
+                //console.log(user_to_photoComments);
+            }
+
+            //console.log('After going through all pics');
+            //console.log("user to photo likes");
+            // console.log(user_to_photoLikes);
+            //console.log("user to photo comments");
+            //console.log(user_to_photoComments);
+
+            /*console.log('After going through all pics');
+             console.log("user to photo likes");
+             console.log(user_to_photoLikes);
+             console.log("user to photo comments");
+             console.log(user_to_photoComments);*/
+
+            //Functions to sort
+            function keysbyValue(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                var obj = {};
+                for(var i= 0, L= A.length; i<L; i++){
+                    obj[i] = {key: A[i], value: O[A[i]]};
+                }
+                return obj;
+            }
+
+            function getSortedKeys(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][0];
+                }
+                return A;
+            }
+
+            function getSortedValues(O){
+                var A= [];
+                for(var p in O){
+                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                }
+                A.sort(function(a, b){
+                    var a1= a[1], b1= b[1];
+                    return b1 - a1;
+                });
+                for(var i= 0, L= A.length; i<L; i++){
+                    A[i]= A[i][1];
+                }
+                return A;
+            }
+
+
+            //end functions to sort
+
+            ///////////LIKES GRAPH//////////
+            //var sorted_ids = getSortedKeys(user_to_photoLikes);
+            //var sorted_Counts = getSortedValues(user_to_photoLikes);
+
+            //user_to_photoLikes = keysbyValue(user_to_photoLikes);
+
+            //console.log("user_to_photoLikes");
+            //console.log(user_to_photoLikes);
+            //console.log("sorted_ids");
+            //console.log(sorted_ids);
+            //console.log("sorted_Counts");
+            //console.log(sorted_Counts);
+            //var facebook_ids_to_photoLikes = [];
+            //for (var i=0; i<20 && i<sorted_ids.length && i<sorted_Counts.length; i++){
+            //   facebook_ids_to_photoLikes[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+            //}
+            //console.log("facebook_ids_to_photoLikes");
+            //console.log(facebook_ids_to_photoLikes);
+
+            //make the graph with user_to_photoLikes
+            photo_likes_sorted_ids = getSortedKeys(user_to_photoLikes);
+
+            var sorted_counts = getSortedValues(user_to_photoLikes);
+
+            //user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+
+            var facebook_ids_to_photoLikes = [];
+            for (var i=0; i<20; i++){
+                facebook_ids_to_photoLikes[i] = { "Facebook ID":photo_likes_sorted_ids[i], "Number of Photo Likes":sorted_counts[i] };
+            }
+
+            var current_selected_bar;
+            var previous_selected_x;
+            var previous_colors;
+            var tray_closed = true;
+
+            var svg = dimple.newSvg("#photoLikesChart", 1000, 500);
+            var data = [
+                { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
+                { "Facebook ID":"World", "Number of Photo Likes":3000 }
+            ];
+            //console.log("data for fake chart");
+            //console.log(data);
+
+            var chart = new dimple.chart(svg, facebook_ids_to_photoLikes);
+            var x = chart.addCategoryAxis("x", "Facebook ID");
+            //                        x.tickFormat = "%20.10s";
+            var y = chart.addMeasureAxis("y", "Number of Photo Likes");
+            y.tickFormat = "i";
+            var s = chart.addSeries("Facebook ID", dimple.plot.bar);
+
+            s.addEventHandler("click", function (e) {
+    //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+                svg.attr("height", 550);
+
+                for(var i = 0;i<6;i++) {
+                    //console.log("Helloooo "+i);
+                    if(like_photos[e.seriesValue].length > i){
+                        document.getElementById('liked-photo-'+(i+1)).src = like_photos[e.seriesValue][i];
+                        document.getElementById('liked-link-'+(i+1)).href = like_photos_urls[e.seriesValue][i];
+                        jQuery('#liked-photo-box-'+i).show();
+                    }
+                    else{
+                        jQuery('#liked-photo-box-'+i).hide();
+                        document.getElementById('liked-photo-'+(i+1)).src = "";
+                        document.getElementById('liked-link-'+(i+1)).href = "";
+                    }
+                }
+
+
+                if(String(current_selected_bar) == String(e.seriesValue)){
+                    console.log('hi1');
+                    // Clicked same bar, close or open tray
+                    if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                        console.log('hi2');
+                        // tray is open, close tray
+                        jQuery('#collapsePhotoLikes').collapse('hide');
+                        //Unhighlight the bar
+                        if(previous_selected_x){
+                            chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+
+                            x.shapes.selectAll('.tick').each(function(d, i) {
+                                if(d == String(previous_selected_x)) {
+                                    d3.select(this)
+                                            .selectAll('text')
+                                            .style("font-weight", "normal")
+                                }
+                            });
+                        }
+                    }
+                    else{
+                        console.log('hi3');
+                        // tray is closed, open tray
+                        jQuery('#collapsePhotoLikes').collapse('show');
+                        //Highlight the bar
+                        chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                        //Iterate through ticks, make right one bold
+                        x.shapes.selectAll('.tick').each(function(d, i) {
+                            if(d == String(e.xValue)) {
+                                d3.select(this)
+                                        .selectAll('text')
+                                        .style("font-weight", "bold")
+                            }
+                        });
+                        //Scroll to accordian
+                        jQuery('html, body').animate({
+                            scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+                        }, {duration: 375}, 2500);
+                    }
+                }
+                else if(current_selected_bar == null){
+                    console.log('hi4'+ e.xValue);
+                    //Store the original tag name and colors of the selectedbar
+                    previous_selected_x = e.xValue;
+                    previous_colors = chart.getColor(e.xValue);
+                    //Highlight bar
                     chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
-                    //Iterate through ticks, make right one bold
+                    //Iterate through ticks and highlight new selection
                     x.shapes.selectAll('.tick').each(function(d, i) {
                         if(d == String(e.xValue)) {
                             d3.select(this)
@@ -523,188 +559,187 @@
                     jQuery('html, body').animate({
                         scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
                     }, {duration: 375}, 2500);
-                }
-            }
-            else if(current_selected_bar == null){
-                console.log('hi4'+ e.xValue);
-                //Store the original tag name and colors of the selectedbar
-                previous_selected_x = e.xValue;
-                previous_colors = chart.getColor(e.xValue);
-                //Highlight bar
-                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
-                //Iterate through ticks and highlight new selection
-                x.shapes.selectAll('.tick').each(function(d, i) {
-                    if(d == String(e.xValue)) {
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "bold")
-                    }
-                });
-                //Scroll to accordian
-                jQuery('html, body').animate({
-                    scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
-                }, {duration: 375}, 2500);
-                // no bar selected yet, open tray
-                jQuery('#collapsePhotoLikes').collapse('show');
-//                                togglePhotoTray1();
-            }
-            else if(String(current_selected_bar) != String(e.seriesValue)){
-                console.log('hi5');
-                //Reset old bar to non-highlight
-                if(previous_selected_x)
-                    chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
-                //Store the original tag name and colors of newly selected bar
-                //Iterate through ticks, unbold old selection, bold new selection
-                x.shapes.selectAll('.tick').each(function(d, i) {
-                    if(previous_selected_x && d == String(previous_selected_x)){
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "normal")
-                    }
-
-                    if(d == String(e.xValue)) {
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "bold")
-                    }
-                });
-                previous_selected_x = e.xValue;
-                previous_colors = chart.getColor(e.xValue);
-                //Highlight new bar
-                chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
-                //Scroll to accordian
-                jQuery('html, body').animate({
-                    scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
-                }, {duration: 375}, 2500);
-                // Selecting new bar
-                if (jQuery('#collapsePhotoLikes').hasClass('in')) {
-                    // tray is open, do not change tray
-                }
-                else{
-                    // tray is closed, open tray
+                    // no bar selected yet, open tray
                     jQuery('#collapsePhotoLikes').collapse('show');
+    //                                togglePhotoTray1();
                 }
-            }
-            current_selected_bar = e.seriesValue;
+                else if(String(current_selected_bar) != String(e.seriesValue)){
+                    console.log('hi5');
+                    //Reset old bar to non-highlight
+                    if(previous_selected_x)
+                        chart.assignColor(previous_selected_x, previous_colors.fill, previous_colors.stroke, previous_colors.opacity);
+                    //Store the original tag name and colors of newly selected bar
+                    //Iterate through ticks, unbold old selection, bold new selection
+                    x.shapes.selectAll('.tick').each(function(d, i) {
+                        if(previous_selected_x && d == String(previous_selected_x)){
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "normal")
+                        }
+
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                    previous_selected_x = e.xValue;
+                    previous_colors = chart.getColor(e.xValue);
+                    //Highlight new bar
+                    chart.assignColor(e.xValue, chart.getColor(e.xValue).stroke, "black", 1);
+                    //Scroll to accordian
+                    jQuery('html, body').animate({
+                        scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+                    }, {duration: 375}, 2500);
+                    // Selecting new bar
+                    if (jQuery('#collapsePhotoLikes').hasClass('in')) {
+                        // tray is open, do not change tray
+                    }
+                    else{
+                        // tray is closed, open tray
+                        jQuery('#collapsePhotoLikes').collapse('show');
+                    }
+                }
+                current_selected_bar = e.seriesValue;
 
 
-            chart.draw();
-             chart.setMargins(60,50,50,150);
-             x.shapes.selectAll("text").attr("transform",
-             function (d) {
-             return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
-             });
-             x.shapes.selectAll("text").style("text-anchor", "end");
-             x.titleShape.remove();
+                chart.draw();
+                 chart.setMargins(60,50,50,150);
+                 x.shapes.selectAll("text").attr("transform",
+                 function (d) {
+                 return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                 });
+                 x.shapes.selectAll("text").style("text-anchor", "end");
+                 x.titleShape.remove();
 
-             y.titleShape.attr("transform",
-             function (d) {
-             return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-             });
+                 y.titleShape.attr("transform",
+                 function (d) {
+                 return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                 });
+                svg.attr("height", 600);
+            });
+
+            //click event handler code here
+
+            var chartObject = chart.draw();
+            chart.setMargins(60,50,50,150);
+            x.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                    });
+            x.shapes.selectAll("text").style("text-anchor", "end");
+            console.log('x.titleShape in photo likes graph removed');
+            x.titleShape.remove();
+
+            y.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                    });
+
             svg.attr("height", 600);
-        });
 
-        //click event handler code here
-
-        var chartObject = chart.draw();
-        chart.setMargins(60,50,50,150);
-        x.shapes.selectAll("text").attr("transform",
-                function (d) {
-                    return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
-                });
-        x.shapes.selectAll("text").style("text-anchor", "end");
-        console.log('x.titleShape in photo likes graph removed');
-        x.titleShape.remove();
-
-        y.titleShape.attr("transform",
-                function (d) {
-                    return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
-                });
-
-        svg.attr("height", 600);
-
-        while(!chartObject){}
-        if (chartObject){
-            showButtons();
-        }
-
-
-        /////////////COMMENTS GRAPH////////////////////////////
-        photo_comments_sorted_ids = getSortedKeys(user_to_photoComments);
-
-        sorted_counts = getSortedValues(user_to_photoComments);
-
-        //user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
-
-        var facebook_ids_to_photoComments = [];
-        for (var i=0; i<20; i++){
-            facebook_ids_to_photoComments[i] = { "Facebook ID":photo_comments_sorted_ids[i], "Number of Photo Comments":sorted_counts[i] };
-        }
-
-        var current_selected_bar2;
-        var previous_selected_x2;
-        var previous_colors2;
-        var tray_closed2 = true;
-
-
-        var svg2 = dimple.newSvg("#photoCommentsChart", 1000, 500);
-        var data2 = [
-            { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
-            { "Facebook ID":"World", "Number of Photo Comments":3000 }
-        ];
-        //console.log("data for fake chart");
-        //console.log(data);
-
-        var chart2 = new dimple.chart(svg2, facebook_ids_to_photoComments);
-        var x2 = chart2.addCategoryAxis("x", "Facebook ID");
-        //                        x.tickFormat = "%20.10s";
-        var y2 = chart2.addMeasureAxis("y", "Number of Photo Comments");
-        y2.tickFormat = "i";
-        var s2 = chart2.addSeries("Facebook ID", dimple.plot.bar);
-
-        s2.addEventHandler("click", function (e) {
-//                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
-            svg2.attr("height", 550);
-
-            for(var i = 0;i<6;i++) {
-                //console.log("Helloooo "+i);
-                if(comment_photos[e.seriesValue].length > i){
-                    document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
-                    document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
-                    jQuery('#commented-photo-box-'+i).show();
-                }
-                else{
-                    jQuery('#commented-photo-box-'+i).hide();
-                    document.getElementById('commented-photo-'+(i+1)).src = "";
-                    document.getElementById('commented-link-'+(i+1)).href = "";
-                }
+            while(!chartObject){}
+            if (chartObject){
+                showButtons();
             }
 
 
-            if(String(current_selected_bar2) == String(e.seriesValue)){
-                // Clicked same bar, close or open tray
-                if (jQuery('#collapsePhotoComments').hasClass('in')) {
-                    // tray is open, close tray
-                    jQuery('#collapsePhotoComments').collapse('hide');
-                    //Unhighlight the bar
-                    if(previous_selected_x2){
-                        chart2.assignColor(previous_selected_x2, previous_colors2.fill, previous_colors2.stroke, previous_colors2.opacity);
+            /////////////COMMENTS GRAPH////////////////////////////
+            photo_comments_sorted_ids = getSortedKeys(user_to_photoComments);
 
+            sorted_counts = getSortedValues(user_to_photoComments);
+
+            //user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
+
+            var facebook_ids_to_photoComments = [];
+            for (var i=0; i<20; i++){
+                facebook_ids_to_photoComments[i] = { "Facebook ID":photo_comments_sorted_ids[i], "Number of Photo Comments":sorted_counts[i] };
+            }
+
+            var current_selected_bar2;
+            var previous_selected_x2;
+            var previous_colors2;
+            var tray_closed2 = true;
+
+
+            var svg2 = dimple.newSvg("#photoCommentsChart", 1000, 500);
+            var data2 = [
+                { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
+                { "Facebook ID":"World", "Number of Photo Comments":3000 }
+            ];
+            //console.log("data for fake chart");
+            //console.log(data);
+
+            var chart2 = new dimple.chart(svg2, facebook_ids_to_photoComments);
+            var x2 = chart2.addCategoryAxis("x", "Facebook ID");
+            //                        x.tickFormat = "%20.10s";
+            var y2 = chart2.addMeasureAxis("y", "Number of Photo Comments");
+            y2.tickFormat = "i";
+            var s2 = chart2.addSeries("Facebook ID", dimple.plot.bar);
+
+            s2.addEventHandler("click", function (e) {
+    //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+                svg2.attr("height", 550);
+
+                for(var i = 0;i<6;i++) {
+                    //console.log("Helloooo "+i);
+                    if(comment_photos[e.seriesValue].length > i){
+                        document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
+                        document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
+                        jQuery('#commented-photo-box-'+i).show();
+                    }
+                    else{
+                        jQuery('#commented-photo-box-'+i).hide();
+                        document.getElementById('commented-photo-'+(i+1)).src = "";
+                        document.getElementById('commented-link-'+(i+1)).href = "";
+                    }
+                }
+
+
+                if(String(current_selected_bar2) == String(e.seriesValue)){
+                    // Clicked same bar, close or open tray
+                    if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                        // tray is open, close tray
+                        jQuery('#collapsePhotoComments').collapse('hide');
+                        //Unhighlight the bar
+                        if(previous_selected_x2){
+                            chart2.assignColor(previous_selected_x2, previous_colors2.fill, previous_colors2.stroke, previous_colors2.opacity);
+
+                            x2.shapes.selectAll('.tick').each(function(d, i) {
+                                if(d == String(previous_selected_x2)) {
+                                    d3.select(this)
+                                            .selectAll('text')
+                                            .style("font-weight", "normal")
+                                }
+                            });
+                        }
+                    }
+                    else{
+                        // tray is closed, open tray
+                        jQuery('#collapsePhotoComments').collapse('show');
+                        //Highlight the bar
+                        chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
+                        //Iterate through ticks, make right one bold
                         x2.shapes.selectAll('.tick').each(function(d, i) {
-                            if(d == String(previous_selected_x2)) {
+                            if(d == String(e.xValue)) {
                                 d3.select(this)
                                         .selectAll('text')
-                                        .style("font-weight", "normal")
+                                        .style("font-weight", "bold")
                             }
                         });
+                        //Scroll to accordion
+                        jQuery('html, body').animate({
+                            scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+                        }, {duration: 375}, 2500);
                     }
                 }
-                else{
-                    // tray is closed, open tray
-                    jQuery('#collapsePhotoComments').collapse('show');
-                    //Highlight the bar
+                else if(current_selected_bar2 == null){
+                    //Store the original tag name and colors of the selectedbar
+                    previous_selected_x2 = e.xValue;
+                    previous_colors2 = chart2.getColor(e.xValue);
+                    //Highlight bar
                     chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
-                    //Iterate through ticks, make right one bold
+                    //Iterate through ticks and highlight new selection
                     x2.shapes.selectAll('.tick').each(function(d, i) {
                         if(d == String(e.xValue)) {
                             d3.select(this)
@@ -716,181 +751,161 @@
                     jQuery('html, body').animate({
                         scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
                     }, {duration: 375}, 2500);
-                }
-            }
-            else if(current_selected_bar2 == null){
-                //Store the original tag name and colors of the selectedbar
-                previous_selected_x2 = e.xValue;
-                previous_colors2 = chart2.getColor(e.xValue);
-                //Highlight bar
-                chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
-                //Iterate through ticks and highlight new selection
-                x2.shapes.selectAll('.tick').each(function(d, i) {
-                    if(d == String(e.xValue)) {
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "bold")
-                    }
-                });
-                //Scroll to accordion
-                jQuery('html, body').animate({
-                    scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
-                }, {duration: 375}, 2500);
-                // no bar selected yet, open tray
-                jQuery('#collapsePhotoComments').collapse('show');
-//                                togglePhotoTray1();
-            }
-            else if(String(current_selected_bar2) != String(e.seriesValue)){
-                //Reset old bar to non-highlight
-                if(previous_selected_x2)
-                    chart2.assignColor(previous_selected_x2, previous_colors2.fill, previous_colors2.stroke, previous_colors2.opacity);
-                //Store the original tag name and colors of newly selected bar
-                //Iterate through ticks, unbold old selection, bold new selection
-                x2.shapes.selectAll('.tick').each(function(d, i) {
-                    if(previous_selected_x2 && d == String(previous_selected_x2)){
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "normal")
-                    }
-
-                    if(d == String(e.xValue)) {
-                        d3.select(this)
-                                .selectAll('text')
-                                .style("font-weight", "bold")
-                    }
-                });
-                previous_selected_x2 = e.xValue;
-                previous_colors2 = chart2.getColor(e.xValue);
-                //Highlight new bar
-                chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
-                //Scroll to accordion
-                jQuery('html, body').animate({
-                    scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
-                }, {duration: 375}, 2500);
-                // Selecting new bar
-                if (jQuery('#collapsePhotoComments').hasClass('in')) {
-                    // tray is open, do not change tray
-                }
-                else{
-                    // tray is closed, open tray
+                    // no bar selected yet, open tray
                     jQuery('#collapsePhotoComments').collapse('show');
+    //                                togglePhotoTray1();
                 }
-            }
-            current_selected_bar2 = e.seriesValue;
+                else if(String(current_selected_bar2) != String(e.seriesValue)){
+                    //Reset old bar to non-highlight
+                    if(previous_selected_x2)
+                        chart2.assignColor(previous_selected_x2, previous_colors2.fill, previous_colors2.stroke, previous_colors2.opacity);
+                    //Store the original tag name and colors of newly selected bar
+                    //Iterate through ticks, unbold old selection, bold new selection
+                    x2.shapes.selectAll('.tick').each(function(d, i) {
+                        if(previous_selected_x2 && d == String(previous_selected_x2)){
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "normal")
+                        }
+
+                        if(d == String(e.xValue)) {
+                            d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                        }
+                    });
+                    previous_selected_x2 = e.xValue;
+                    previous_colors2 = chart2.getColor(e.xValue);
+                    //Highlight new bar
+                    chart2.assignColor(e.xValue, chart2.getColor(e.xValue).stroke, "black", 1);
+                    //Scroll to accordion
+                    jQuery('html, body').animate({
+                        scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+                    }, {duration: 375}, 2500);
+                    // Selecting new bar
+                    if (jQuery('#collapsePhotoComments').hasClass('in')) {
+                        // tray is open, do not change tray
+                    }
+                    else{
+                        // tray is closed, open tray
+                        jQuery('#collapsePhotoComments').collapse('show');
+                    }
+                }
+                current_selected_bar2 = e.seriesValue;
 
 
-            chart2.draw();
-             chart2.setMargins(60,50,50,150);
-             x2.shapes.selectAll("text").attr("transform",
-             function (d) {
-             return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
-             });
-             x2.shapes.selectAll("text").style("text-anchor", "end");
-             x2.titleShape.remove();
+                chart2.draw();
+                 chart2.setMargins(60,50,50,150);
+                 x2.shapes.selectAll("text").attr("transform",
+                 function (d) {
+                 return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
+                 });
+                 x2.shapes.selectAll("text").style("text-anchor", "end");
+                 x2.titleShape.remove();
 
-             y2.titleShape.attr("transform",
-             function (d) {
-             return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
-             });
+                 y2.titleShape.attr("transform",
+                 function (d) {
+                 return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
+                 });
+                svg2.attr("height", 600);
+
+
+            });
+
+            var chartObject2 = chart2.draw();
+            chart2.setMargins(60,50,50,150);
+            x2.shapes.selectAll("text").attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
+                    });
+            x2.shapes.selectAll("text").style("text-anchor", "end");
+            x2.titleShape.remove();
+
+            y2.titleShape.attr("transform",
+                    function (d) {
+                        return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
+                    });
             svg2.attr("height", 600);
 
 
-        });
-
-        var chartObject2 = chart2.draw();
-        chart2.setMargins(60,50,50,150);
-        x2.shapes.selectAll("text").attr("transform",
-                function (d) {
-                    return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
-                });
-        x2.shapes.selectAll("text").style("text-anchor", "end");
-        x2.titleShape.remove();
-
-        y2.titleShape.attr("transform",
-                function (d) {
-                    return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
-                });
-        svg2.attr("height", 600);
 
 
+                while(!chartObject2){}
+                if (chartObject2){
+                    showButtons();
+
+                }
+                /*sorted_keys = getSortedKeys(user_to_photoComments);
+
+                 sorted_values = getSortedValues(user_to_photoComments);
+
+                 user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
 
 
-            while(!chartObject2){}
-            if (chartObject2){
-                showButtons();
+                 for (var i=0; i<20; i++){
+                 facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
+                 }
 
+
+                 console.log('Ids to Comments')
+                 console.log(facebook_ids_to_tags);
+
+                 console.log('Ids to Photos vector');
+                 facebook_ids_to_tagged_photos = comment_photos;
+                 console.log(facebook_ids_to_tagged_photos);
+
+
+                 console.log('Ids to Photos urls');
+                 facebook_ids_to_tagged_photo_urls = comment_photos_urls;
+                 console.log(facebook_ids_to_tagged_photo_urls);
+
+                 callback();*/
+
+
+
+                //COMMENTS
+                //sorted_ids = getSortedKeys(user_to_photoComments);
+                //sorted_Counts = getSortedValues(user_to_photoComments);
+                //user_to_photoComments = keysbyValue(user_to_photoComments);
+                //console.log("user_to_photoComments");
+                //console.log(user_to_photoComments);
+                //console.log("sorted_ids");
+                //console.log(sorted_ids);
+                //console.log("sorted_Counts");
+                //console.log(sorted_Counts);
+                //var facebook_ids_to_photoComments = [];
+
+                //for (var i=0; i<20; i++){
+                //   facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
+                //}
+                //console.log("facebook_ids_to_photoComments");
+                //console.log(facebook_ids_to_photoComments);
+
+                //make the graph with user_to_photoComments
+
+                /*
+                 sorted_keys = getSortedKeys(user_to_photoLikes);
+
+                 sorted_values = getSortedValues(user_to_photoLikes);
+
+                 user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
+
+                 for (var i=0; i<20; i++){
+                 facebook_ids_to_tags[i] = facebook_ids_to_photoLikes[i];
+                 }
+
+                 console.log("facebook_ids_to_tags");
+                 console.log(facebook_ids_to_tags);
+
+                 //makegraph();
+
+
+
+                 }
+                 };
+
+                 */
             }
-            /*sorted_keys = getSortedKeys(user_to_photoComments);
-
-             sorted_values = getSortedValues(user_to_photoComments);
-
-             user_to_num_photos_uploaded = keysbyValue(user_to_photoComments);
-
-
-             for (var i=0; i<20; i++){
-             facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
-             }
-
-
-             console.log('Ids to Comments')
-             console.log(facebook_ids_to_tags);
-
-             console.log('Ids to Photos vector');
-             facebook_ids_to_tagged_photos = comment_photos;
-             console.log(facebook_ids_to_tagged_photos);
-
-
-             console.log('Ids to Photos urls');
-             facebook_ids_to_tagged_photo_urls = comment_photos_urls;
-             console.log(facebook_ids_to_tagged_photo_urls);
-
-             callback();*/
-
-
-
-            //COMMENTS
-            //sorted_ids = getSortedKeys(user_to_photoComments);
-            //sorted_Counts = getSortedValues(user_to_photoComments);
-            //user_to_photoComments = keysbyValue(user_to_photoComments);
-            //console.log("user_to_photoComments");
-            //console.log(user_to_photoComments);
-            //console.log("sorted_ids");
-            //console.log(sorted_ids);
-            //console.log("sorted_Counts");
-            //console.log(sorted_Counts);
-            //var facebook_ids_to_photoComments = [];
-
-            //for (var i=0; i<20; i++){
-            //   facebook_ids_to_photoComments[i] = { "Facebook ID":sorted_ids[i], "Number of Photo Likes":sorted_Counts[i] };
-            //}
-            //console.log("facebook_ids_to_photoComments");
-            //console.log(facebook_ids_to_photoComments);
-
-            //make the graph with user_to_photoComments
-
-            /*
-             sorted_keys = getSortedKeys(user_to_photoLikes);
-
-             sorted_values = getSortedValues(user_to_photoLikes);
-
-             user_to_num_photos_uploaded = keysbyValue(user_to_photoLikes);
-
-             for (var i=0; i<20; i++){
-             facebook_ids_to_tags[i] = facebook_ids_to_photoLikes[i];
-             }
-
-             console.log("facebook_ids_to_tags");
-             console.log(facebook_ids_to_tags);
-
-             //makegraph();
-
-
-
-             }
-             };
-
-             */
-
 
         };
 
@@ -898,31 +913,34 @@
     var max_params = {since:"01-01-2010", limit:1000};
 
     function getStatusComments(response){
-        var post = response;
-//        console.log('get status commment response');
-//        console.log(response);
-        if('comments' in post){
-            for( var j = 0; j < post.comments.data.length; j++){
-//                console.log('printing status content');
-//                console.log(post.comments.data[j]);
-                if('from'in post.comments.data[j]){
-                    var user_name = post.comments.data[j].from.name;
-                    //console.log('username: '+ user_name);
-                    if(post.comments.data[j].from.id != user_id){
-                        if( user_name in user_to_num_status_commented){
-                            user_to_num_status_commented[user_name]++;
-                            //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                            //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
-                        }else{
-                            user_to_num_status_commented[user_name] = 1;
-                            //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
-                            //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
-                            //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
-                            //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+        if(!response || response.error){
+            alert("an error occured, please refresh your page")
+        }else{
+            var post = response;
+    //        console.log('get status commment response');
+    //        console.log(response);
+            if('comments' in post){
+                for( var j = 0; j < post.comments.data.length; j++){
+    //                console.log('printing status content');
+    //                console.log(post.comments.data[j]);
+                    if('from'in post.comments.data[j]){
+                        var user_name = post.comments.data[j].from.name;
+                        //console.log('username: '+ user_name);
+                        if(post.comments.data[j].from.id != user_id){
+                            if( user_name in user_to_num_status_commented){
+                                user_to_num_status_commented[user_name]++;
+                                //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                                //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                            }else{
+                                user_to_num_status_commented[user_name] = 1;
+                                //facebook_ids_to_liked_status[total_likers_data[j].name] = [];
+                                //facebook_ids_to_liked_status_urls[total_likers_data[j].name] = [];
+                                //facebook_ids_to_liked_status[total_likers_data[j].name].push(all_status_ids[i].source);
+                                //facebook_ids_to_liked_status_urls[total_likers_data[j].name].push(all_status_ids[i].link);
+                            }
                         }
                     }
                 }
-            }
         }else if('data' in post){
             for( var j = 0; j < post.data.length; j++){
                 if('from' in post.data[j]){
@@ -950,90 +968,95 @@
                 FB.api(response.paging.next, max_params ,  getStatusComments);
             }
         }
+     }
     }
 
-    function getLikes(response, post_message, post_id){
-        var post = response;
-
-        a = typeof post_message !== 'undefined' ? post_id : -1;
-        b = typeof post_id !== 'undefined' ? post_id : -1;
-
+    function getLikes(response){
+        if(!response || response.error){
+            alert("an error occured, please refresh your page")
+        }else{
+            var post = response;
 //        console.log('get likes response');
 //        console.log(response);
-        if('likes' in post){
-            for( var j = 0; j < post.likes.data.length; j++){
-                if('name' in post.likes.data[j]){
-                    var user_name = post.likes.data[j].name;
-                    if( user_name in user_to_num_status_liked){
-                        user_to_num_status_liked[post.likes.data[j].name]++;
+            if('likes' in post){
+                for( var j = 0; j < post.likes.data.length; j++){
+                    if('name' in post.likes.data[j]){
+                        var user_name = post.likes.data[j].name;
+                        if( user_name in user_to_num_status_liked){
+                            user_to_num_status_liked[post.likes.data[j].name]++;
 //                        facebook_ids_to_liked_status[user_name].push(post.message);
 //                        facebook_ids_to_liked_status_urls[user_name].push(post.id);
-                    }else{
-                        user_to_num_status_liked[post.likes.data[j].name] = 1;
+                        }else{
+                            user_to_num_status_liked[post.likes.data[j].name] = 1;
 //                        facebook_ids_to_liked_status[user_name] = [];
 //                        facebook_ids_to_liked_status_urls[user_name] = [];
 //                        facebook_ids_to_liked_status[user_name].push(post.message);
 //                        facebook_ids_to_liked_status_urls[user_name].push(post.id);
+                        }
                     }
                 }
-            }
-        }else if('data' in post){
-            console.log('paged')
-            console.log(temp_id_likes)
-            console.log(temp_message_likes)
-            for( var j = 0; j < post.data.length; j++){
-//                console.log('paged likes');
-//                console.log(post);
-                if('name' in post.data[j]){
-                    var user_name = post.data[j].name;
-                    if( user_name in user_to_num_status_liked){
-                        user_to_num_status_liked[post.data[j].name]++;
-                    }else{
-                        user_to_num_status_liked[post.data[j].name] = 1;
-                    }
-                }
-            }
-        }
-        if('likes' in post){
-            if ('paging' in post.likes && 'next' in post.likes.paging && post.likes.paging.next != 'undefined' ){
-//                console.log('paging likes');
-                temp_message_likes = post.message;
-                temp_id_likes = post.id;
-                console.log('paging likes')
+            }else if('data' in post){
+                console.log('paged')
                 console.log(temp_id_likes)
                 console.log(temp_message_likes)
-                FB.api(response.likes.paging.next, max_params , getLikes);
+                for( var j = 0; j < post.data.length; j++){
+//                console.log('paged likes');
+//                console.log(post);
+                    if('name' in post.data[j]){
+                        var user_name = post.data[j].name;
+                        if( user_name in user_to_num_status_liked){
+                            user_to_num_status_liked[post.data[j].name]++;
+                        }else{
+                            user_to_num_status_liked[post.data[j].name] = 1;
+                        }
+                    }
+                }
             }
-        }else if('data' in post){
-            if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
+            if('likes' in post){
+                if ('paging' in post.likes && 'next' in post.likes.paging && post.likes.paging.next != 'undefined' ){
+//                console.log('paging likes');
+                    temp_message_likes = post.message;
+                    temp_id_likes = post.id;
+                    console.log('paging likes')
+                    console.log(temp_id_likes)
+                    console.log(temp_message_likes)
+                    FB.api(response.likes.paging.next, max_params , getLikes);
+                }
+            }else if('data' in post){
+                if('paging' in post.data && 'next' in post.data.paging && post.data.paging.next != 'undefined'){
 //                console.log('paging likes again');
-                FB.api(response.likes.paging.next, max_params ,  getLikes);
+                    FB.api(response.likes.paging.next, max_params ,  getLikes);
+                }
             }
-        }
 
+        }
     }
 
     function getAllstatus(response){
-        console.log(response);
-        all_status_ids = response.data;
-        // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
-        for (var i=0; i< all_status_ids.length; i++){
-                if('likes' in all_status_ids[i] && all_status_ids[i].type != "question"){
-                    //console.log(all_status_ids[i]);
-//                    console.log('calling get likes for ' + i);
-                    getLikes(all_status_ids[i]);
-                }
-                if('comments' in all_status_ids[i] && all_status_ids[i].type != "question"){
-//                    console.log('calling get comments for '+i);
-                    getStatusComments(all_status_ids[i]);
-                }
-        }
-
-        if ('paging' in response && response.paging.next != "undefined"){
-            FB.api(response.paging.next, max_params ,getAllstatus);
+        if(!response || response.error){
+            alert("an error occured, please refresh your page")
         }else{
-            //console.log('calling finishing');
-            finishStatusGraph(makeStatusGraph, makeStatusCommentGraph);
+            console.log(response);
+            all_status_ids = response.data;
+            // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
+            for (var i=0; i< all_status_ids.length; i++){
+                    if('likes' in all_status_ids[i] && all_status_ids[i].type != "question"){
+                        //console.log(all_status_ids[i]);
+    //                    console.log('calling get likes for ' + i);
+                        getLikes(all_status_ids[i]);
+                    }
+                    if('comments' in all_status_ids[i] && all_status_ids[i].type != "question"){
+    //                    console.log('calling get comments for '+i);
+                        getStatusComments(all_status_ids[i]);
+                    }
+            }
+
+            if ('paging' in response && response.paging.next != "undefined"){
+                FB.api(response.paging.next, max_params ,getAllstatus);
+            }else{
+                //console.log('calling finishing');
+                finishStatusGraph(makeStatusGraph, makeStatusCommentGraph);
+            }
         }
     }
 
@@ -1050,27 +1073,31 @@
 
 
     function getAllStatusTags(response){
-        var all_tags = response.data;
-        console.log('all_tags');
-        console.log(response);
-
-        for(var i = 0; i < all_tags.length; i++){
-
-            //console.log(all_tags[i]);
-            var name = all_tags[i].from.name;
-
-            if(name in user_to_num_status_taggeded){
-                user_to_num_status_taggeded[name]++;
-            }else{
-                user_to_num_status_taggeded[name]=1;
-            }
-        }
-
-        if('paging' in response && response.paging.next != 'undefined'){
-            FB.api(response.paging.next,max_params ,getAllStatusTags);
+        if(!response || response.error){
+            alert("an error occured, please refresh your page")
         }else{
-            console.log('finished');
-            finishTaggedStatusGraph(makeTaggedStatusGraph);
+            var all_tags = response.data;
+            console.log('all_tags');
+            console.log(response);
+
+            for(var i = 0; i < all_tags.length; i++){
+
+                //console.log(all_tags[i]);
+                var name = all_tags[i].from.name;
+
+                if(name in user_to_num_status_taggeded){
+                    user_to_num_status_taggeded[name]++;
+                }else{
+                    user_to_num_status_taggeded[name]=1;
+                }
+            }
+
+            if('paging' in response && response.paging.next != 'undefined'){
+                FB.api(response.paging.next,max_params ,getAllStatusTags);
+            }else{
+                console.log('finished');
+                finishTaggedStatusGraph(makeTaggedStatusGraph);
+            }
         }
     }
 
@@ -1275,66 +1302,68 @@
 
 //            console.log("photoResponse");
 //            console.log(photoResponse);
+            if(!photoResponse || photoResponse.error){
+                alert("an error occured, please refresh your page")
+            }else{
+                var all_data;
+                all_data = photoResponse.data;
 
-            var all_data;
-            all_data = photoResponse.data;
+                for (var i=0; i<photoResponse.data.length; i++){
+                    var photo = photoResponse.data[i];
+                    //console.log('Link: ' + photo.link);
+                    if(i==0){
+                        document.getElementById('feature-item-1').src = photo.source;
+                    }
+                    if(i==1){
+                        document.getElementById('feature-item-2').src = photo.source;
+                    }
+                    if(i==2){
+                        document.getElementById('feature-item-3').src = photo.source;
+                    }
+                    if(i==3){
+                        document.getElementById('feature-item-4').src = photo.source;
+                    }
 
-            for (var i=0; i<photoResponse.data.length; i++){
-                var photo = photoResponse.data[i];
-                //console.log('Link: ' + photo.link);
-                if(i==0){
-                    document.getElementById('feature-item-1').src = photo.source;
                 }
-                if(i==1){
-                    document.getElementById('feature-item-2').src = photo.source;
-                }
-                if(i==2){
-                    document.getElementById('feature-item-3').src = photo.source;
-                }
-                if(i==3){
-                    document.getElementById('feature-item-4').src = photo.source;
-                }
-
-            }
 
 
-            // NEED TO LOOP THROUGH PAGES
+                // NEED TO LOOP THROUGH PAGES
 
-            var desiredAttributes=["id","from"];
-            var myJSONText = JSON.stringify(all_data, desiredAttributes);
+                var desiredAttributes=["id","from"];
+                var myJSONText = JSON.stringify(all_data, desiredAttributes);
 
-            //console.log(myJSONText);
+                //console.log(myJSONText);
 //            console.log('Link: ' + response.data[0].link + '.');
 
 
-            //console.log("all_data");
-            //console.log(all_data);
+                //console.log("all_data");
+                //console.log(all_data);
 
-            // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
-            //var user_to_num_photos_uploaded = {};
-            for (var i=0; i< all_data.length; i++){
-                var user_name = all_data[i].from.name;
+                // PREPARE MAP OF USER_ID (who uploaded the photo) to NUM_PHOTOS (number they uploaded)
+                //var user_to_num_photos_uploaded = {};
+                for (var i=0; i< all_data.length; i++){
+                    var user_name = all_data[i].from.name;
 
-                if(all_data[i].from.id == user_id){
-
-                }
-                else{
-                    if (user_name in user_to_num_photos_uploaded) {
-                        user_to_num_photos_uploaded[all_data[i].from.name]++;
-                        facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
-                        facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
-                    } else {
-                        user_to_num_photos_uploaded[all_data[i].from.name] = 1;
-                        facebook_ids_to_tagged_photos[all_data[i].from.name] = [];
-                        facebook_ids_to_tagged_photo_urls[all_data[i].from.name] = [];
-                        facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
-                        facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
+                    if(all_data[i].from.id == user_id){
 
                     }
-                }
-            }
+                    else{
+                        if (user_name in user_to_num_photos_uploaded) {
+                            user_to_num_photos_uploaded[all_data[i].from.name]++;
+                            facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
+                            facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
+                        } else {
+                            user_to_num_photos_uploaded[all_data[i].from.name] = 1;
+                            facebook_ids_to_tagged_photos[all_data[i].from.name] = [];
+                            facebook_ids_to_tagged_photo_urls[all_data[i].from.name] = [];
+                            facebook_ids_to_tagged_photos[all_data[i].from.name].push(all_data[i].source);
+                            facebook_ids_to_tagged_photo_urls[all_data[i].from.name].push(all_data[i].link);
 
-            //console.log(user_to_num_photos_uploaded);
+                        }
+                    }
+                }
+
+                //console.log(user_to_num_photos_uploaded);
 
 
 
@@ -1345,81 +1374,82 @@
 //                return b1 - a1;
 //            });
 
-            //user_to_num_photos_uploaded.sort();
+                //user_to_num_photos_uploaded.sort();
 
 
-            function keysbyValue(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                function keysbyValue(O){
+                    var A= [];
+                    for(var p in O){
+                        if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                    }
+                    A.sort(function(a, b){
+                        var a1= a[1], b1= b[1];
+                        return b1 - a1;
+                    });
+                    for(var i= 0, L= A.length; i<L; i++){
+                        A[i]= A[i][0];
+                    }
+                    var obj = {};
+                    for(var i= 0, L= A.length; i<L; i++){
+                        obj[i] = {key: A[i], value: O[A[i]]};
+                    }
+                    return obj;
                 }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][0];
+
+                function getSortedKeys(O){
+                    var A= [];
+                    for(var p in O){
+                        if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                    }
+                    A.sort(function(a, b){
+                        var a1= a[1], b1= b[1];
+                        return b1 - a1;
+                    });
+                    for(var i= 0, L= A.length; i<L; i++){
+                        A[i]= A[i][0];
+                    }
+                    return A;
                 }
-                var obj = {};
-                for(var i= 0, L= A.length; i<L; i++){
-                    obj[i] = {key: A[i], value: O[A[i]]};
+
+                function getSortedValues(O){
+                    var A= [];
+                    for(var p in O){
+                        if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                    }
+                    A.sort(function(a, b){
+                        var a1= a[1], b1= b[1];
+                        return b1 - a1;
+                    });
+                    for(var i= 0, L= A.length; i<L; i++){
+                        A[i]= A[i][1];
+                    }
+                    return A;
                 }
-                return obj;
-            }
 
-            function getSortedKeys(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
+                sorted_keys = getSortedKeys(user_to_num_photos_uploaded);
+
+                sorted_values = getSortedValues(user_to_num_photos_uploaded);
+
+                user_to_num_photos_uploaded = keysbyValue(user_to_num_photos_uploaded);
+
+                //console.log("user_to_num_photos_uploaded");
+                //console.log(user_to_num_photos_uploaded);
+
+                //console.log("sorted_keys");
+                //console.log(sorted_keys);
+
+                //console.log("sorted_values");
+                //console.log(sorted_values);
+
+                for (var i=0; i<20; i++){
+                    facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
                 }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][0];
-                }
-                return A;
-            }
-
-            function getSortedValues(O){
-                var A= [];
-                for(var p in O){
-                    if(O.hasOwnProperty(p)) A.push([p, O[p]]);
-                }
-                A.sort(function(a, b){
-                    var a1= a[1], b1= b[1];
-                    return b1 - a1;
-                });
-                for(var i= 0, L= A.length; i<L; i++){
-                    A[i]= A[i][1];
-                }
-                return A;
-            }
-
-            sorted_keys = getSortedKeys(user_to_num_photos_uploaded);
-
-            sorted_values = getSortedValues(user_to_num_photos_uploaded);
-
-            user_to_num_photos_uploaded = keysbyValue(user_to_num_photos_uploaded);
-
-            //console.log("user_to_num_photos_uploaded");
-            //console.log(user_to_num_photos_uploaded);
-
-            //console.log("sorted_keys");
-            //console.log(sorted_keys);
-
-            //console.log("sorted_values");
-            //console.log(sorted_values);
-
-            for (var i=0; i<20; i++){
-                facebook_ids_to_tags[i] = { "Facebook ID":sorted_keys[i], "Number of Photo Tags":sorted_values[i] };
-            }
 //            console.log("facebook_ids_to_tags");
 //            console.log(facebook_ids_to_tags);
 
-            callback();
-            getPhotoLikesComments(photoResponse,callback);
+                callback();
+                getPhotoLikesComments(photoResponse,callback);
+            }
         });
     }
 
