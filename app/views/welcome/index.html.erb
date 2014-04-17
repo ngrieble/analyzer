@@ -430,6 +430,11 @@
 
         s.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            jQuery('html, body').animate({
+                scrollTop: jQuery("#accordionPhotoLikes").offset().top - 200
+            }, 2500);
+            refreshScroll();
+
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
                 if(like_photos[e.seriesValue].length > i){
@@ -555,6 +560,7 @@
         //click event handler code here
 
         var chartObject = chart.draw();
+        //chart.setMargins(60,50,50,100);
         x.shapes.selectAll("text").attr("transform",
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -612,8 +618,15 @@
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
             svg2.attr("height", 550);
 
+            jQuery('html, body').animate({
+                scrollTop: jQuery("#accordionPhotoComments").offset().top - 200
+            }, 2500);
+            refreshScroll();
+
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
+
+
                 if(comment_photos[e.seriesValue].length > i){
                     document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
                     document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
@@ -732,6 +745,7 @@
         });
 
         var chartObject2 = chart2.draw();
+        //chart.setMargins(60,50,50,100);
         x2.shapes.selectAll("text").attr("transform",
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -743,7 +757,6 @@
                 function (d) {
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
-
         svg2.attr("height", 600);
 
 
@@ -1576,6 +1589,12 @@
                         y.tickFormat = "i";
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
                         s.addEventHandler("click", function (e) {
+
+
+                            jQuery('html, body').animate({
+                                scrollTop: jQuery("#collapseOne").offset().top - 200
+                            }, 2500);
+                            refreshScroll();
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
                             svg.attr("height", 550);
 
@@ -1731,7 +1750,7 @@
 
 
                             chart.draw();
-                            chart.setMargins(60,50,50,100);
+                            chart.setMargins(60,50,50,150);
                             x.shapes.selectAll("text").attr("transform",
                                     function (d) {
                                         return d3.select(this).attr("transform") + " translate(27, 36) rotate(-135)";
@@ -1749,7 +1768,7 @@
                         });
 
                         var chartObject = chart.draw();
-                        chart.setMargins(60,50,50,100);
+                        chart.setMargins(60,50,50,150);
                         x.shapes.selectAll("text").attr("transform",
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -2052,6 +2071,7 @@
 
                       console.log('draw');
                       var postLikesChart = chart.draw();
+                      //chart.setMargins(60,50,50,100);
                       console.log('done');
                       x.shapes.selectAll("text").attr("transform",
                               function (d) {
@@ -2066,6 +2086,7 @@
                               });
 
                       svg.attr("height", 600);
+
 
                       while(!postLikesChart){}
                       if (postLikesChart){
@@ -2111,6 +2132,7 @@
 //                   console.log('draw');
                   var postLikesChart = chart.draw();
 //                   console.log('done');
+                  //chart.setMargins(60,50,50,100);
                   x.shapes.selectAll("text").attr("transform",
                           function (d) {
                               return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
@@ -2165,7 +2187,7 @@
                   console.log('draw');
                   var postLikesChart = chart.draw();
                   console.log('done');
-
+                  //chart.setMargins(60,50,50,100);
                   x.shapes.selectAll("text").attr("transform",
                           function (d) {
                               return d3.select(this).attr("transform") + " translate(0, 15) rotate(-45)";
