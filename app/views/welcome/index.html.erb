@@ -201,9 +201,10 @@
         });
 
         FB.Event.subscribe('auth.logout', function(response) {
-            hideButtons();
-            graphs_made = 0;
             console.log("logout_event");
+            hideButtons();
+            document.getElementById('chart2').innerHTML = "";
+            graphs_made = 0;
             first_graph_made = false;
             sorted_values = [];
             sorted_keys = [];
@@ -236,6 +237,14 @@
             stalker_rankings = {};
             sorted_stalker_rankings_keys = [];
             sorted_stalker_rankings_values = [];
+
+            jQuery("#chart2").empty();
+            jQuery("#photoLikesChart").empty();
+            jQuery("#photoCommentsChart").empty();
+            jQuery("chart3").empty();
+            jQuery("chart4").empty();
+            jQuery("chart5").empty();
+
         });
     };
 
@@ -1655,12 +1664,12 @@
 
                 <script>
 
-                    var current_selected_bar;
-                    var previous_selected_x;
-                    var previous_colors;
-                    var tray_closed = true;
-
                     function makeGraph() {
+
+                        var current_selected_bar;
+                        var previous_selected_x;
+                        var previous_colors;
+                        var tray_closed = true;
 
                         getUsersStatusLikes(finishStatusGraph);
 
@@ -2191,11 +2200,10 @@
 
           <script>
 
-
-              var current_selected_bar;
-              var tray_closed = true;
-
               function makeStatusGraph(){
+                  var current_selected_bar;
+                  var tray_closed = true;
+
                   // CHART USING D3 AND DIMPLY: PRETTY
                   var svg = dimple.newSvg("#chart3", 1000, 500);
 
@@ -2270,10 +2278,10 @@
 
           <script>
 
-              var current_selected_bar;
-              var tray_closed = true;
-
               function makeTaggedStatusGraph(){
+                  var current_selected_bar;
+                  var tray_closed = true;
+
                   var div = document.getElementById("temp");
                   div.parentNode.removeChild(div);
 
