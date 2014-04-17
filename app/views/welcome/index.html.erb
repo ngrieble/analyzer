@@ -413,7 +413,7 @@
         var previous_colors;
         var tray_closed = true;
 
-        var svg = dimple.newSvg(".photoLikesChart", 1000, 600);
+        var svg = dimple.newSvg("#photoLikesChart", 1000, 500);
         var data = [
             { "Facebook ID":"Hello", "Number of Photo Likes":2000 },
             { "Facebook ID":"World", "Number of Photo Likes":3000 }
@@ -567,7 +567,7 @@
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
 
-        svg.attr("height", 1000);
+        svg.attr("height", 600);
 
         while(!chartObject){}
         if (chartObject){
@@ -593,7 +593,7 @@
         var tray_closed2 = true;
 
 
-        var svg2 = dimple.newSvg(".photoCommentsChart", 1000, 600);
+        var svg2 = dimple.newSvg("#photoCommentsChart", 1000, 500);
         var data2 = [
             { "Facebook ID":"Hello", "Number of Photo Comments":2000 },
             { "Facebook ID":"World", "Number of Photo Comments":3000 }
@@ -610,6 +610,8 @@
 
         s2.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+            svg2.attr("height", 550);
+
             for(var i = 0;i<6;i++) {
                 //console.log("Helloooo "+i);
                 if(comment_photos[e.seriesValue].length > i){
@@ -724,6 +726,8 @@
              function (d) {
              return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
              })*/
+            svg2.attr("height", 600);
+
 
         });
 
@@ -740,7 +744,7 @@
                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                 });
 
-        svg2.attr("height", 1000);
+        svg2.attr("height", 600);
 
 
 
@@ -1544,7 +1548,11 @@
 			
 			<span> Who do you think has tagged you the most in pictures?
 				<span class="inner">This graph shows the number of tags per person!</span>
-              <div class="chart2"></div>
+              <!--<div class="chart2"></div>-->
+            <svg id="chart2" width="1000" height="600"
+                 viewBox="0 0 1000 600"
+                 preserveAspectRatio="xMidYMid">
+            </svg>
                   <h4>Click on a bar to see what they've tagged you in most recently!</h4>
 
                 <script>
@@ -1559,8 +1567,7 @@
                         getUsersStatusLikes(finishStatusGraph);
 
                         // CHART USING D3 AND DIMPLY: PRETTY
-                        var svg = dimple.newSvg(".chart2", 1000, 600);
-
+                        var svg = dimple.newSvg("#chart2", 1000, 550);
 
                         var chart = new dimple.chart(svg, facebook_ids_to_tags);
                         var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -1570,6 +1577,7 @@
                         var s = chart.addSeries("Facebook ID", dimple.plot.bar);
                         s.addEventHandler("click", function (e) {
 //                            alert("Hey, you clicked " + e.seriesValue + ". Woooooo!");
+                            svg.attr("height", 550);
 
                             if(facebook_ids_to_tagged_photos[e.seriesValue].length > 0){
                                 document.getElementById('tagged-photo-1').src = facebook_ids_to_tagged_photos[e.seriesValue][0];
@@ -1736,6 +1744,8 @@
                                         return d3.select(this).attr("transform") + " translate(-10, -4) rotate(0)";
                                     })
 
+                            svg.attr("height", 600);
+
                         });
 
                         var chartObject = chart.draw();
@@ -1751,6 +1761,9 @@
                                 function (d) {
                                     return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                                 });
+//                        d3.select("xAxis").attr("height", 600);
+
+                        svg.attr("height", 600);
 
                         while(!chartObject){}
                         if (chartObject){
@@ -1845,8 +1858,12 @@
 			</span>
             <span> Who do you think has liked the most pictures of you?
 				<span class="inner">This graph shows the number of likes per person!</span>
-                <div class="photoLikesChart">
-                </div>
+                <svg id="photoLikesChart" width="1000" height="600"
+                     viewBox="0 0 1000 600"
+                     preserveAspectRatio="xMidYMid">
+                </svg>
+                                <h4>Click on a bar to see what they've liked most recently!</h4>
+
                 <div class="panel-group" id="accordionPhotoLikes">
                   <div class="panel panel-default">
 
@@ -1894,8 +1911,12 @@
 
             <span> Who do you think has commented on the most pictures of you?
 				<span class="inner">This graph shows the number of comments per person!</span>
-                <div class="photoCommentsChart">
-                </div>
+                <svg id="photoCommentsChart" width="1000" height="600"
+                     viewBox="0 0 1000 600"
+                     preserveAspectRatio="xMidYMid">
+                </svg>
+                                <h4>Click on a bar to see what they've commented on most recently!</h4>
+
                 <div class="panel-group" id="accordionPhotoComments">
                   <div class="panel panel-default">
 
@@ -2007,7 +2028,10 @@
 
         <span> Who do you think has commented on your statuses the most?
 	      <span class="inner">This graph shows the number of comments per person on all statuses!</span>
-          <div class = "chart4"></div>
+          <svg id="chart4" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
           <script>
               var current_selected_bar;
               var tray_closed = true;
@@ -2015,7 +2039,7 @@
               function makeStatusCommentGraph(){
 
                       // CHART USING D3 AND DIMPLY: PRETTY
-                      var svg = dimple.newSvg(".chart4", 1000, 600);
+                      var svg = dimple.newSvg("#chart4", 1000, 550);
                       var chart = new dimple.chart(svg, facebook_ids_to_status_commented );
                       console.log('made');
                       var x = chart.addCategoryAxis("x", "Facebook ID");
@@ -2041,7 +2065,7 @@
                                   return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                               });
 
-                      svg.attr("height", 1000);
+                      svg.attr("height", 600);
 
                       while(!postLikesChart){}
                       if (postLikesChart){
@@ -2054,7 +2078,10 @@
 
 	    <span> Who do you think has liked your statuses the most?
 	      <span class="inner">This graph shows the number of likes per person on all statuses!</span>
-          <div class="chart3"></div>
+          <svg id="chart3" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
 
           <script>
 
@@ -2064,7 +2091,7 @@
 
               function makeStatusGraph(){
                   // CHART USING D3 AND DIMPLY: PRETTY
-                  var svg = dimple.newSvg(".chart3", 1000, 600);
+                  var svg = dimple.newSvg("#chart3", 1000, 550);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_likes);
 //                  console.log('made');
@@ -2096,7 +2123,7 @@
                               return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                           });
 
-                  svg.attr("height", 1000);
+                  svg.attr("height", 600);
 
                   while(!postLikesChart){}
                   if (postLikesChart){
@@ -2110,14 +2137,17 @@
 
         <span> Who do you think has tagged you the most in statuses?
 	      <span class="inner">This graph shows the number of tags per person in all their statuses!</span>
-          <div class="chart5"></div>
+          <svg id="chart5" width="1000" height="600"
+               viewBox="0 0 1000 600"
+               preserveAspectRatio="xMidYMid">
+          </svg>
 
           <script>
               var current_selected_bar;
               var tray_closed = true;
 
               function makeTaggedStatusGraph(){
-                  var svg = dimple.newSvg(".chart5", 1000, 600);
+                  var svg = dimple.newSvg("#chart5", 1000, 550);
 
                   var chart = new dimple.chart(svg, facebook_ids_to_status_tagged);
                   console.log('made');
@@ -2148,7 +2178,7 @@
                               return d3.select(this).attr("transform") + " translate(0, -20) rotate(0)";
                           });
 
-                  svg.attr("height", 1000);
+                  svg.attr("height", 600);
 
                   while(!postLikesChart){}
                   if (postLikesChart){
