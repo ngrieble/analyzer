@@ -2,7 +2,7 @@
 
 jQuery('.nav-collapse .nav > li > a').click(function(){
 			
-			jQuery('.collapse.in').removeClass('in').css('height', '0');
+			//jQuery('.collapse.in').removeClass('in').css('height', '0');
 
 		});
 
