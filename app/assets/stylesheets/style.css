@@ -979,17 +979,17 @@ padding-top: 18px;
     padding-bottom: 12px;
     padding-top: 13px; }
   .btn.btn-primary {
-    background-color: #d7dafd; }
+    background-color: #4c66a4; }
     .btn.btn-primary:hover, .btn.btn-primary:focus {
-      background-color: #4c66a4; }
+      background-color: #364c7c; }
     .btn.btn-primary:active, .btn.btn-primary.active {
-      background-color: #4c66a4;}
+      background-color: #364c7c;}
   .btn.btn-info {
-    background-color: #3498db; }
+    background-color: #d7dafd; }
     .btn.btn-info:hover, .btn.btn-info:focus {
-      background-color: #5dade2; }
+      background-color: #4c66a4; }
     .btn.btn-info:active, .btn.btn-info.active {
-      background-color: #2383c4; }
+      background-color: #4c66a4; }
   .btn.btn-danger {
     background-color: #e74c3c; }
     .btn.btn-danger:hover, .btn.btn-danger:focus {
