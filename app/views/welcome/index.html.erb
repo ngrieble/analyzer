@@ -686,10 +686,10 @@
                     if(comment_photos[e.seriesValue].length > i){
                         document.getElementById('commented-photo-'+(i+1)).src = comment_photos[e.seriesValue][i];
                         document.getElementById('commented-link-'+(i+1)).href = comment_photos_urls[e.seriesValue][i];
-                        jQuery('#commented-photo-box-'+i).show();
+                        jQuery('#commented-photo-box-'+(i+1)).show();
                     }
                     else{
-                        jQuery('#commented-photo-box-'+i).hide();
+                        jQuery('#commented-photo-box-'+(i+1)).hide();
                         document.getElementById('commented-photo-'+(i+1)).src = "";
                         document.getElementById('commented-link-'+(i+1)).href = "";
                     }
